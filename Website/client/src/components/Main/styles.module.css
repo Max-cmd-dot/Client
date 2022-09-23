@@ -1,0 +1,36 @@
+.data {
+	
+	display: flex;
+  justify-content: space-evenly;
+}
+
+
+.sensordata{
+	width: 250px;
+	height: 100px;
+	border-radius: 10px;
+	margin: 20px;
+	box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 40%),
+		0px 3px 4px 0px rgb(0 0 0 / 24%), 0px 1px 8px 0px rgb(0 0 0 / 22%);
+	background-color: #ff37e4;
+	color: #ffffff;
+	text-align: center;
+}
+
+.sensordata:hover {
+color:#111;
+background-color: #ff37e4;
+box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 55%),
+0px 3px 4px 0px rgb(0 0 0 / 39%), 0px 1px 8px 0px rgb(0 0 0 / 37%);
+}
+
+.graph {
+	color:#111;
+	width: auto;
+	height: auto;
+	padding-right: 200px;
+  }
+  /* The button used to open the sidebar */
+.heading{
+	text-align: center;
+}
