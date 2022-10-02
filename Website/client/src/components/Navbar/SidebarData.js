@@ -1,7 +1,7 @@
 import React from "react";
 import * as AiIcons from "react-icons/ai";
 import * as bifrom from "react-icons/bi";
-import * as IconName from "react-icons/fi";
+import * as feathericons from "react-icons/fi";
 
 export const SidebarData = [
   {
@@ -14,7 +14,7 @@ export const SidebarData = [
   {
     title: "History",
     path: "/history",
-    icon: <IconName.FiLogOut />,
+    icon: <bifrom.BiHistory />,
     cName: "nav-text",
   },
   //{
@@ -33,7 +33,7 @@ export const SidebarData = [
   {
     title: "Logout",
     path: "/logout",
-    icon: <IconName.FiLogOut />,
+    icon: <feathericons.FiLogOut />,
     cName: "nav-text",
   },
 ];
