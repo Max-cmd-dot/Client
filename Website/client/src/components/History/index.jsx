@@ -97,6 +97,26 @@ const History = () => {
             />
           </div>
         </div>
+        <div>
+          <h2 className={styles.heading}>Temperatur Diagramm</h2>
+          <div className={styles.graph}>
+            <Line
+              data={{
+                labels: tempchardata.map((tempchardata) => tempchardata.time),
+                datasets: [
+                  {
+                    label: "Dataset 1",
+                    data: tempchardata.map(
+                      (tempchardata) => tempchardata.value
+                    ),
+                    backgroundColor: ["rgba(37, 150, 190, 0.2)"],
+                    borderColor: ["rgba(237, 150, 190, 1)"],
+                  },
+                ],
+              }}
+            />
+          </div>
+        </div>
       </div>
     </>
   );
