@@ -23,8 +23,8 @@ const Main = () => {
   let [list, setList] = useState([]);
   let [tempchardata, settempchardata] = useState([]);
   let [humchardata, sethumchardata] = useState([]);
-  let [luxchardata, setluxchardata] = useState([]);
-  let [allchardata, setallchardata] = useState([]);
+  //let [luxchardata, setluxchardata] = useState([]);
+  //let [allchardata, setallchardata] = useState([]);
   //let [name, setName] = useState([]);
   useEffect(() => {
     axios
@@ -106,11 +106,6 @@ const Main = () => {
 
   return (
     <>
-      <head>
-        <meta httpEquiv="cache-control" content="no-cache" />
-        <meta httpEquiv="expires" content="0" />
-        <meta httpEquiv="pragma" content="no-cache" />
-      </head>
       <body>
         <div className={styles.main_container}>
           <h1 className={styles.heading}>Sensor Data</h1>
