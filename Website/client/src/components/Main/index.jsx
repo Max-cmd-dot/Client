@@ -18,7 +18,6 @@ Chart.register(
   LinearScale,
   PointElement
 );
-
 const Main = () => {
   let [list, setList] = useState([]);
   let [tempchardata, settempchardata] = useState([]);
@@ -103,89 +102,120 @@ const Main = () => {
         setList(valuesArr);
       });
   });
-
+  const decimation = {
+    enabled: false,
+    algorithm: "min-max",
+  };
   return (
-    <>
-      <body>
-        <div className={styles.main_container}>
-          <h1 className={styles.heading}>Sensor Data</h1>
-          <div className={styles.main_container}>
-            <div className={styles.data}>
-              {list.map((item) => {
-                if (item.topic === "esp/ground/light/lux") {
-                  return (
-                    <div className={styles.sensordata}>
-                      <p key={item}>Brightness</p> <h2> {item.value} lux</h2>
-                    </div>
-                  );
-                }
-              })}
-              {list.map((item) => {
-                if (item.topic === "esp/ground/moisture/1") {
-                  return (
-                    <div className={styles.sensordata}>
-                      <p key={item}>Soil Moisture</p> <h2> {item.value}</h2>
-                    </div>
-                  );
-                }
-              })}
-              {list.map((item) => {
-                if (item.topic === "esp/air/pressure") {
-                  return (
-                    <div className={styles.sensordata}>
-                      <p key={item}>Pressure</p> <h2> {item.value} hpa</h2>
-                    </div>
-                  );
-                }
-              })}
-              {list.map((item) => {
-                if (item.topic === "esp/air/humidity") {
-                  return (
-                    <div className={styles.sensordata}>
-                      <p key={item}>Humidity </p> <h2> {item.value}%</h2>
-                    </div>
-                  );
-                }
-              })}
-              {list.map((item) => {
-                if (item.topic === "esp/air/temperature") {
-                  return (
-                    <div className={styles.sensordata}>
-                      <p key={item}>Temperature </p> <h2> {item.value}°C</h2>
-                    </div>
-                  );
-                }
-              })}
-            </div>
-          </div>
-          <div>
-            <h2 className={styles.heading}>Temperatur Diagramm</h2>
-            <div className={styles.graph}>
-              <Line
-                data={{
-                  labels: tempchardata.map((tempchardata) => tempchardata.time),
-                  datasets: [
-                    {
-                      label: "Dataset 1",
-                      data: tempchardata.map(
-                        (tempchardata) => tempchardata.value
-                      ), //[20,10,30],                data.map((data) => [data.value]),
-                      backgroundColor: ["rgba(37, 150, 190, 0.2)"],
-                      borderColor: ["rgba(237, 150, 190, 1)"],
-                    },
-                    {
-                      label: "Dataset 1",
-                      data: humchardata.map((humchardata) => humchardata.value), //[20,10,30],                data.map((data) => [data.value]),
-                      borderColor: ["rgba(255, 99, 132, 1)"],
-                    },
-                  ],
-                }}
-              />
-            </div>
-          </div>
+    <div className={styles.main_container}>
+      <h1 className={styles.heading}>Sensor Data</h1>
+      <div className={styles.main_container}>
+        <div className={styles.data}>
+          {list.map((item) => {
+            if (item.topic === "esp/ground/light/lux") {
+              return (
+                <div className={styles.sensordata}>
+                  <p key={item}>Brightness</p> <h2> {item.value} lux</h2>
+                </div>
+              );
+            }
+          })}
+          {list.map((item) => {
+            if (item.topic === "esp/ground/moisture/1") {
+              return (
+                <div className={styles.sensordata}>
+                  <p key={item}>Soil Moisture</p> <h2> {item.value}</h2>
+                </div>
+              );
+            }
+          })}
+          {list.map((item) => {
+            if (item.topic === "esp/air/pressure") {
+              return (
+                <div className={styles.sensordata}>
+                  <p key={item}>Pressure</p> <h2> {item.value} hpa</h2>
+                </div>
+              );
+            }
+          })}
+          {list.map((item) => {
+            if (item.topic === "esp/air/humidity") {
+              return (
+                <div className={styles.sensordata}>
+                  <p key={item}>Humidity </p> <h2> {item.value}%</h2>
+                </div>
+              );
+            }
+          })}
+          {list.map((item) => {
+            if (item.topic === "esp/air/temperature") {
+              return (
+                <div className={styles.sensordata}>
+                  <p key={item}>Temperature </p> <h2> {item.value}°C</h2>
+                </div>
+              );
+            }
+          })}
         </div>
-      </body>
-    </>
+      </div>
+      <div>
+        <h2 className={styles.heading}>Temperatur Diagramm</h2>
+        <div className={styles.graph}>
+          <Line
+            data={{
+              labels: tempchardata.map((tempchardata) => tempchardata.time),
+              title: {
+                text: "Chart with Animation Enabled",
+              },
+              datasets: [
+                {
+                  label: "Large Dataset",
+                  data: tempchardata.map((tempchardata) => tempchardata.value), //[20,10,30],                data.map((data) => [data.value]),
+                  borderColor: ["rgba(237, 150, 190, 1)"],
+                },
+                {
+                  label: "Large Dataset",
+                  data: humchardata.map((humchardata) => humchardata.value), //[20,10,30],                data.map((data) => [data.value]),
+                  borderColor: ["rgba(255, 99, 132, 1)"],
+                },
+              ],
+            }}
+            options={{
+              animation: false,
+              plugins: {
+                title: {
+                  display: true,
+                  text: "Cryptocurrency prices",
+                },
+                legend: {
+                  display: true,
+                  position: "bottom",
+                },
+                plugins: {
+                  decimation: decimation,
+                },
+                interaction: {
+                  mode: "nearest",
+                  axis: "x",
+                  intersect: false,
+                },
+                scales: {
+                  x: {
+                    type: "time",
+                    ticks: {
+                      source: "auto",
+                      // Disabled rotation for performance
+                      maxRotation: 0,
+                      autoSkip: true,
+                    },
+                  },
+                },
+              },
+            }}
+          />
+        </div>
+      </div>
+    </div>
   );
 };
 //{selected.map((item) => {
