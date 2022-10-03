@@ -10,7 +10,7 @@ import {
 } from "chart.js";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import ClipLoader from "react-spinners/ClipLoader";
 Chart.register(
   ArcElement,
   CategoryScale,
@@ -22,6 +22,7 @@ const Main = () => {
   let [list, setList] = useState([]);
   let [tempchardata, settempchardata] = useState([]);
   let [humchardata, sethumchardata] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   //let [luxchardata, setluxchardata] = useState([]);
   //let [allchardata, setallchardata] = useState([]);
   //let [name, setName] = useState([]);
@@ -41,6 +42,7 @@ const Main = () => {
             });
           counter++;
         }
+        setIsLoading(false);
         sethumchardata(dataArr);
       });
   });
@@ -159,61 +161,72 @@ const Main = () => {
         </div>
       </div>
       <div>
-        <h2 className={styles.heading}>Temperatur Diagramm</h2>
-        <div className={styles.graph}>
-          <Line
-            data={{
-              labels: tempchardata.map((tempchardata) => tempchardata.time),
-              title: {
-                text: "Chart with Animation Enabled",
-              },
-              datasets: [
-                {
-                  label: "Large Dataset",
-                  data: tempchardata.map((tempchardata) => tempchardata.value), //[20,10,30],                data.map((data) => [data.value]),
-                  borderColor: ["rgba(237, 150, 190, 1)"],
-                },
-                {
-                  label: "Large Dataset",
-                  data: humchardata.map((humchardata) => humchardata.value), //[20,10,30],                data.map((data) => [data.value]),
-                  borderColor: ["rgba(255, 99, 132, 1)"],
-                },
-              ],
-            }}
-            options={{
-              animation: false,
-              plugins: {
-                title: {
-                  display: true,
-                  text: "Cryptocurrency prices",
-                },
-                legend: {
-                  display: true,
-                  position: "bottom",
-                },
-                plugins: {
-                  decimation: decimation,
-                },
-                interaction: {
-                  mode: "nearest",
-                  axis: "x",
-                  intersect: false,
-                },
-                scales: {
-                  x: {
-                    type: "time",
-                    ticks: {
-                      source: "auto",
-                      // Disabled rotation for performance
-                      maxRotation: 0,
-                      autoSkip: true,
+        {!isLoading ? (
+          <div>
+            <h2 className={styles.heading}>Temperatur Diagramm</h2>
+            <div className={styles.graph}>
+              <Line
+                data={{
+                  labels: tempchardata.map((tempchardata) => tempchardata.time),
+                  title: {
+                    text: "Chart with Animation Enabled",
+                  },
+                  datasets: [
+                    {
+                      label: "Large Dataset",
+                      data: tempchardata.map(
+                        (tempchardata) => tempchardata.value
+                      ), //[20,10,30],                data.map((data) => [data.value]),
+                      borderColor: ["rgba(237, 150, 190, 1)"],
+                    },
+                    {
+                      label: "Large Dataset",
+                      data: humchardata.map((humchardata) => humchardata.value), //[20,10,30],                data.map((data) => [data.value]),
+                      borderColor: ["rgba(255, 99, 132, 1)"],
+                    },
+                  ],
+                }}
+                options={{
+                  animation: false,
+                  plugins: {
+                    title: {
+                      display: true,
+                      text: "Cryptocurrency prices",
+                    },
+                    legend: {
+                      display: true,
+                      position: "bottom",
+                    },
+                    plugins: {
+                      decimation: decimation,
+                    },
+                    interaction: {
+                      mode: "nearest",
+                      axis: "x",
+                      intersect: false,
+                    },
+                    scales: {
+                      x: {
+                        type: "time",
+                        ticks: {
+                          source: "auto",
+                          // Disabled rotation for performance
+                          maxRotation: 0,
+                          autoSkip: true,
+                          reverse: true,
+                        },
+                      },
                     },
                   },
-                },
-              },
-            }}
-          />
-        </div>
+                }}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className={styles.loading}>
+            <ClipLoader size={150} />
+          </div>
+        )}
       </div>
     </div>
   );
