@@ -21,4 +21,4 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-mqtt2mongodb.log
+/Scripts/mqtt2mongodb.log
