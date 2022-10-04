@@ -42,29 +42,10 @@ const Main = () => {
             });
           counter++;
         }
-        setIsLoading(false);
         sethumchardata(dataArr);
       });
   });
-  useEffect(() => {
-    axios
-      .get("http://20.219.193.229:8080/api/data/all/lux")
 
-      .then(function (response) {
-        const dataArr = []; //const valueNameArr = []
-        let counter = 0;
-        for (let thing in response.data) {
-          //console.log(response.data[item].location.coordinates);
-          if (counter < 1000)
-            dataArr.push({
-              time: response.data[thing].time,
-              value: response.data[thing].value,
-            });
-          counter++;
-        }
-        setluxchardata(dataArr);
-      });
-  });
   useEffect(() => {
     axios
       .get("http://20.219.193.229:8080/api/data/all/temperature")
@@ -81,6 +62,7 @@ const Main = () => {
             });
           counter++;
         }
+        setIsLoading(false);
         settempchardata(dataArr);
       });
   });
@@ -168,9 +150,7 @@ const Main = () => {
               <Line
                 data={{
                   labels: tempchardata.map((tempchardata) => tempchardata.time),
-                  title: {
-                    text: "Chart with Animation Enabled",
-                  },
+
                   datasets: [
                     {
                       label: "Large Dataset",
@@ -188,43 +168,14 @@ const Main = () => {
                 }}
                 options={{
                   animation: false,
-                  plugins: {
-                    title: {
-                      display: true,
-                      text: "Cryptocurrency prices",
-                    },
-                    legend: {
-                      display: true,
-                      position: "bottom",
-                    },
-                    plugins: {
-                      decimation: decimation,
-                    },
-                    interaction: {
-                      mode: "nearest",
-                      axis: "x",
-                      intersect: false,
-                    },
-                    scales: {
-                      x: {
-                        type: "time",
-                        ticks: {
-                          source: "auto",
-                          // Disabled rotation for performance
-                          maxRotation: 0,
-                          autoSkip: true,
-                          reverse: true,
-                        },
-                      },
-                    },
-                  },
+                  pointRadius: 0,
                 }}
               />
             </div>
           </div>
         ) : (
-          <div className={styles.loading}>
-            <ClipLoader size={150} />
+          <div>
+            <ClipLoader size={150} className={styles.loading} />
           </div>
         )}
       </div>

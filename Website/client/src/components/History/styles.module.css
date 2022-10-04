@@ -37,5 +37,7 @@
   text-align: center;
 }
 .loading {
+  position: fixed;
+  left: 46%;
   top: 50%;
 }

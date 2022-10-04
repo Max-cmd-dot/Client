@@ -42,8 +42,9 @@ const History = () => {
             });
           counter++;
         }
+        const reverseddataArr = dataArr.reverse();
         setIsLoading(false);
-        sethumchardata(dataArr);
+        sethumchardata(reverseddataArr);
       });
   });
   useEffect(() => {
@@ -77,7 +78,8 @@ const History = () => {
             });
           counter++;
         }
-        settempchardata(dataArr);
+        const reverseddataArr = dataArr.reverse();
+        settempchardata(reverseddataArr);
       });
   });
   useEffect(() => {
@@ -94,7 +96,8 @@ const History = () => {
             });
           counter++;
         }
-        setmoi1chardata(dataArr);
+        const reverseddataArr = dataArr.reverse();
+        setmoi1chardata(reverseddataArr);
       });
   });
   useEffect(() => {
@@ -111,7 +114,8 @@ const History = () => {
             });
           counter++;
         }
-        setmoi2chardata(dataArr);
+        const reverseddataArr = dataArr.reverse();
+        setmoi2chardata(reverseddataArr);
       });
   });
   useEffect(() => {
@@ -128,7 +132,8 @@ const History = () => {
             });
           counter++;
         }
-        setmoi3chardata(dataArr);
+        const reverseddataArr = dataArr.reverse();
+        setmoi3chardata(reverseddataArr);
       });
   });
 
@@ -152,7 +157,7 @@ const History = () => {
                         data: tempchardata.map(
                           (tempchardata) => tempchardata.value
                         ),
-                        borderColor: ["rgba(237, 150, 190, 1)"],
+                        borderColor: ["rgba(237, 0, 0, 1)"],
                       },
                     ],
                   }}
@@ -188,7 +193,7 @@ const History = () => {
                         data: luxchardata.map(
                           (luxchardata) => luxchardata.value
                         ),
-                        borderColor: ["rgba(237, 150, 190, 1)"],
+                        borderColor: ["rgba(0, 250, 200, 1)"],
                       },
                     ],
                   }}
@@ -224,7 +229,7 @@ const History = () => {
                         data: humchardata.map(
                           (humchardata) => humchardata.value
                         ),
-                        borderColor: ["rgba(237, 150, 190, 1)"],
+                        borderColor: ["rgba(0, 250, 0, 1)"],
                       },
                     ],
                   }}
@@ -297,7 +302,7 @@ const History = () => {
           </div>
         ) : (
           <div className={styles.loading}>
-            <ClipLoader size={150} />
+            <ClipLoader size={150} className={styles.heading} />
           </div>
         )}
       </div>
