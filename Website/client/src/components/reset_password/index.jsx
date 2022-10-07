@@ -1,0 +1,70 @@
+import { useState } from "react";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import styles from "./styles.module.css";
+
+import { useParams } from "react-router";
+const reset_Password = () => {
+  const [data, setData] = useState({
+    password: "",
+  });
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const { userId, token } = useParams();
+  //console.log(userId);
+  //console.log(token);
+  const handleChange = ({ currentTarget: input }) => {
+    setData({
+      ...data,
+      [input.name]: input.value,
+      _id: userId,
+      token: token,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const url = "http://20.219.193.229:8080/api/password-reset/resetvalidate";
+      console.log(data);
+      const { data: res } = await axios.post(url, data);
+      navigate("/login");
+      //console.log(res.message);
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.status >= 400 &&
+        error.response.status <= 500
+      ) {
+        setError(error.response.data.message);
+      }
+    }
+  };
+
+  return (
+    <div className={styles.signup_container}>
+      <div className={styles.signup_form_container}>
+        <div className={styles.right}>
+          <form className={styles.form_container} onSubmit={handleSubmit}>
+            <h1>Set new Password</h1>
+            <input
+              type="password"
+              placeholder="Password"
+              name="password"
+              onChange={handleChange}
+              value={data.password}
+              required
+              className={styles.input}
+            />
+            {error && <div className={styles.error_msg}>{error}</div>}
+            <button type="submit" className={styles.green_btn}>
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default reset_Password;

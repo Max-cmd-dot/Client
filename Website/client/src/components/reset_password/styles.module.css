@@ -1,13 +1,13 @@
-.login_container {
+.signup_container {
   width: 100%;
   min-height: 100vh;
-  background-color: #edf5f3;
+  background-color: #f5f5f5;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.login_form_container {
+.signup_form_container {
   width: 900px;
   height: 500px;
   display: flex;
@@ -17,12 +17,32 @@
 }
 
 .left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #0088ff;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.left h1 {
+  margin-top: 0;
+  color: white;
+  font-size: 35px;
+  align-self: center;
+}
+
+.right {
   flex: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: white;
+  background-color: #0088ff;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
 }
@@ -60,24 +80,6 @@
   text-align: center;
 }
 
-.right {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #0088ff;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-}
-
-.right h1 {
-  margin-top: 0;
-  color: white;
-  font-size: 40px;
-  align-self: center;
-}
-
 .white_btn,
 .green_btn {
   border: none;
@@ -92,8 +94,8 @@
 }
 
 .green_btn {
-  background-color: #0088ff;
-  color: white;
+  background-color: white;
+  color: 0088ff;
   margin: 10px;
 }
 
@@ -105,10 +107,4 @@
 .green_btn:hover {
   transition: 0.3s;
   background-color: #1f77c4;
-}
-.forgotbutton {
-  background-color: transparent;
-  color: #0088ff;
-  border: none;
-  cursor: pointer;
 }

@@ -1,11 +1,13 @@
 import { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
-
-const Login = () => {
-  const [data, setData] = useState({ email: "", password: "" });
+const Password_reset = () => {
+  const [data, setData] = useState({
+    email: "",
+  });
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = ({ currentTarget: input }) => {
     setData({ ...data, [input.name]: input.value });
@@ -14,10 +16,11 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = "http://20.219.193.229:8080/api/auth";
+      const url = "http://20.219.193.229:8080/api/password-reset";
+      console.log(data);
       const { data: res } = await axios.post(url, data);
-      localStorage.setItem("token", res.data);
-      window.location = "/";
+      //navigate("/login");
+      //console.log(res.message);
     } catch (error) {
       if (
         error.response &&
@@ -30,11 +33,19 @@ const Login = () => {
   };
 
   return (
-    <div className={styles.login_container}>
-      <div className={styles.login_form_container}>
+    <div className={styles.signup_container}>
+      <div className={styles.signup_form_container}>
         <div className={styles.left}>
+          <h1>Back to Login</h1>
+          <Link to="/login">
+            <button type="button" className={styles.white_btn}>
+              Log in
+            </button>
+          </Link>
+        </div>
+        <div className={styles.right}>
           <form className={styles.form_container} onSubmit={handleSubmit}>
-            <h1>Log in to your Account</h1>
+            <h1>Password Reset</h1>
             <input
               type="email"
               placeholder="Email"
@@ -44,39 +55,15 @@ const Login = () => {
               required
               className={styles.input}
             />
-            <input
-              type="password"
-              placeholder="Password"
-              name="password"
-              onChange={handleChange}
-              value={data.password}
-              required
-              className={styles.input}
-            />
             {error && <div className={styles.error_msg}>{error}</div>}
-            <div>
-              <Link to="/password_reset">
-                <button type="button" className={styles.forgotbutton}>
-                  Forgot Password?
-                </button>
-              </Link>
-            </div>
             <button type="submit" className={styles.green_btn}>
-              Confirm
+              Reset now
             </button>
           </form>
-        </div>
-        <div className={styles.right}>
-          <h1>New here?</h1>
-          <Link to="/signup">
-            <button type="button" className={styles.white_btn}>
-              Sing Up
-            </button>
-          </Link>
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Password_reset;

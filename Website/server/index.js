@@ -6,6 +6,7 @@ const connection = require("./db");
 const userRoutes = require("./routes/users");
 const authRoutes = require("./routes/auth");
 const dataRoutes = require("./routes/apidata");
+const password_resetRoutes = require("./routes/passwordReset");
 const notificationRoutes = require("./routes/notificationdata");
 
 // database connection
@@ -19,6 +20,7 @@ app.use(cors());
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/data", dataRoutes);
+app.use("/api/password-reset", password_resetRoutes);
 app.use("/api/notification", notificationRoutes);
 
 const port = process.env.PORT || 8080;
