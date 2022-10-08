@@ -7,6 +7,7 @@ import {
   LineElement,
   LinearScale,
   PointElement,
+  TimeScale,
 } from "chart.js";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -16,8 +17,10 @@ Chart.register(
   CategoryScale,
   LineElement,
   LinearScale,
-  PointElement
+  PointElement,
+  TimeScale
 );
+import "chartjs-adapter-moment";
 const Main = () => {
   let [list, setList] = useState([]);
   let [tempchardata, settempchardata] = useState([]);
@@ -169,6 +172,16 @@ const Main = () => {
                 options={{
                   animation: false,
                   pointRadius: 0,
+                  scales: {
+                    x: {
+                      type: "time",
+                      time: {
+                        displayFormats: {
+                          hour: "HH:MM",
+                        },
+                      },
+                    },
+                  },
                 }}
               />
             </div>

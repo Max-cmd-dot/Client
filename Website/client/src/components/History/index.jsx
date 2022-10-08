@@ -7,6 +7,7 @@ import {
   LineElement,
   LinearScale,
   PointElement,
+  TimeScale,
 } from "chart.js";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -16,9 +17,10 @@ Chart.register(
   CategoryScale,
   LineElement,
   LinearScale,
-  PointElement
+  PointElement,
+  TimeScale
 );
-
+import "chartjs-adapter-moment";
 const History = () => {
   let [tempchardata, settempchardata] = useState([]);
   let [humchardata, sethumchardata] = useState([]);
@@ -163,17 +165,20 @@ const History = () => {
                   }}
                   options={{
                     pointRadius: 0,
-                    options: {
-                      scales: {
-                        x: {
-                          type: "time",
-                          ticks: {
-                            source: "auto",
-                            // Disabled rotation for performance
-                            maxRotation: 0,
-                            autoSkip: true,
-                            reverse: true,
+                    scales: {
+                      x: {
+                        type: "time",
+                        time: {
+                          displayFormats: {
+                            hour: "HH:MM",
                           },
+                        },
+                        ticks: {
+                          source: "auto",
+                          // Disabled rotation for performance
+                          maxRotation: 0,
+                          autoSkip: true,
+                          reverse: true,
                         },
                       },
                     },
@@ -199,17 +204,20 @@ const History = () => {
                   }}
                   options={{
                     pointRadius: 0,
-                    options: {
-                      scales: {
-                        x: {
-                          type: "time",
-                          ticks: {
-                            source: "auto",
-                            // Disabled rotation for performance
-                            maxRotation: 0,
-                            autoSkip: true,
-                            reverse: true,
+                    scales: {
+                      x: {
+                        type: "time",
+                        time: {
+                          displayFormats: {
+                            hour: "HH:MM",
                           },
+                        },
+                        ticks: {
+                          source: "auto",
+                          // Disabled rotation for performance
+                          maxRotation: 0,
+                          autoSkip: true,
+                          reverse: true,
                         },
                       },
                     },
@@ -235,18 +243,20 @@ const History = () => {
                   }}
                   options={{
                     pointRadius: 0,
-                    reverse: true,
-                    options: {
-                      scales: {
-                        x: {
-                          type: "time",
-                          ticks: {
-                            source: "auto",
-                            // Disabled rotation for performance
-                            maxRotation: 0,
-                            autoSkip: true,
-                            reverse: true,
+                    scales: {
+                      x: {
+                        type: "time",
+                        time: {
+                          displayFormats: {
+                            hour: "HH:MM",
                           },
+                        },
+                        ticks: {
+                          source: "auto",
+                          // Disabled rotation for performance
+                          maxRotation: 0,
+                          autoSkip: true,
+                          reverse: true,
                         },
                       },
                     },
@@ -281,17 +291,20 @@ const History = () => {
                   }}
                   options={{
                     pointRadius: 0,
-                    options: {
-                      scales: {
-                        x: {
-                          type: "time",
-                          ticks: {
-                            source: "auto",
-                            // Disabled rotation for performance
-                            maxRotation: 0,
-                            autoSkip: true,
-                            reverse: true,
+                    scales: {
+                      x: {
+                        type: "time",
+                        time: {
+                          displayFormats: {
+                            hour: "HH:MM",
                           },
+                        },
+                        ticks: {
+                          source: "auto",
+                          // Disabled rotation for performance
+                          maxRotation: 0,
+                          autoSkip: true,
+                          reverse: true,
                         },
                       },
                     },
@@ -310,3 +323,20 @@ const History = () => {
   );
 };
 export default History;
+/*options={{
+                    pointRadius: 0,
+                    options: {
+                      scales: {
+                        x: {
+                          type: "time",
+                          ticks: {
+                            source: "auto",
+                            // Disabled rotation for performance
+                            maxRotation: 0,
+                            autoSkip: true,
+                            reverse: true,
+                          },
+                        },
+                      },
+                    },
+                  }}*/
