@@ -1,5 +1,9 @@
 import styles from "./styles.module.css";
 import { Line } from "react-chartjs-2";
+import "chartjs-adapter-moment";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import ClipLoader from "react-spinners/ClipLoader";
 import {
   Chart,
   ArcElement,
@@ -9,9 +13,7 @@ import {
   PointElement,
   TimeScale,
 } from "chart.js";
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import ClipLoader from "react-spinners/ClipLoader";
+
 Chart.register(
   ArcElement,
   CategoryScale,
@@ -20,7 +22,6 @@ Chart.register(
   PointElement,
   TimeScale
 );
-import "chartjs-adapter-moment";
 const History = () => {
   let [tempchardata, settempchardata] = useState([]);
   let [humchardata, sethumchardata] = useState([]);

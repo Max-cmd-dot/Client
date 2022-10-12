@@ -1,10 +1,9 @@
-import { useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
-
+import React, { useState } from "react";
 import { useParams } from "react-router";
-const reset_Password = () => {
+const Reset_Password = () => {
   const [data, setData] = useState({
     password: "",
   });
@@ -67,4 +66,4 @@ const reset_Password = () => {
   );
 };
 
-export default reset_Password;
+export default Reset_Password;

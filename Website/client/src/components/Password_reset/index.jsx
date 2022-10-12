@@ -7,7 +7,7 @@ const Password_reset = () => {
     email: "",
   });
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const handleChange = ({ currentTarget: input }) => {
     setData({ ...data, [input.name]: input.value });

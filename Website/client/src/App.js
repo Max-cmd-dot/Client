@@ -1,4 +1,4 @@
-import { Route, Routes, Navigate, useParams } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import Main from "./components/Main";
 import Signup from "./components/Singup";
 import Login from "./components/Login";
@@ -7,8 +7,8 @@ import Navbar from "./components/Navbar";
 import Logout from "./components/Logout";
 import History from "./components/History";
 import Password_reset from "./components/Password_reset";
-import Reset_passwort from "./components/reset_password";
-import Notifications from "./components/Notifications";
+import Reset_Passwort from "./components/Reset_Password";
+//import Notifications from "./components/Notifications";
 import NotFoundPage from "./components/NotFoundPage";
 import Profile from "./components/Profile";
 import { Outlet } from "react-router-dom";
@@ -43,7 +43,7 @@ function App() {
             <Route
               path="/reset_password/:userId/:token"
               exact
-              element={<Reset_passwort />}
+              element={<Reset_Passwort />}
             />
           </Route>
         </Routes>
