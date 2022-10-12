@@ -89,10 +89,10 @@ const Main = () => {
         setList(valuesArr);
       });
   });
-  const decimation = {
-    enabled: false,
-    algorithm: "min-max",
-  };
+  //const decimation = {
+  //  enabled: false,
+  //  algorithm: "min-max",
+  //};
   return (
     <div className={styles.main_container}>
       <h1 className={styles.heading}>Sensor Data</h1>
