@@ -10,7 +10,7 @@ router.post("/", async (req, res) => {
       return res.status(400).send({ message: error.details[0].message });
 
     const user = await User.findOne({ _id: req.body.id });
-    console.log(user);
+    //console.log(user);
     if (!user) return res.status(401).send({ message: "Invalid login" });
 
     res.status(200).send(user);
