@@ -16,8 +16,14 @@ const Login = () => {
     try {
       const url = "http://20.219.193.229:8080/api/auth";
       const { data: res } = await axios.post(url, data);
+      //console.log(res);
+      //const { userid: ress } = await axios.post(url, userid);
+      //console.log(res.id);
+      //console.log(res.data);
       localStorage.setItem("token", res.data);
       window.location = "/";
+      localStorage.setItem("id", res.id);
+      //console.log(res.userid, res.token, "ok");
     } catch (error) {
       if (
         error.response &&
@@ -28,7 +34,6 @@ const Login = () => {
       }
     }
   };
-
   return (
     <div className={styles.login_container}>
       <div className={styles.login_form_container}>

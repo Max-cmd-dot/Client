@@ -17,7 +17,7 @@ const Password_reset = () => {
     e.preventDefault();
     try {
       const url = "http://20.219.193.229:8080/api/password-reset";
-      console.log(data);
+      //console.log(data);
       const { data: res } = await axios.post(url, data);
       //navigate("/login");
       //console.log(res.message);

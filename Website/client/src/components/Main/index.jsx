@@ -1,4 +1,5 @@
 import styles from "./styles.module.css";
+import { Link } from "react-router-dom";
 import { Line } from "react-chartjs-2";
 import {
   Chart,
@@ -160,12 +161,12 @@ const Main = () => {
                       data: tempchardata.map(
                         (tempchardata) => tempchardata.value
                       ), //[20,10,30],                data.map((data) => [data.value]),
-                      borderColor: ["rgba(237, 150, 190, 1)"],
+                      borderColor: ["rgba(257, 50, 10, 1)"],
                     },
                     {
                       label: "Large Dataset",
                       data: humchardata.map((humchardata) => humchardata.value), //[20,10,30],                data.map((data) => [data.value]),
-                      borderColor: ["rgba(255, 99, 132, 1)"],
+                      borderColor: ["rgba(5, 9, 242, 101)"],
                     },
                   ],
                 }}

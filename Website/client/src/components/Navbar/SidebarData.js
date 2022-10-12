@@ -29,6 +29,12 @@ export const SidebarData = [
     icon: <bifrom.BiLaptop />,
     cName: "nav-text",
   },
+  {
+    title: "Profile",
+    path: "/profile",
+    icon: <feathericons.FiUser />,
+    cName: "nav-text",
+  },
 
   {
     title: "Logout",

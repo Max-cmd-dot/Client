@@ -9,6 +9,8 @@ import History from "./components/History";
 import Password_reset from "./components/Password_reset";
 import Reset_passwort from "./components/reset_password";
 import Notifications from "./components/Notifications";
+import NotFoundPage from "./components/NotFoundPage";
+import Profile from "./components/Profile";
 import { Outlet } from "react-router-dom";
 
 const NavbarLayout = () => (
@@ -29,6 +31,7 @@ function App() {
             {user && <Route path="/navbar" exact element={<Navbar />} />}
             <Route path="/" element={<Navigate replace to="/landing" />} />
             {user && <Route path="/history" exact element={<History />} />}
+            {user && <Route path="/Profile" exact element={<Profile />} />}
           </Route>
           <Route>
             <Route path="/landing" exact element={<Landing />} />
@@ -36,6 +39,7 @@ function App() {
             <Route path="/login" exact element={<Login />} />
             <Route path="/logout" exact element={<Logout />} />
             <Route path="/password_reset" exact element={<Password_reset />} />
+            <Route path="*" exact element={<NotFoundPage />} />
             <Route
               path="/reset_password/:userId/:token"
               exact

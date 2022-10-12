@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
       return res.status(400).send("user with given email doesn't exist");
 
     let token = await Token.findOne({ userId: user._id });
-    console.log(token);
+    //console.log(token);
     if (!token) {
       token = await new Token({
         userId: user._id,
@@ -30,7 +30,10 @@ router.post("/", async (req, res) => {
 
     const link = `http://20.219.193.229:3000/reset_password/${user._id}/${token.token}`;
     //console.log(link);
-    await sendEmail(user.email, "Password reset", link);
+    const text =
+      `In the following you will find the link to reset your password!
+      ` + link;
+    await sendEmail(user.email, "Password reset", text);
 
     res.send("password reset link sent to your email account");
   } catch (error) {
