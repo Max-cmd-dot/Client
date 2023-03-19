@@ -5,7 +5,7 @@ const Notifications = () => {
     let [list, setList] = useState([]);
     //Iot-Garden Automatisierung
     useEffect(() => {
-        axios.get('http://20.219.193.229:8080/api/data/latestdata/all')
+        axios.get('https://20.219.193.229:8080/api/data/latestdata/all')
         .then(function (response) {
           const valuesArr = []
           //const valueNameArr = []

@@ -14,7 +14,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = "http://20.219.193.229:8080/api/auth";
+      const url = "https://20.219.193.229:8080/api/auth";
       const { data: res } = await axios.post(url, data);
       //console.log(res);
       //const { userid: ress } = await axios.post(url, userid);

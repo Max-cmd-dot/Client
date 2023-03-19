@@ -1,3 +1,5 @@
+const fs = require("fs")
+const https = require("https")
 require("dotenv").config();
 const express = require("express");
 const app = express();
@@ -25,5 +27,10 @@ app.use("/api/password-reset", password_resetRoutes);
 app.use("/api/notification", notificationRoutes);
 app.use("/api/apiuserdata", apiuserdataRoutes);
 
+const options = {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
+}
 const port = process.env.PORT || 8080;
-app.listen(port, console.log(`Listening on port ${port}...`));
+//app.listen(port, console.log(`Listening on port ${port}...`));
+https.createServer(options, app).listen(port, console.log(`server runs on port ${port}`))

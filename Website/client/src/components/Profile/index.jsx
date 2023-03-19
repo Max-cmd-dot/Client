@@ -16,7 +16,7 @@ const Profile = () => {
     //const datauser = `{"id": "${userinfo}"}`;
     const datauser = JSON.stringify({ id: userinfo });
     console.log(userinfo, "wtf");
-    const url = "http://20.219.193.229:8080/api/apiuserdata";
+    const url = "https://20.219.193.229:8080/api/apiuserdata";
     const customConfig = {
       headers: {
         "Content-Type": "application/json",

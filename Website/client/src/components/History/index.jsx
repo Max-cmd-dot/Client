@@ -36,7 +36,7 @@ const History = () => {
   //const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     axios
-      .get("http://20.219.193.229:8080/api/data/all/humidity")
+      .get("https://20.219.193.229:8080/api/data/all/humidity")
       .then(function (response) {
         const dataArr = [];
         //console.log("loading true");
@@ -56,7 +56,7 @@ const History = () => {
   });
   useEffect(() => {
     axios
-      .get("http://20.219.193.229:8080/api/data/all/lux")
+      .get("https://20.219.193.229:8080/api/data/all/lux")
       .then(function (response) {
         const dataArr = [];
         let counter = 0;
@@ -74,7 +74,7 @@ const History = () => {
   });
   useEffect(() => {
     axios
-      .get("http://20.219.193.229:8080/api/data/all/temperature")
+      .get("https://20.219.193.229:8080/api/data/all/temperature")
       .then(function (response) {
         const dataArr = [];
         console.log("loading true");
@@ -94,7 +94,7 @@ const History = () => {
   });
   useEffect(() => {
     axios
-      .get("http://20.219.193.229:8080/api/data/all/moisture/1")
+      .get("https://20.219.193.229:8080/api/data/all/moisture/1")
       .then(function (response) {
         const dataArr = [];
         let counter = 0;
@@ -113,7 +113,7 @@ const History = () => {
   });
   useEffect(() => {
     axios
-      .get("http://20.219.193.229:8080/api/data/all/moisture/2")
+      .get("https://20.219.193.229:8080/api/data/all/moisture/2")
       .then(function (response) {
         const dataArr = [];
         let counter = 0;
@@ -131,7 +131,7 @@ const History = () => {
   });
   useEffect(() => {
     axios
-      .get("http://20.219.193.229:8080/api/data/all/moisture/3")
+      .get("https://20.219.193.229:8080/api/data/all/moisture/3")
       .then(function (response) {
         const dataArr = [];
         let counter = 0;

@@ -31,7 +31,7 @@ const Main = () => {
   //let [name, setName] = useState([]);
   useEffect(() => {
     axios
-      .get("http://20.219.193.229:8080/api/data/all/humidity")
+      .get("https://20.219.193.229:8080/api/data/all/humidity")
 
       .then(function (response) {
         const dataArr = []; //const valueNameArr = []
