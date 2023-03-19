@@ -2,7 +2,7 @@ import styles from "./styles.module.css";
 import { Link } from "react-router-dom";
 import image from "c://Programm_React/Website/client/src/components/Pictures/sensor2.png";
 import image2 from "c://Programm_React/Website/client/src/components/Pictures/module2.png";
-const Main = () => {
+const Landing = () => {
   //Iot-Garden Automatisierung
 
   return (
@@ -23,11 +23,15 @@ const Main = () => {
         </div>
         <div className={styles.picture2}>
           <img src={image2} alt="Sensor Controller" className={styles.img} />
-          <h3 className={styles.infotext}>Text about lorem ipsum dolor</h3>
+          <Link to="/doc">
+            <button type="submit" className={styles.infotext}>
+              Text about lorem ipsum dolor
+            </button>
+          </Link>
         </div>
       </div>
     </div>
   );
 };
 
-export default Main;
+export default Landing;

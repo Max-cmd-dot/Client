@@ -91,7 +91,12 @@ router.get("/All/temperature", async (req, res) => {
     if (error)
       return res.status(400).send({ message: error.details[0].message });
 
-    const data = await Data.find({ topic: "esp/air/temperature" })
+    const data = await Data.find({
+      time: {
+        $lt: new Date(),
+        $gte: new Date(new Date().setDate(new Date().getDate() - 17)),
+      },
+    })
       .sort({ _id: -1 })
       .limit(1000);
     if (data) return res.json(data);

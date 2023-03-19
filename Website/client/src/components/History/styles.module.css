@@ -41,3 +41,7 @@
   left: 46%;
   top: 50%;
 }
+.select {
+  position: fixed;
+  left: 50%;
+}

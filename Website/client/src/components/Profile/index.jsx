@@ -57,9 +57,10 @@ const Profile = () => {
           {list.map((list) => list.email)}
         </div>
         <div className={styles.box}>
-          <h2>Group</h2>
+          <h2>Work Group</h2>
           <p>admin</p>
         </div>
+        {/*like stüffel*/}
         <div className={styles.box}>
           <h2>Abonnements</h2>
           <p>all you have</p>

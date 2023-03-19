@@ -48,7 +48,6 @@ const Main = () => {
         sethumchardata(dataArr);
       });
   });
-
   useEffect(() => {
     axios
       .get("http://20.219.193.229:8080/api/data/all/temperature")
@@ -141,60 +140,63 @@ const Main = () => {
                   <p key={item}>Temperature </p> <h2> {item.value}°C</h2>
                 </div>
               );
+            } else {
+              console.log("Failure");
             }
+            return null;
           })}
         </div>
-      </div>
-      <div>
-        {!isLoading ? (
-          <div>
-            <h2 className={styles.heading}>Temperatur Diagramm</h2>
-            <div className={styles.graph}>
-              <Line
-                data={{
-                  labels: tempchardata.map((tempchardata) => tempchardata.time),
-
-                  datasets: [
-                    {
-                      label: "Large Dataset",
-                      data: tempchardata.map(
-                        (tempchardata) => tempchardata.value
-                      ), //[20,10,30],                data.map((data) => [data.value]),
-                      borderColor: ["rgba(257, 50, 10, 1)"],
-                    },
-                    {
-                      label: "Large Dataset",
-                      data: humchardata.map((humchardata) => humchardata.value), //[20,10,30],                data.map((data) => [data.value]),
-                      borderColor: ["rgba(5, 9, 242, 101)"],
-                    },
-                  ],
-                }}
-                options={{
-                  animation: false,
-                  pointRadius: 0,
-                  scales: {
-                    x: {
-                      type: "time",
-                      time: {
-                        displayFormats: {
-                          hour: "HH:MM",
-                        },
-                      },
-                    },
-                  },
-                }}
-              />
-            </div>
-          </div>
-        ) : (
-          <div>
-            <ClipLoader size={150} className={styles.loading} />
-          </div>
-        )}
       </div>
     </div>
   );
 };
+//<div></div>; //        {!isLoading ? (
+//         <div>
+//         <h2 className={styles.heading}>Kalendar</h2>
+//       <div className={styles.graph}>
+//       <Line
+//               data={{
+//               labels: tempchardata.map((tempchardata) => tempchardata.time),
+//
+//               datasets: [
+//               {
+//               label: "Large Dataset",
+//             data: tempchardata.map(
+//
+//                     (tempchardata) => tempchardata.value
+//                     ), //[20,10,30],                data.map((data) => [data.value]),
+//                   borderColor: ["rgba(257, 50, 10, 1)"],
+//                 },
+//                 {
+//                   label: "Large Dataset",
+//                   data: humchardata.map((humchardata) => humchardata.value), //[20,10,30],                data.map((data) => [data.value]),
+//                   borderColor: ["rgba(5, 9, 242, 101)"],
+//                 },
+//               ],
+//             }}
+//             options={{
+//               animation: false,
+//               pointRadius: 0,
+//           scales: {
+//               x: {
+//                   type: "time",
+//                     time: {
+//                        displayFormats: {
+//                          hour: "HH:MM",
+//                        },
+//                      },
+//                    },
+//                  },
+//                }}
+//              />
+//            </div>
+//          </div>
+//        ) : (
+//          <div>
+//            <ClipLoader size={150} className={styles.loading} />
+//          </div>
+//    )}
+//    </div>
 //{selected.map((item) => {
 //  if ((item.selected = "Temperatur")) {
 //    <div>

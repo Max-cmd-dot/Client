@@ -17,12 +17,12 @@ export const SidebarData = [
     icon: <bifrom.BiHistory />,
     cName: "nav-text",
   },
-  //{
-  //title: 'Notifications',
-  //  path: '/notifications',
-  //  icon: <AiIcons.AiTwotoneBell />,
-  //  cName: 'nav-text'
-  //},
+  {
+    title: "Documentation",
+    path: "/doc",
+    icon: <AiIcons.AiFillFileText />,
+    cName: "nav-text",
+  },
   {
     title: "Landing",
     path: "/landing",
