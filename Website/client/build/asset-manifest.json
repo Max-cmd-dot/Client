@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/BLL/static/css/main.25272c7c.css",
-    "main.js": "/BLL/static/js/main.6080fcab.js",
+    "main.js": "/BLL/static/js/main.71aba079.js",
     "static/media/sensor2.png": "/BLL/static/media/sensor2.bc7415f3168f95c2345c.png",
     "static/media/module2.png": "/BLL/static/media/module2.937caeeefb35a2f6819f.png",
     "index.html": "/BLL/index.html",
     "main.25272c7c.css.map": "/BLL/static/css/main.25272c7c.css.map",
-    "main.6080fcab.js.map": "/BLL/static/js/main.6080fcab.js.map"
+    "main.71aba079.js.map": "/BLL/static/js/main.71aba079.js.map"
   },
   "entrypoints": [
     "static/css/main.25272c7c.css",
-    "static/js/main.6080fcab.js"
+    "static/js/main.71aba079.js"
   ]
 }

@@ -50,7 +50,7 @@ const Main = () => {
   });
   useEffect(() => {
     axios
-      .get("http://20.219.193.229:8080/api/data/all/temperature")
+      .get("https://20.219.193.229:8080/api/data/all/temperature")
 
       .then(function (response) {
         const dataArr = []; //const valueNameArr = []
@@ -70,7 +70,7 @@ const Main = () => {
   });
   useEffect(() => {
     axios
-      .get("http://20.219.193.229:8080/api/data/latestdata/all")
+      .get("https://20.219.193.229:8080/api/data/latestdata/all")
       .then(function (response) {
         const valuesArr = [];
         //const valueNameArr = []
