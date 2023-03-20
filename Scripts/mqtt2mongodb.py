@@ -38,7 +38,6 @@ def on_message(client, userdata, msg):
 
 
 # Set up client for MongoDB
-#mongoClient = MongoClient(username='admin', password='iamTheFuckingadmin!', port='27017')
 mongoClient = MongoClient(
     "mongodb://localhost:27017")
 db = mongoClient.Data2
