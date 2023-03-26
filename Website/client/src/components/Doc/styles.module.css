@@ -6,7 +6,9 @@
   align-items: center;
   justify-content: space-between;
 }
-
+.filereaderbox {
+  height: 700;
+}
 .navbar h1 {
   color: white;
   font-size: 25px;

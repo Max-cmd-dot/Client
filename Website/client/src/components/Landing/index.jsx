@@ -24,9 +24,9 @@ const Landing = () => {
         <div className={styles.picture2}>
           <img src={image2} alt="Sensor Controller" className={styles.img} />
           <Link to="/doc">
-            <button type="submit" className={styles.infotext}>
+            <h2 type="submit" className={styles.infotext}>
               Documentation
-            </button>
+            </h2>
           </Link>
         </div>
       </div>
