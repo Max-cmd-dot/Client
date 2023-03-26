@@ -5,7 +5,7 @@ const Doc = () => {
   const docs = [
     //{ uri: "https://url-to-my-pdf.pdf" }, // Remote file
     {
-      uri: require("C://Programm_React//Website//client//src//components//Documents//Gymnasium-Buckhorn-bll-final.pdf"),
+      uri: require("C:/Programm_React/Website/client/src/components/Documents/Gymnasium-Buckhorn-bll-final.pdf"),
     }, // Local File
   ];
   return (
