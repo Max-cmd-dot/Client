@@ -1,2 +1,2 @@
 # BLL
-https://max-cmd-dot.github.io/BLL/
+https://bll-maximilian.vercel.app/landing
