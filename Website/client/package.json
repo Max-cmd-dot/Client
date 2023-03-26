@@ -1,7 +1,7 @@
 {
   "name": "client",
   "version": "0.1.1",
-  "homepage": "https://max-cmd-dot.github.io/BLL",
+  "homepage": "https://bll-maximilian.vercel.app",
   "dependencies": {
     "@heroicons/react": "^2.0.10",
     "@testing-library/jest-dom": "^5.16.5",
@@ -32,7 +32,6 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
-  
   "browserslist": {
     "production": [
       ">0.2%",
