@@ -1,7 +1,7 @@
 import styles from "./styles.module.css";
 import { Link } from "react-router-dom";
-import image from "c://Programm_React/Website/client/src/components/images/sensor2.png";
-import image2 from "c://Programm_React/Website/client/src/components/images/module2.png";
+import image from "../images/sensor2.png";
+import image2 from "../images/module2.png";
 const Landing = () => {
   //Iot-Garden Automatisierung
 
