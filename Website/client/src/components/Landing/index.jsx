@@ -25,7 +25,7 @@ const Landing = () => {
           <img src={image2} alt="Sensor Controller" className={styles.img} />
           <Link to="/doc">
             <button type="submit" className={styles.infotext}>
-              Text about lorem ipsum dolor
+              Documentation
             </button>
           </Link>
         </div>
