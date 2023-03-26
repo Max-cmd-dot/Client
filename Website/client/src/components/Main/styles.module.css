@@ -15,6 +15,10 @@
   text-align: center;
 }
 
+.calendar {
+  height: 70px;
+}
+
 .sensordata:hover {
   color: #111;
   background-color: #ff37e4;

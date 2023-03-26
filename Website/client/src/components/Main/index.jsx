@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 import "chartjs-adapter-moment";
+import Calendar from "@toast-ui/react-calendar";
+import "@toast-ui/calendar/dist/toastui-calendar.min.css";
 import {
   Chart,
   ArcElement,
@@ -88,6 +90,25 @@ const Main = () => {
         setList(valuesArr);
       });
   });
+  const calendars = [{ id: "cal1", name: "Personal" }];
+  const initialEvents = [
+    {
+      id: "1",
+      calendarId: "cal1",
+      title: "Lunch",
+      category: "time",
+      start: "2023-03-26T12:00:00",
+      end: "2023-03-28T13:30:00",
+    },
+    {
+      id: "2",
+      calendarId: "cal1",
+      title: "Coffee Break",
+      category: "time",
+      start: "2023-03-28T15:00:00",
+      end: "2023-03-28T15:30:00",
+    },
+  ];
   //const decimation = {
   //  enabled: false,
   //  algorithm: "min-max",
@@ -146,6 +167,14 @@ const Main = () => {
             return null;
           })}
         </div>
+      </div>
+      <div className={styles.calendar}>
+        <Calendar
+          view="month"
+          calendars={calendars}
+          events={initialEvents}
+          styles={styles.calendar}
+        />
       </div>
     </div>
   );
