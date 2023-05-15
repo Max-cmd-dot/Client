@@ -168,12 +168,12 @@ const Main = () => {
           })}
         </div>
       </div>
-      <div className={styles.calendar}>
+      <div className={styles.CalendarBox}>
         <Calendar
           view="month"
           calendars={calendars}
           events={initialEvents}
-          styles={styles.calendar}
+          styles={styles.CalendarBox}
         />
       </div>
     </div>

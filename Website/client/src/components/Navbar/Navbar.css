@@ -10,7 +10,6 @@
   margin-left: 2rem;
   font-size: 2rem;
   background: none;
-  
 }
 
 .nav-menu {
@@ -67,10 +66,8 @@
   display: flex;
   justify-content: flex-start;
   align-items: top;
-  
 }
 
 span {
   margin-left: 16px;
 }
-

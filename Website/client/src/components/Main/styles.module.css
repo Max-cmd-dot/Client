@@ -16,7 +16,13 @@
 }
 
 .calendar {
-  height: 70px;
+  width: 1000px;
+  height: auto;
+  justify-content: center;
+  align-items: center;
+}
+.CalendarBox {
+  margin: 220px;
 }
 
 .sensordata:hover {
