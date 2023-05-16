@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "react-bootstrap": "^2.5.0"
+    "react-bootstrap": "^2.5.0",
+    "tui-date-picker": "^4.3.3",
+    "tui-time-picker": "^2.1.6"
   }
 }

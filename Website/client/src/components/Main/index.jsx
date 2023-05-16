@@ -6,6 +6,8 @@ import ClipLoader from "react-spinners/ClipLoader";
 import "chartjs-adapter-moment";
 import Calendar from "@toast-ui/react-calendar";
 import "@toast-ui/calendar/dist/toastui-calendar.min.css";
+import "tui-date-picker/dist/tui-date-picker.css";
+import "tui-time-picker/dist/tui-time-picker.css";
 import {
   Chart,
   ArcElement,
@@ -94,19 +96,43 @@ const Main = () => {
   const initialEvents = [
     {
       id: "1",
-      calendarId: "cal1",
-      title: "Lunch",
+      calendarId: "cal2",
+      title: "Bereich 1 gießen",
       category: "time",
-      start: "2023-03-26T12:00:00",
-      end: "2023-03-28T13:30:00",
+      start: "2023-05-26T12:00:00",
+      end: "2023-05-26T13:30:00",
     },
     {
       id: "2",
       calendarId: "cal1",
-      title: "Coffee Break",
+      title: "Bereich 2 Pflanzen",
       category: "time",
-      start: "2023-03-28T15:00:00",
-      end: "2023-03-28T15:30:00",
+      start: "2023-05-24T15:00:00",
+      end: "2023-05-27T15:30:00",
+      backgroundColor: "lightblue",
+    },
+    {
+      id: "3",
+      calendarId: "cal1",
+      title: "Bereich 1 Pflanzen",
+      category: "time",
+      start: "2023-05-07T15:00:00",
+      end: "2023-05-13T15:30:00",
+      backgroundColor: "orange",
+    },
+    {
+      id: "4",
+      calendarId: "cal1",
+      title: "Bereich 1 ernten",
+      category: "time",
+      start: "2023-06-04T15:00:00",
+      end: "2023-06-06T15:30:00",
+    },
+  ];
+  const options = [
+    {
+      useFormPopup: true,
+      useDetailPopup: true,
     },
   ];
   //const decimation = {
