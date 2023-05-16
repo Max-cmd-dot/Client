@@ -58,12 +58,12 @@ const Profile = () => {
         </div>
         <div className={styles.box}>
           <h2>Work Group</h2>
-          <p>admin</p>
+          <p className={styles.textinbox}>admin</p>
         </div>
         {/*like stüffel*/}
         <div className={styles.box}>
           <h2>Abonnements</h2>
-          <p>all you have</p>
+          <p className={styles.textinbox}>all you have</p>
         </div>
       </div>
     </div>
