@@ -386,34 +386,38 @@ const History = () => {
     <>
       <div>
         <h1 className={styles.heading}>History</h1>
-        <div className={styles.checkbox}>
-          <form>
-            <input
-              type="checkbox"
-              name={"Humidity"}
-              onChange={handleChangeHumidity}
-            />
-            <label for="Humidity"> Humidity</label>
-            <input
-              type="checkbox"
-              name={"Temperature"}
-              onChange={handleChangeTemperature}
-            />
-            <label for="Temperature"> Temperature</label>
-            <input
-              type="checkbox"
-              name={"Moisture"}
-              onChange={handleChangeMoisture}
-            />
-            <label for="Moisture"> Moisture</label>
-            <input type="checkbox" name={"Lux"} onChange={handleChangeLux} />
-            <label for="Lux"> Lux</label>
-            <br></br>
-          </form>
-          {renderTemperature()}
-          {renderHumidity()}
-          {renderMoisture()}
-          {renderLux()}
+        <div>
+          <div className={styles.checkbox}>
+            <form>
+              <input
+                type="checkbox"
+                name={"Humidity"}
+                onChange={handleChangeHumidity}
+              />
+              <label for="Humidity"> Humidity</label>
+              <input
+                type="checkbox"
+                name={"Temperature"}
+                onChange={handleChangeTemperature}
+              />
+              <label for="Temperature"> Temperature</label>
+              <input
+                type="checkbox"
+                name={"Moisture"}
+                onChange={handleChangeMoisture}
+              />
+              <label for="Moisture"> Moisture</label>
+              <input type="checkbox" name={"Lux"} onChange={handleChangeLux} />
+              <label for="Lux"> Lux</label>
+              <br></br>
+            </form>
+          </div>
+          <div className={styles.diagramm}>
+            {renderTemperature()}
+            {renderHumidity()}
+            {renderMoisture()}
+            {renderLux()}
+          </div>
         </div>
       </div>
     </>

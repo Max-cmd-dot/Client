@@ -10,7 +10,6 @@ export const SidebarData = [
     icon: <AiIcons.AiFillHome />,
     cName: "nav-text",
   },
-
   {
     title: "History",
     path: "/history",
@@ -18,9 +17,9 @@ export const SidebarData = [
     cName: "nav-text",
   },
   {
-    title: "Documentation",
-    path: "/doc",
-    icon: <AiIcons.AiFillFileText />,
+    title: "Notifications",
+    path: "/notifications",
+    icon: <bifrom.BiBell />,
     cName: "nav-text",
   },
   {
@@ -30,12 +29,17 @@ export const SidebarData = [
     cName: "nav-text",
   },
   {
+    title: "Documentation",
+    path: "/doc",
+    icon: <bifrom.BiFile />,
+    cName: "nav-text",
+  },
+  {
     title: "Profile",
     path: "/profile",
     icon: <feathericons.FiUser />,
     cName: "nav-text",
   },
-
   {
     title: "Logout",
     path: "/logout",

@@ -9,7 +9,7 @@ import History from "./components/History";
 import Password_reset from "./components/Password_reset";
 import Reset_Passwort from "./components/Reset_Password";
 import Doc from "./components/Doc";
-//import Notifications from "./components/Notifications";
+import Notifications from "./components/Notifications";
 import NotFoundPage from "./components/NotFoundPage";
 import Profile from "./components/Profile";
 import { Outlet } from "react-router-dom";
@@ -33,6 +33,7 @@ function App() {
             <Route path="/" element={<Navigate replace to="/landing" />} />
             {user && <Route path="/history" exact element={<History />} />}
             {user && <Route path="/Profile" exact element={<Profile />} />}
+            <Route path="/notifications" exact element={<Notifications />} />
             <Route path="/doc" exact element={<Doc />} />
           </Route>
           <Route>

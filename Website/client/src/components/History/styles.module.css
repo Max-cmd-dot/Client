@@ -2,6 +2,9 @@
   display: flex;
   justify-content: space-evenly;
 }
+.diagramm {
+  margin: 5%;
+}
 
 .sensordata {
   width: 250px;

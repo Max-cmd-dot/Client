@@ -22,7 +22,9 @@
   align-items: center;
 }
 .CalendarBox {
-  margin: 220px;
+  margin-left: 220px;
+  margin-right: 220px;
+  margin-bottom: 220px;
 }
 
 .sensordata:hover {
