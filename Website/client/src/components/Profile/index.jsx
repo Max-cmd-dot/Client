@@ -11,6 +11,8 @@ const Profile = () => {
   //const { data: res } = axios.post(url, userinfo);
   //console.log(res);
   //setList(res);
+  const user = localStorage.getItem("token");
+  console.log(user);
   useEffect(() => {
     const userinfo = localStorage.getItem("id");
     //const datauser = `{"id": "${userinfo}"}`;

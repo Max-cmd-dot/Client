@@ -16,7 +16,7 @@ const Login = () => {
     try {
       const url = "https://20.219.193.229:8080/api/auth";
       const { data: res } = await axios.post(url, data);
-      //console.log(res);
+      console.log(res);
       //const { userid: ress } = await axios.post(url, userid);
       //console.log(res.id);
       //console.log(res.data);
