@@ -1,0 +1,5 @@
+INFO:root:Connected with result code 0
+INFO:root:2023-05-17 14:47:26.895516: esp/ground/light/red 654.0
+INFO:root:2023-05-17 14:47:26.902517: esp/ground/light/green 702.0
+INFO:root:2023-05-17 14:47:26.903517: esp/ground/light/blue 704.0
+INFO:root:2023-05-17 14:47:26.904516: esp/ground/light/clear 1557.0

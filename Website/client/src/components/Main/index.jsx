@@ -8,6 +8,7 @@ import Calendar from "@toast-ui/react-calendar";
 import "@toast-ui/calendar/dist/toastui-calendar.min.css";
 import "tui-date-picker/dist/tui-date-picker.css";
 import "tui-time-picker/dist/tui-time-picker.css";
+import toast, { Toaster } from "react-hot-toast";
 import {
   Chart,
   ArcElement,
@@ -27,71 +28,43 @@ Chart.register(
 );
 const Main = () => {
   let [list, setList] = useState([]);
-  let [tempchardata, settempchardata] = useState([]);
-  let [humchardata, sethumchardata] = useState([]);
+  //let [tempchardata, settempchardata] = useState([]);
+  //let [humchardata, sethumchardata] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   //let [luxchardata, setluxchardata] = useState([]);
   //let [allchardata, setallchardata] = useState([]);
   //let [name, setName] = useState([]);
-  useEffect(() => {
-    axios
-      .get("https://20.219.193.229:8080/api/data/all/humidity")
 
-      .then(function (response) {
-        const dataArr = []; //const valueNameArr = []
-        let counter = 0;
-        for (let thing in response.data) {
-          //console.log(response.data[item].location.coordinates);
-          if (counter < 1000)
-            dataArr.push({
-              time: response.data[thing].time,
-              value: response.data[thing].value,
-            });
-          counter++;
-        }
-        sethumchardata(dataArr);
-      });
-  });
   useEffect(() => {
-    axios
-      .get("https://20.219.193.229:8080/api/data/all/temperature")
-
-      .then(function (response) {
-        const dataArr = []; //const valueNameArr = []
-        let counter = 0;
-        for (let thing in response.data) {
-          //console.log(response.data[item].location.coordinates);
-          if (counter < 1000)
-            dataArr.push({
-              time: response.data[thing].time,
-              value: response.data[thing].value,
-            });
-          counter++;
-        }
-        setIsLoading(false);
-        settempchardata(dataArr);
-      });
-  });
-  useEffect(() => {
-    axios
-      .get("https://20.219.193.229:8080/api/data/latestdata/all")
-      .then(function (response) {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "https://20.219.193.229:8080/api/data/latestdata/all"
+        );
         const valuesArr = [];
-        //const valueNameArr = []
         let counter = 0;
         for (let item in response.data) {
-          //console.log(response.data[item].location.coordinates);
           if (counter < 100)
             valuesArr.push({
               topic: response.data[item].topic,
-
               value: response.data[item].value,
             });
           counter++;
         }
         setList(valuesArr);
-      });
-  });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData(); // Fetch data immediately when the component mounts
+
+    const interval = setInterval(fetchData, 5000); // Fetch data every 15 seconds
+
+    return () => {
+      clearInterval(interval); // Clear the interval when the component is unmounted
+    };
+  }, []);
   const calendars = [{ id: "cal1", name: "Personal" }];
   const initialEvents = [
     {
@@ -135,12 +108,13 @@ const Main = () => {
       useDetailPopup: true,
     },
   ];
-  //const decimation = {
-  //  enabled: false,
-  //  algorithm: "min-max",
-  //};
+  const notify = () => toast("Here is your toast.");
   return (
     <div className={styles.main_container}>
+      <div>
+        {notify}
+        <Toaster />
+      </div>
       <h1 className={styles.heading}>Sensor Data</h1>
       <div className={styles.main_container}>
         <div className={styles.data}>
@@ -188,7 +162,7 @@ const Main = () => {
                 </div>
               );
             } else {
-              console.log("Failure");
+              console.log("Data load sucessfully");
             }
             return null;
           })}
@@ -205,6 +179,46 @@ const Main = () => {
     </div>
   );
 };
+
+//useEffect(() => {
+//  axios
+//    .get("https://20.219.193.229:8080/api/data/all/humidity")
+//
+//    .then(function (response) {
+//      const dataArr = []; //const valueNameArr = []
+//      let counter = 0;
+//      for (let thing in response.data) {
+//        //console.log(response.data[item].location.coordinates);
+//        if (counter < 1000)
+//          dataArr.push({
+//            time: response.data[thing].time,
+//            value: response.data[thing].value,
+//          });
+//        counter++;
+//      }
+//      sethumchardata(dataArr);
+//    });
+//});
+//useEffect(() => {
+//  axios
+//    .get("https://20.219.193.229:8080/api/data/all/temperature")
+//
+//    .then(function (response) {
+//      const dataArr = []; //const valueNameArr = []
+//      let counter = 0;
+//      for (let thing in response.data) {
+//        //console.log(response.data[item].location.coordinates);
+//        if (counter < 1000)
+//          dataArr.push({
+//            time: response.data[thing].time,
+//            value: response.data[thing].value,
+//          });
+//        counter++;
+//      }
+//      setIsLoading(false);
+//      settempchardata(dataArr);
+//    });
+//});
 //<div></div>; //        {!isLoading ? (
 //         <div>
 //         <h2 className={styles.heading}>Kalendar</h2>

@@ -32,127 +32,181 @@ const History = () => {
   const [isLoadingTemperature, setIsLoadingTemperature] = useState(true);
   const [isLoadingMoisture, setIsLoadingMoisture] = useState(true);
   const [isLoadingLux, setIsLoadingLux] = useState(true);
-  const [isLoadingMHumidity, setIsLoadingHumidity] = useState(true);
-  //const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    axios
-      .get("https://20.219.193.229:8080/api/data/all/humidity")
-      .then(function (response) {
-        const dataArr = [];
-        //console.log("loading true");
-        let counter = 0;
-        for (let thing in response.data) {
-          if (counter < 1000)
-            dataArr.push({
-              time: response.data[thing].time,
-              value: response.data[thing].value,
-            });
-          counter++;
-        }
-        const reverseddataArr = dataArr.reverse();
-        sethumchardata(reverseddataArr);
-        setIsLoadingHumidity(false);
-      }, 2000);
-  });
-  useEffect(() => {
-    axios
-      .get("https://20.219.193.229:8080/api/data/all/lux")
-      .then(function (response) {
-        const dataArr = [];
-        let counter = 0;
-        for (let thing in response.data) {
-          if (counter < 1000)
-            dataArr.push({
-              time: response.data[thing].time,
-              value: response.data[thing].value,
-            });
-          counter++;
-        }
-        setluxchardata(dataArr);
-        setIsLoadingLux(false);
-      }, 2000);
-  });
-  useEffect(() => {
-    axios
-      .get("https://20.219.193.229:8080/api/data/all/temperature")
-      .then(function (response) {
-        const dataArr = [];
-        console.log("loading true");
-        let counter = 0;
-        for (let thing in response.data) {
-          if (counter < 1000)
-            dataArr.push({
-              time: response.data[thing].time,
-              value: response.data[thing].value,
-            });
-          counter++;
-        }
-        const reverseddataArr = dataArr.reverse();
-        settempchardata(reverseddataArr);
-        setIsLoadingTemperature(false);
-      }, 2000);
-  });
-  useEffect(() => {
-    axios
-      .get("https://20.219.193.229:8080/api/data/all/moisture/1")
-      .then(function (response) {
-        const dataArr = [];
-        let counter = 0;
-        for (let thing in response.data) {
-          if (counter < 1000)
-            dataArr.push({
-              time: response.data[thing].time,
-              value: response.data[thing].value,
-            });
-          counter++;
-        }
-        const reverseddataArr = dataArr.reverse();
-        setmoi1chardata(reverseddataArr);
-        setIsLoadingMoisture(false);
-      }, 2000);
-  });
-  useEffect(() => {
-    axios
-      .get("https://20.219.193.229:8080/api/data/all/moisture/2")
-      .then(function (response) {
-        const dataArr = [];
-        let counter = 0;
-        for (let thing in response.data) {
-          if (counter < 1000)
-            dataArr.push({
-              time: response.data[thing].time,
-              value: response.data[thing].value,
-            });
-          counter++;
-        }
-        const reverseddataArr = dataArr.reverse();
-        setmoi2chardata(reverseddataArr);
-      }, 2000);
-  });
-  useEffect(() => {
-    axios
-      .get("https://20.219.193.229:8080/api/data/all/moisture/3")
-      .then(function (response) {
-        const dataArr = [];
-        let counter = 0;
-        for (let thing in response.data) {
-          if (counter < 1000)
-            dataArr.push({
-              time: response.data[thing].time,
-              value: response.data[thing].value,
-            });
-          counter++;
-        }
-        const reverseddataArr = dataArr.reverse();
-        setmoi3chardata(reverseddataArr);
-      }, 2000);
-  });
-  const [checkedTemperature, setCheckedTemperature] = React.useState(false);
+  const [isLoadingHumidity, setIsLoadingHumidity] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [checkedTemperature, setcheckedTemperature] = React.useState(false);
   const [checkedHumidity, setcheckedHumidity] = React.useState(false);
   const [checkedMoisture, setcheckedMoisture] = React.useState(false);
   const [checkedLux, setcheckedLux] = React.useState(false);
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+
+        const checkboxPromises = [];
+
+        if (checkedHumidity) {
+          checkboxPromises.push(
+            axios.get("https://20.219.193.229:8080/api/data/all/humidity")
+          );
+        }
+
+        if (checkedLux) {
+          checkboxPromises.push(
+            axios.get("https://20.219.193.229:8080/api/data/all/lux")
+          );
+        }
+
+        if (checkedTemperature) {
+          checkboxPromises.push(
+            axios.get("https://20.219.193.229:8080/api/data/all/temperature")
+          );
+        }
+
+        if (checkedMoisture) {
+          checkboxPromises.push(
+            axios.get("https://20.219.193.229:8080/api/data/all/moisture/1")
+          );
+          checkboxPromises.push(
+            axios.get("https://20.219.193.229:8080/api/data/all/moisture/2")
+          );
+          checkboxPromises.push(
+            axios.get("https://20.219.193.229:8080/api/data/all/moisture/3")
+          );
+        }
+
+        const responses = await Promise.all(checkboxPromises);
+
+        // Process the responses and update the respective chart data states
+
+        if (checkedHumidity) {
+          const humidityDataArr = [];
+          let counterhumidity = 0;
+          for (let thing in responses[0].data) {
+            if (counterhumidity < 1000) {
+              humidityDataArr.push({
+                time: responses[0].data[thing].time,
+                value: responses[0].data[thing].value,
+              });
+              counterhumidity++;
+            }
+          }
+          const reversedhumidityDataArr = humidityDataArr.reverse();
+
+          if (isMounted) {
+            sethumchardata(reversedhumidityDataArr);
+          }
+        }
+
+        if (checkedLux) {
+          const luxDataArr = [];
+          let counterlux = 0;
+          for (let thing in responses[1].data) {
+            if (counterlux < 1000) {
+              luxDataArr.push({
+                time: responses[0].data[thing].time,
+                value: responses[0].data[thing].value,
+              });
+              counterlux++;
+            }
+          }
+          const reversedluxDataArr = luxDataArr.reverse();
+
+          if (isMounted) {
+            setluxchardata(reversedluxDataArr);
+          }
+        }
+
+        if (checkedTemperature) {
+          const temperatureDataArr = [];
+          let countertemperature = 0;
+          for (let thing in responses[0].data) {
+            if (countertemperature < 1000) {
+              temperatureDataArr.push({
+                time: responses[0].data[thing].time,
+                value: responses[0].data[thing].value,
+              });
+              countertemperature++;
+            }
+          }
+          const reversedtemperatureDataArr = temperatureDataArr.reverse();
+
+          if (isMounted) {
+            settempchardata(reversedtemperatureDataArr);
+          }
+        }
+
+        if (checkedMoisture) {
+          const moisture1DataArr = [];
+          let countermoisture1 = 0;
+          for (let thing in responses[3].data) {
+            if (countermoisture1 < 1000) {
+              moisture1DataArr.push({
+                time: responses[0].data[thing].time,
+                value: responses[0].data[thing].value,
+              });
+              countermoisture1++;
+            }
+          }
+          const reversedmoisture1DataArr = moisture1DataArr.reverse();
+
+          const moisture2DataArr = [];
+          let countermoisture2 = 0;
+          for (let thing in responses[0].data) {
+            if (countermoisture2 < 1000) {
+              moisture2DataArr.push({
+                time: responses[0].data[thing].time,
+                value: responses[0].data[thing].value,
+              });
+              countermoisture2++;
+            }
+          }
+          const reversedmoisture2DataArr = moisture2DataArr.reverse();
+
+          const moisture3DataArr = [];
+          let countermoisture3 = 0;
+          for (let thing in responses[0].data) {
+            if (countermoisture3 < 1000) {
+              moisture3DataArr.push({
+                time: responses[0].data[thing].time,
+                value: responses[0].data[thing].value,
+              });
+              countermoisture3++;
+            }
+          }
+          const reversedmoisture3DataArr = moisture3DataArr.reverse();
+
+          if (isMounted) {
+            setmoi1chardata(reversedmoisture1DataArr);
+            setmoi2chardata(reversedmoisture2DataArr);
+            setmoi3chardata(reversedmoisture3DataArr);
+          }
+        }
+
+        // Similar processing for other responses based on checkbox selection
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+
+    const interval = setInterval(fetchData, 15000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [checkedHumidity, checkedLux, checkedTemperature, checkedMoisture]);
+
   const handleChangeTemperature = () => {
-    setCheckedTemperature(!checkedTemperature);
+    setcheckedTemperature(!checkedTemperature);
     console.log(!checkedTemperature);
   };
   const handleChangeMoisture = () => {
@@ -173,7 +227,7 @@ const History = () => {
         <div>
           <h2 className={styles.heading}>Humdity Diagramm</h2>
           <div className={styles.graph}>
-            {!isLoadingMHumidity ? (
+            {!isLoading ? (
               <Line
                 data={{
                   labels: humchardata.map((humchardata) => humchardata.time),
@@ -225,7 +279,7 @@ const History = () => {
         <div>
           <h2 className={styles.heading}>Temperatur Diagramm</h2>
           <div className={styles.graph}>
-            {!isLoadingTemperature ? (
+            {!isLoading ? (
               <Line
                 data={{
                   labels: tempchardata.map((tempchardata) => tempchardata.time),
@@ -279,7 +333,7 @@ const History = () => {
         <div>
           <h2 className={styles.heading}>Moisture Diagramm</h2>
           <div className={styles.graph}>
-            {!isLoadingMoisture ? (
+            {!isLoading ? (
               <Line
                 data={{
                   labels: moi1chardata.map((moi1chardata) => moi1chardata.time),
@@ -338,7 +392,7 @@ const History = () => {
         <div>
           <h2 className={styles.heading}>Brightness Diagramm (Lux)</h2>
           <div className={styles.graph}>
-            {!isLoadingLux ? (
+            {!isLoading ? (
               <Line
                 data={{
                   labels: luxchardata.map((luxchardata) => luxchardata.time),
