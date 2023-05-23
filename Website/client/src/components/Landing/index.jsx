@@ -6,19 +6,18 @@ import image2 from "../images/module2.png";
 const Landing = () => {
   return (
     <div>
-      <div className={styles.navbar}>
-        <h1>Plant</h1>
-        <Link to="/login">
-          <button type="button" className={styles.white_btn}>
-            Log in
-          </button>
-        </Link>
-      </div>
-
       <div className={styles.hero_section}>
-        <img src={image1} alt="Hero" className={styles.img} />
-        <div className={styles.hero_text}>
+        <div className={styles.login_button}>
+          <Link to="/login">
+            <button type="button" className={styles.white_btn}>
+              Log in
+            </button>
+          </Link>
+        </div>
+        <h1 className={styles.project_name}>Projekt XYZ</h1>
+        <div className={styles.hero_content}>
           <h1 className={styles.info3words}>Future, Efficiency, Planting</h1>
+          <img src={image1} alt="Hero" className={styles.img} />
         </div>
       </div>
 
@@ -35,18 +34,15 @@ const Landing = () => {
               von Daten in Echtzeit.
             </p>
           </div>
-
-          <div className={styles.info_text}>
+          <div className={`${styles.info_text} ${styles.vorteile}`}>
             <h2>Vorteile von Projekt XYZ</h2>
             <ul>
               <li>Echtzeitüberwachung und -steuerung</li>
               <li>Umfassende Datenanalyse</li>
               <li>Skalierbare Architektur</li>
               <li>Sichere und zuverlässige Kommunikation</li>
-              <li>Benutzerfreundliche Schnittstelle</li>
             </ul>
           </div>
-
           <div className={styles.info_text}>
             <h2>Anwendungsbereiche</h2>
             <ul>
@@ -56,22 +52,28 @@ const Landing = () => {
               <li>Umweltüberwachung</li>
             </ul>
           </div>
+          <div className={`${styles.info_text} ${styles.contact_box}`}>
+            <h2>Bereit, die Vorteile von Projekt XYZ zu nutzen?</h2>
+            <p>
+              Kontaktieren Sie uns noch heute, um mehr über unsere IoT-Lösung zu
+              erfahren oder eine maßgeschneiderte Demo anzufordern. Steigern Sie
+              Ihre Effizienz, verbessern Sie Ihre Prozesse und bleiben Sie der
+              Konkurrenz einen Schritt voraus.
+            </p>
+            <a
+              href="mailto:your-email@example.com"
+              className={styles.contact_btn}
+            >
+              Kontakt
+            </a>
+          </div>
         </div>
-      </div>
 
-      <div className={styles.contact_section}>
-        <h2>Kontaktieren Sie uns noch heute!</h2>
-        <Link to="/contact">
-          <button type="button" className={styles.contact_btn}>
-            Kontakt
-          </button>
-        </Link>
+        <footer className={styles.footer}>
+          <Link to="/impressum">Impressum</Link>
+          <Link to="/agb">AGB</Link>
+        </footer>
       </div>
-
-      <footer className={styles.footer}>
-        <Link to="/impressum">Impressum</Link>
-        <Link to="/agb">AGB</Link>
-      </footer>
     </div>
   );
 };
