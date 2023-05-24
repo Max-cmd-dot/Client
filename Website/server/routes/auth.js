@@ -22,10 +22,14 @@ router.post("/", async (req, res) => {
 
     const token = user.generateAuthToken();
     const userid = user._id;
+    const group = user.group; // Assuming the group information is stored in the 'group' field of the user schema
     res.status(200).send({
-      data: token,
-      id: userid,
-      message: "logged in successfully",
+      data: {
+        token,
+        userId: userid,
+        group,
+      },
+      message: "Logged in successfully",
     });
   } catch (error) {
     res.status(500).send({ message: "Internal Server Error" });

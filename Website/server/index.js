@@ -1,5 +1,5 @@
-const fs = require("fs")
-const https = require("https")
+const fs = require("fs");
+const https = require("https");
 require("dotenv").config();
 const express = require("express");
 const app = express();
@@ -11,6 +11,7 @@ const dataRoutes = require("./routes/apidata");
 const password_resetRoutes = require("./routes/passwordReset");
 const notificationRoutes = require("./routes/notificationdata");
 const apiuserdataRoutes = require("./routes/apiuserdata");
+const groupRoutes = require("./routes/groupRoutes");
 
 // database connection
 connection();
@@ -26,11 +27,14 @@ app.use("/api/data", dataRoutes);
 app.use("/api/password-reset", password_resetRoutes);
 app.use("/api/notification", notificationRoutes);
 app.use("/api/apiuserdata", apiuserdataRoutes);
+app.use("/api/checkGroup", groupRoutes);
 
 const options = {
-    key: fs.readFileSync('key.pem'),
-    cert: fs.readFileSync('cert.pem')
-}
+  key: fs.readFileSync("key.pem"),
+  cert: fs.readFileSync("cert.pem"),
+};
 const port = process.env.PORT || 8080;
 //app.listen(port, console.log(`Listening on port ${port}...`));
-https.createServer(options, app).listen(port, console.log(`server runs on port ${port}`))
+https
+  .createServer(options, app)
+  .listen(port, console.log(`server runs on port ${port}`));

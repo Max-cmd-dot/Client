@@ -34,22 +34,25 @@ const Main = () => {
   //let [luxchardata, setluxchardata] = useState([]);
   //let [allchardata, setallchardata] = useState([]);
   //let [name, setName] = useState([]);
+  const groupId = localStorage.getItem("groupId");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Replace with the actual group ID
         const response = await axios.get(
-          "https://20.219.193.229:8080/api/data/latestdata/all"
+          `https://20.219.193.229:8080/api/data/latestdata/all?groupId=${groupId}`
         );
         const valuesArr = [];
         let counter = 0;
         for (let item in response.data) {
-          if (counter < 100)
+          if (counter < 100) {
             valuesArr.push({
               topic: response.data[item].topic,
               value: response.data[item].value,
             });
-          counter++;
+            counter++;
+          }
         }
         setList(valuesArr);
       } catch (error) {
@@ -65,6 +68,7 @@ const Main = () => {
       clearInterval(interval); // Clear the interval when the component is unmounted
     };
   }, []);
+
   const calendars = [{ id: "cal1", name: "Personal" }];
   const initialEvents = [
     {

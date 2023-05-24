@@ -7,17 +7,19 @@ import logging
 logging.basicConfig(filename='mqtt2mongodb.log', level=logging.DEBUG)
 
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
+    print("Connected with result code " + str(rc))
     client.subscribe("esp/#")
-    logging.info('Connected with result code '+str(rc))
+    logging.info('Connected with result code ' + str(rc))
 
 def on_message(client, userdata, msg):
     receiveTime = datetime.datetime.now()
     message = msg.payload.decode("utf-8")
     isfloatValue = False
     try:
-        # Convert the string to a float so that it is stored as a number and not a string in the database
-        val = float(message)
+        # Split the message to separate the value from the group information
+        parts = message.split(",")
+        val = float(parts[0])  # Extract the value
+        group = parts[1] if len(parts) > 1 else ""  # Extract the group information if available
         isfloatValue = True
     except:
         isfloatValue = False
@@ -25,21 +27,19 @@ def on_message(client, userdata, msg):
     if isfloatValue:
         print(str(receiveTime) + ": " + msg.topic + " " + str(val))
         logging.info(str(receiveTime) + ": " + msg.topic + " " + str(val))
-        post = {"time": receiveTime, "topic": msg.topic, "value": val}
-    #else:
-   #     print(str(receiveTime) + ": " + msg.topic + " " + message)
-  #      post = {"time": receiveTime, "topic": msg.topic, "value": message}
+        post = {"time": receiveTime, "topic": msg.topic, "group": group, "value": val}
     else:
-        print(str(receiveTime) + ": " + msg.topic + " " + message + msg.name)
-        logging.info(str(receiveTime) + ": " + msg.topic + " " + message + msg.name)
-        post = {"time": receiveTime, "topic": msg.topic, "value": message, "name": msg.name}
+        print(str(receiveTime) + ": " + msg.topic + " " + message)
+        logging.info(str(receiveTime) + ": " + msg.topic + " " + message)
+        post = {"time": receiveTime, "topic": msg.topic, "group": group, "value": message}
+
+    # Remove the group information from the value field
+    post['value'] = str(post['value']).split(',')[0]
+
     collection.insert_one(post)
 
-
-
 # Set up client for MongoDB
-mongoClient = MongoClient(
-    "mongodb://localhost:27017")
+mongoClient = MongoClient("mongodb://localhost:27017")
 db = mongoClient.Data2
 collection = db.datas
 

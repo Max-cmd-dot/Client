@@ -16,14 +16,17 @@ const Login = () => {
     try {
       const url = "https://20.219.193.229:8080/api/auth";
       const { data: res } = await axios.post(url, data);
-      console.log(res);
-      //const { userid: ress } = await axios.post(url, userid);
-      //console.log(res.id);
+
+      localStorage.setItem("token", res.data.token); // Store the authentication token in local storage
+      localStorage.setItem("id", res.data.userId);
+      localStorage.setItem("groupId", res.data.group);
+      //console.log(res);
       //console.log(res.data);
-      localStorage.setItem("token", res.data);
-      window.location = "/";
-      localStorage.setItem("id", res.id);
-      //console.log(res.userid, res.token, "ok");
+      //console.log(res.data.token);
+      //console.log(res.data.userId);
+      console.log(res.data.group);
+      // Redirect the user to the desired page after successful login
+      window.location = "/"; // Replace "/" with the appropriate route for your application
     } catch (error) {
       if (
         error.response &&
@@ -34,6 +37,7 @@ const Login = () => {
       }
     }
   };
+
   return (
     <div className={styles.login_container}>
       <div className={styles.login_form_container}>

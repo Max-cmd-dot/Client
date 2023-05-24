@@ -23,6 +23,7 @@ Chart.register(
   TimeScale
 );
 const History = () => {
+  const groupId = localStorage.getItem("groupId");
   let [tempchardata, settempchardata] = useState([]);
   let [humchardata, sethumchardata] = useState([]);
   let [luxchardata, setluxchardata] = useState([]);
@@ -38,6 +39,7 @@ const History = () => {
   const [checkedHumidity, setcheckedHumidity] = React.useState(false);
   const [checkedMoisture, setcheckedMoisture] = React.useState(false);
   const [checkedLux, setcheckedLux] = React.useState(false);
+
   useEffect(() => {
     let isMounted = true;
 
@@ -49,31 +51,43 @@ const History = () => {
 
         if (checkedHumidity) {
           checkboxPromises.push(
-            axios.get("https://20.219.193.229:8080/api/data/all/humidity")
+            axios.get(
+              `https://20.219.193.229:8080/api/data/all/humidity?groupId=${groupId}`
+            )
           );
         }
 
         if (checkedLux) {
           checkboxPromises.push(
-            axios.get("https://20.219.193.229:8080/api/data/all/lux")
+            axios.get(
+              `https://20.219.193.229:8080/api/data/all/lux?groupId=${groupId}`
+            )
           );
         }
 
         if (checkedTemperature) {
           checkboxPromises.push(
-            axios.get("https://20.219.193.229:8080/api/data/all/temperature")
+            axios.get(
+              `https://20.219.193.229:8080/api/data/all/temperature?groupId=${groupId}`
+            )
           );
         }
 
         if (checkedMoisture) {
           checkboxPromises.push(
-            axios.get("https://20.219.193.229:8080/api/data/all/moisture/1")
+            axios.get(
+              `https://20.219.193.229:8080/api/data/all/moisture/1?groupId=${groupId}`
+            )
           );
           checkboxPromises.push(
-            axios.get("https://20.219.193.229:8080/api/data/all/moisture/2")
+            axios.get(
+              `https://20.219.193.229:8080/api/data/all/moisture/2?groupId=${groupId}`
+            )
           );
           checkboxPromises.push(
-            axios.get("https://20.219.193.229:8080/api/data/all/moisture/3")
+            axios.get(
+              `https://20.219.193.229:8080/api/data/all/moisture/3?groupId=${groupId}`
+            )
           );
         }
 
@@ -197,7 +211,7 @@ const History = () => {
 
     fetchData();
 
-    const interval = setInterval(fetchData, 15000);
+    const interval = setInterval(fetchData, 150000);
 
     return () => {
       isMounted = false;
@@ -476,209 +490,6 @@ const History = () => {
       </div>
     </>
   );
-
-  /*
-  <button type="submit">Submit</button>
-  return (
-    <>
-      <div className={styles.main_container}>
-        <h1 className={styles.heading}>History</h1>
-        {!isLoading ? (
-          <div>
-            <div>
-              <h2 className={styles.heading}>Temperatur Diagramm</h2>
-              <div className={styles.graph}>
-                <Line
-                  data={{
-                    labels: tempchardata.map(
-                      (tempchardata) => tempchardata.time
-                    ),
-                    datasets: [
-                      {
-                        label: "Dataset 1",
-                        data: tempchardata.map(
-                          (tempchardata) => tempchardata.value
-                        ),
-                        borderColor: ["rgba(237, 0, 0, 1)"],
-                      },
-                    ],
-                  }}
-                  options={{
-                    pointRadius: 0,
-                    scales: {
-                      x: {
-                        type: "time",
-                        time: {
-                          displayFormats: {
-                            hour: "HH:MM",
-                          },
-                        },
-                        ticks: {
-                          source: "auto",
-                          // Disabled rotation for performance
-                          maxRotation: 0,
-                          autoSkip: true,
-                          reverse: true,
-                        },
-                      },
-                    },
-                  }}
-                />
-              </div>
-            </div>
-            <div>
-              <h2 className={styles.heading}>Brightness Diagramm (Lux)</h2>
-              <div className={styles.graph}>
-                <Line
-                  data={{
-                    labels: luxchardata.map((luxchardata) => luxchardata.time),
-                    datasets: [
-                      {
-                        label: "Dataset 1",
-                        data: luxchardata.map(
-                          (luxchardata) => luxchardata.value
-                        ),
-                        borderColor: ["rgba(0, 250, 200, 1)"],
-                      },
-                    ],
-                  }}
-                  options={{
-                    pointRadius: 0,
-                    scales: {
-                      x: {
-                        type: "time",
-                        time: {
-                          displayFormats: {
-                            hour: "HH:MM",
-                          },
-                        },
-                        ticks: {
-                          source: "auto",
-                          // Disabled rotation for performance
-                          maxRotation: 0,
-                          autoSkip: true,
-                          reverse: true,
-                        },
-                      },
-                    },
-                  }}
-                />
-              </div>
-            </div>
-            <div>
-              <h2 className={styles.heading}>Humdity Diagramm</h2>
-              <div className={styles.graph}>
-                <Line
-                  data={{
-                    labels: humchardata.map((humchardata) => humchardata.time),
-                    datasets: [
-                      {
-                        label: "Dataset 1",
-                        data: humchardata.map(
-                          (humchardata) => humchardata.value
-                        ),
-                        borderColor: ["rgba(0, 250, 0, 1)"],
-                      },
-                    ],
-                  }}
-                  options={{
-                    pointRadius: 0,
-                    scales: {
-                      x: {
-                        type: "time",
-                        time: {
-                          displayFormats: {
-                            hour: "HH:MM",
-                          },
-                        },
-                        ticks: {
-                          source: "auto",
-                          // Disabled rotation for performance
-                          maxRotation: 0,
-                          autoSkip: true,
-                          reverse: true,
-                        },
-                      },
-                    },
-                  }}
-                />
-              </div>
-            </div>
-            <div>
-              <h2 className={styles.heading}>Moisture Diagramm</h2>
-              <div className={styles.graph}>
-                <Line
-                  data={{
-                    labels: moi1chardata.map(
-                      (moi1chardata) => moi1chardata.time
-                    ),
-                    datasets: [
-                      {
-                        label: "Dataset 2",
-                        data: moi2chardata.map(
-                          (moi2chardata) => moi2chardata.value
-                        ),
-                        borderColor: ["rgba(220, 250, 190, 1)"],
-                      },
-                      {
-                        label: "Dataset 3",
-                        data: moi3chardata.map(
-                          (moi3chardata) => moi3chardata.value
-                        ),
-                        borderColor: ["rgba(200, 50, 190, 1)"],
-                      },
-                    ],
-                  }}
-                  options={{
-                    pointRadius: 0,
-                    scales: {
-                      x: {
-                        type: "time",
-                        time: {
-                          displayFormats: {
-                            hour: "HH:MM",
-                          },
-                        },
-                        ticks: {
-                          source: "auto",
-                          // Disabled rotation for performance
-                          maxRotation: 0,
-                          autoSkip: true,
-                          reverse: true,
-                        },
-                      },
-                    },
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className={styles.loading}>
-            <ClipLoader size={150} className={styles.heading} />
-          </div>
-        )}
-      </div>
-    </>
-  );
-  */
 };
 
 export default History;
-/*options={{
-                    pointRadius: 0,
-                    options: {
-                      scales: {
-                        x: {
-                          type: "time",
-                          ticks: {
-                            source: "auto",
-                            // Disabled rotation for performance
-                            maxRotation: 0,
-                            autoSkip: true,
-                            reverse: true,
-                          },
-                        },
-                      },
-                    },
-                  }}*/
