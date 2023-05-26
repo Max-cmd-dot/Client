@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
 
     const token = user.generateAuthToken();
     const userid = user._id;
-    const group = user.group; // Assuming the group information is stored in the 'group' field of the user schema
+    const group = user.group;
     res.status(200).send({
       data: {
         token,

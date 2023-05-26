@@ -1,17 +1,21 @@
 .heading {
   text-align: center;
 }
+
 .alerts {
   text-align: center;
   margin-top: 5%;
 }
+
 .date {
   margin-left: 20px;
   margin-top: 30px;
 }
+
 .box {
+  position: relative;
   width: 1050px;
-  height: 100px;
+  height: 150px;
   border-radius: 10px;
   margin-left: 10%;
   box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 40%),
@@ -19,4 +23,15 @@
   background-color: #ff37e4;
   color: #ffffff;
   text-align: center;
+}
+
+.deleteButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border: none;
+  border-radius: 50%;
 }

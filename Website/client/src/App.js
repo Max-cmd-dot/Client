@@ -7,7 +7,7 @@ import Navbar from "./components/Navbar";
 import Logout from "./components/Logout";
 import History from "./components/History";
 import Password_reset from "./components/Password_reset";
-import Reset_Passwort from "./components/Reset_Password";
+import Reset_Password from "./components/Reset_Password";
 import Doc from "./components/Doc";
 import Notifications from "./components/Notifications";
 import NotFoundPage from "./components/NotFoundPage";
@@ -20,33 +20,33 @@ const NavbarLayout = () => (
     <Outlet />
   </>
 );
+
 function App() {
   const user = localStorage.getItem("token");
-  //<Route path="/notifications" exact element={<Notifications />} />
+
   return (
     <>
       <div className="container">
         <Routes>
           <Route element={<NavbarLayout />}>
-            {user && <Route path="/" exact element={<Main />} />}
-            {user && <Route path="/navbar" exact element={<Navbar />} />}
+            {user && <Route path="/" element={<Main />} />}
+            {user && <Route path="/navbar" element={<Navbar />} />}
             <Route path="/" element={<Navigate replace to="/landing" />} />
-            {user && <Route path="/history" exact element={<History />} />}
-            {user && <Route path="/Profile" exact element={<Profile />} />}
-            <Route path="/notifications" exact element={<Notifications />} />
-            <Route path="/doc" exact element={<Doc />} />
+            {user && <Route path="/history" element={<History />} />}
+            {user && <Route path="/profile" element={<Profile />} />}
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/doc" element={<Doc />} />
           </Route>
           <Route>
-            <Route path="/landing" exact element={<Landing />} />
-            <Route path="/signup" exact element={<Signup />} />
-            <Route path="/login" exact element={<Login />} />
-            <Route path="/logout" exact element={<Logout />} />
-            <Route path="/password_reset" exact element={<Password_reset />} />
-            <Route path="*" exact element={<NotFoundPage />} />
+            <Route path="/landing" element={<Landing />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/password_reset" element={<Password_reset />} />
+            <Route path="*" element={<NotFoundPage />} />
             <Route
               path="/reset_password/:userId/:token"
-              exact
-              element={<Reset_Passwort />}
+              element={<Reset_Password />}
             />
           </Route>
         </Routes>

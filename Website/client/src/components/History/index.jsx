@@ -93,7 +93,7 @@ const History = () => {
 
         const responses = await Promise.all(checkboxPromises);
 
-        // Process the responses and update the respective chart data states
+        // Process the responses and update the respective chart data statess
 
         if (checkedHumidity) {
           const humidityDataArr = [];

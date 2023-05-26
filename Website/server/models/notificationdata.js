@@ -1,22 +1,24 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 
-const notfificationSchema = new mongoose.Schema({
-	time: { type: String, required: true },
-	topic: { type: String, required: true },
-	value: { type: String, required: true },
+const notificationSchema = new mongoose.Schema({
+  time: { type: Date, required: false },
+  topic: { type: String, required: false },
+  value: { type: String, required: false },
+  ignore: { type: String, required: false },
 });
 
+const Notification = mongoose.model("Notification", notificationSchema);
 
+const validate = (notification) => {
+  const schema = Joi.object({
+    time: Joi.string(),
+    topic: Joi.string(),
+    value: Joi.string(),
+    ignore: Joi.string(),
+  });
 
-
-const Notfification = mongoose.model("notifications", notfificationSchema);
-const validate = (notfification) => {
-	const schema = Joi.object({
-		time: { type: String, required: true },
-		topic: { type: String, required: true },
-		value: { type: String, required: true },
-	});
-	return schema.validate(notfification);
+  return schema.validate(notification);
 };
-module.exports = { Notfification, validate };
+
+module.exports = { Notification, validate };
