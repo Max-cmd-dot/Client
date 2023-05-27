@@ -12,6 +12,8 @@ import Doc from "./components/Doc";
 import Notifications from "./components/Notifications";
 import NotFoundPage from "./components/NotFoundPage";
 import Profile from "./components/Profile";
+import Imprint from "./components/Imprint";
+import Privacy from "./components/Privacy";
 import { Outlet } from "react-router-dom";
 
 const NavbarLayout = () => (
@@ -34,7 +36,11 @@ function App() {
             <Route path="/" element={<Navigate replace to="/landing" />} />
             {user && <Route path="/history" element={<History />} />}
             {user && <Route path="/profile" element={<Profile />} />}
-            <Route path="/notifications" element={<Notifications />} />
+            {user && (
+              <Route path="/notifications" element={<Notifications />} />
+            )}
+            <Route path="/imprint" element={<Imprint />}></Route>
+            <Route path="/privacy" element={<Privacy />}></Route>
             <Route path="/doc" element={<Doc />} />
           </Route>
           <Route>

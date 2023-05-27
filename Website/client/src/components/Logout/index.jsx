@@ -5,6 +5,8 @@ const Logout = () => {
   const handleLogout = (e) => {
     e.preventDefault(); // Prevent form submission
     localStorage.removeItem("token");
+    localStorage.removeItem("id");
+    localStorage.removeItem("groupId");
     setTimeout(() => {
       window.location.href = "/Landing"; // Redirect to the landing page after a delay
     }, 1000); // Delay of 1000 milliseconds (1 second)

@@ -1,19 +1,45 @@
+import { Link, useHistory } from "react-router-dom";
+import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
-import { Link } from "react-router-dom";
 import image1 from "../images/sensor2.png";
 import image2 from "../images/module2.png";
 
 const Landing = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check if user is logged in based on userId in local storage
+    const userId = localStorage.getItem("id");
+    console.log(userId);
+    if (userId) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const renderButton = () => {
+    if (isLoggedIn) {
+      return (
+        <Link to="/">
+          <button type="button" className={styles.white_btn}>
+            Go Back
+          </button>
+        </Link>
+      );
+    } else {
+      return (
+        <Link to="/login">
+          <button type="button" className={styles.white_btn}>
+            Log in
+          </button>
+        </Link>
+      );
+    }
+  };
+
   return (
     <div>
       <div className={styles.hero_section}>
-        <div className={styles.login_button}>
-          <Link to="/login">
-            <button type="button" className={styles.white_btn}>
-              Log in
-            </button>
-          </Link>
-        </div>
+        <div className={styles.login_button}>{renderButton()}</div>
         <h1 className={styles.project_name}>Projekt XYZ</h1>
         <div className={styles.hero_content}>
           <h1 className={styles.info3words}>Future, Efficiency, Planting</h1>

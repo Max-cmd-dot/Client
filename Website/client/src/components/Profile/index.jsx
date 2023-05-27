@@ -1,6 +1,7 @@
 import styles from "./styles.module.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const Profile = () => {
   const [userData, setUserData] = useState({});
@@ -39,7 +40,9 @@ const Profile = () => {
     <div className={styles.main_container}>
       <h1 className={styles.heading}>Profile</h1>
       {loading ? (
-        <p>Loading...</p>
+        <div className={styles.loading}>
+          <ClipLoader size={150} className={styles.heading} />
+        </div>
       ) : (
         <div className={styles.userdata}>
           <div className={styles.box}>
