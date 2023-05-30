@@ -27,7 +27,7 @@ app.use("/api/data", dataRoutes);
 app.use("/api/password-reset", password_resetRoutes);
 app.use("/api/notification", notificationRoutes);
 app.use("/api/apiuserdata", apiuserdataRoutes);
-app.use("/api/checkGroup", groupRoutes);
+app.use("/api/group", groupRoutes);
 
 const options = {
   key: fs.readFileSync("key.pem"),

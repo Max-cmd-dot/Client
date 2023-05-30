@@ -44,7 +44,7 @@ const Signup = () => {
 
   const checkGroupExists = async (group) => {
     try {
-      const url = `https://20.219.193.229:8080/api/checkGroup?group=${group}`;
+      const url = `https://20.219.193.229:8080/api/group/checkGroup?group=${group}`;
       const response = await axios.get(url);
       return response.data.exists;
     } catch (error) {

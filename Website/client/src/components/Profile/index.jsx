@@ -6,6 +6,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 const Profile = () => {
   const [userData, setUserData] = useState({});
   const [userGroup, setUserGroup] = useState("");
+  const [groupAbo, setgroupAbo] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,6 +27,8 @@ const Profile = () => {
 
         setUserData({ firstName, lastName, email });
         setUserGroup(group);
+        const abo = await Abo(group);
+        setgroupAbo(abo);
         setLoading(false);
       } catch (error) {
         // Handle any error that occurred during the API request
@@ -35,7 +38,16 @@ const Profile = () => {
 
     fetchData();
   }, []);
-
+  const Abo = async (group) => {
+    try {
+      const url = `https://20.219.193.229:8080/api/group/abo?group=${group}`;
+      const response = await axios.get(url);
+      return response.data.package;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
   return (
     <div className={styles.main_container}>
       <h1 className={styles.heading}>Profile</h1>
@@ -59,7 +71,10 @@ const Profile = () => {
             <h2>Work Group</h2>
             <p className={styles.textinbox}>{userGroup}</p>
           </div>
-          {/* Additional sections */}
+          <div className={styles.box}>
+            <h2>Abo</h2>
+            <p className={styles.textinbox}>{groupAbo}</p>
+          </div>
         </div>
       )}
     </div>
