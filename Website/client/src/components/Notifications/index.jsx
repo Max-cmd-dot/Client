@@ -12,6 +12,7 @@ const Notifications = () => {
         const response = await axios.get(
           `https://20.219.193.229:8080/api/notification/latestdata/notifications?groupId=${groupId}`
         );
+        console.log(response);
         const valuesArr = response.data.map((item) => ({
           message: item.message,
           time: new Date(item.time).toISOString(), // Convert to ISO string
@@ -39,7 +40,7 @@ const Notifications = () => {
       const formattedTime = new Date(deletedItem.time);
       // Perform the delete request to your backend API with the formatted time
       await axios.post(
-        `https://20.219.193.229:8080/api/notification/notifications/ignore`,
+        `https://20.219.193.229:8080/api/notification/notifications/ignore?groupId=${groupId}`,
         { time: formattedTime.toISOString() }
       );
 

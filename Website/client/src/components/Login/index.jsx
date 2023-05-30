@@ -24,7 +24,7 @@ const Login = () => {
       //console.log(res.data);
       //console.log(res.data.token);
       //console.log(res.data.userId);
-      console.log(res.data.group);
+      //console.log(res.data.group);
       // Redirect the user to the desired page after successful login
       window.location = "/"; // Replace "/" with the appropriate route for your application
     } catch (error) {

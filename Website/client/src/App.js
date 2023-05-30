@@ -1,4 +1,6 @@
 import { Route, Routes, Navigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Main from "./components/Main";
 import Signup from "./components/Singup";
 import Login from "./components/Login";
@@ -25,6 +27,28 @@ const NavbarLayout = () => (
 
 function App() {
   const user = localStorage.getItem("token");
+  const [rightabo, setRightabo] = useState(false);
+  const group = localStorage.getItem("groupId");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `https://20.219.193.229:8080/api/group/abo?group=${group}`
+        );
+        setRightabo(response.data.package);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 100000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <>
@@ -36,7 +60,7 @@ function App() {
             <Route path="/" element={<Navigate replace to="/landing" />} />
             {user && <Route path="/history" element={<History />} />}
             {user && <Route path="/profile" element={<Profile />} />}
-            {user && (
+            {rightabo === "medium" && (
               <Route path="/notifications" element={<Notifications />} />
             )}
             <Route path="/imprint" element={<Imprint />}></Route>

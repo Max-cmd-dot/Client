@@ -47,6 +47,7 @@ const Main = () => {
             counter++;
           }
         }
+        console.log(response);
         setList(valuesArr);
       } catch (error) {
         console.error("Error fetching data:", error);

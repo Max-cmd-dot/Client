@@ -10,7 +10,6 @@ const Landing = () => {
   useEffect(() => {
     // Check if user is logged in based on userId in local storage
     const userId = localStorage.getItem("id");
-    console.log(userId);
     if (userId) {
       setIsLoggedIn(true);
     }

@@ -3,7 +3,7 @@ import * as AiIcons from "react-icons/ai";
 import * as bifrom from "react-icons/bi";
 import * as feathericons from "react-icons/fi";
 
-export const SidebarData = [
+export const SidebarData2 = [
   {
     title: "Home",
     path: "/",
@@ -14,6 +14,12 @@ export const SidebarData = [
     title: "History",
     path: "/history",
     icon: <bifrom.BiHistory />,
+    cName: "nav-text",
+  },
+  {
+    title: "Notifications",
+    path: "/notifications",
+    icon: <bifrom.BiBell />,
     cName: "nav-text",
   },
   {
