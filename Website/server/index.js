@@ -5,13 +5,13 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const connection = require("./db");
-const userRoutes = require("./routes/users");
-const authRoutes = require("./routes/auth");
-const dataRoutes = require("./routes/apidata");
-const password_resetRoutes = require("./routes/passwordReset");
-const notificationRoutes = require("./routes/notificationdata");
-const apiuserdataRoutes = require("./routes/apiuserdata");
-const groupRoutes = require("./routes/groupRoutes");
+const userRoutes = require("./src/routes/users");
+const authRoutes = require("./src/routes/auth");
+const dataRoutes = require("./src/routes/apidata");
+const password_resetRoutes = require("./src/routes/passwordReset");
+const notificationRoutes = require("./src/routes/notificationdata");
+const apiuserdataRoutes = require("./src/routes/apiuserdata");
+const groupRoutes = require("./src/routes/groupRoutes");
 
 // database connection
 connection();
