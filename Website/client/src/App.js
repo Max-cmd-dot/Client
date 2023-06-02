@@ -17,7 +17,7 @@ import Profile from "./components/Profile";
 import Imprint from "./components/Imprint";
 import Privacy from "./components/Privacy";
 import { Outlet } from "react-router-dom";
-
+import { Analytics } from "@vercel/analytics/react";
 const NavbarLayout = () => (
   <>
     <Navbar />
@@ -83,6 +83,7 @@ function App() {
             />
           </Route>
         </Routes>
+        <Analytics />
       </div>
     </>
   );
