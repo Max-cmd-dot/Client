@@ -25,3 +25,4 @@ yarn-error.log*
 /Scripts/mqtt2mongodb.log
 /Website/server/key.pem
 /Website/server/cert.pem
+Scripts/mqtt2mongodb.log
