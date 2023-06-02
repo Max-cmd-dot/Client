@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "homepage": "https://bll-backend.vercel.app/api",
+  "homepage": "https://bll-backend.vercel.app/",
   "description": "",
   "main": "index.js",
   "scripts": {
