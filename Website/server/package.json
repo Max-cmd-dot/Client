@@ -1,13 +1,14 @@
 {
   "name": "server",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "homepage": "https://bll-backend.vercel.app/",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js",
-    "build": "nodemon --watch src/ --exec babel ./src --out-dir ./dist --source-maps --copy-files"
+    "build": "react-scripts build",
+    "predeploy": "npm run build"
   },
   "keywords": [],
   "author": "",

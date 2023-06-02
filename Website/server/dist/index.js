@@ -31,9 +31,11 @@ app.use("/api/group", groupRoutes);
 
 const options = {
   key: fs.readFileSync("key.pem"),
-  cert: fs.readFileSync("cert.pem")
+  cert: fs.readFileSync("cert.pem"),
 };
 const port = process.env.PORT || 8080;
 //app.listen(port, console.log(`Listening on port ${port}...`));
-https.createServer(options, app).listen(port, console.log(`server runs on port ${port}`));
+https
+  .createServer(options, app)
+  .listen(port, console.log(`server runs on port ${port}`));
 //# sourceMappingURL=index.js.map
