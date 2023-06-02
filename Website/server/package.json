@@ -12,7 +12,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "babel": "^6.23.0",
     "bcrypt": "^5.0.1",
     "chart.js": "^3.9.1",
     "cors": "^2.8.5",
