@@ -63,6 +63,9 @@ function App() {
             {rightabo === "medium" && (
               <Route path="/notifications" element={<Notifications />} />
             )}
+            {rightabo === "big" && (
+              <Route path="/notifications" element={<Notifications />} />
+            )}
             <Route path="/imprint" element={<Imprint />}></Route>
             <Route path="/privacy" element={<Privacy />}></Route>
             <Route path="/doc" element={<Doc />} />
