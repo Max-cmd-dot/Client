@@ -2,6 +2,7 @@ import styles from "./styles.module.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const Profile = () => {
   const [userData, setUserData] = useState({});
@@ -15,7 +16,7 @@ const Profile = () => {
         const token = localStorage.getItem("token");
         const userId = localStorage.getItem("id");
         //console.log(userId);
-        const url = `https://20.219.193.229:8080/api/apiuserdata/${userId}`; // Update the URL
+        const url = `${apiUrl}/api/apiuserdata/${userId}`; // Update the URL
 
         const response = await axios.get(url, {
           headers: {
@@ -40,7 +41,7 @@ const Profile = () => {
   }, []);
   const Abo = async (group) => {
     try {
-      const url = `https://20.219.193.229:8080/api/group/abo?group=${group}`;
+      const url = `${apiUrl}/api/group/abo?group=${group}`;
       const response = await axios.get(url);
       return response.data.package;
     } catch (error) {

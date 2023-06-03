@@ -9,6 +9,7 @@ import "@toast-ui/calendar/dist/toastui-calendar.min.css";
 import "tui-date-picker/dist/tui-date-picker.css";
 import "tui-time-picker/dist/tui-time-picker.css";
 import toast, { Toaster } from "react-hot-toast";
+const apiUrl = process.env.REACT_APP_API_URL;
 import {
   Chart,
   ArcElement,
@@ -34,7 +35,7 @@ const Main = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://20.219.193.229:8080/api/data/latestdata/all?groupId=${groupId}`
+          `${apiUrl}/api/data/latestdata/all?groupId=${groupId}`
         );
         const valuesArr = [];
         let counter = 0;

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
 import React, { useState } from "react";
 import { useParams } from "react-router";
+const apiUrl = process.env.REACT_APP_API_URL;
 const Reset_Password = () => {
   const [data, setData] = useState({
     password: "",
@@ -24,7 +25,7 @@ const Reset_Password = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = "https://20.219.193.229:8080/api/password-reset/resetvalidate";
+      const url = `${apiUrl}/api/password-reset/resetvalidate`;
       console.log(data);
       const { data: res } = await axios.post(url, data);
       navigate("/login");

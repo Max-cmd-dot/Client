@@ -2,8 +2,6 @@ import { Link, useHistory } from "react-router-dom";
 import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import image1 from "../images/sensor2.png";
-import image2 from "../images/module2.png";
-
 const Landing = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 

@@ -28,7 +28,7 @@ router.post("/", async (req, res) => {
       }).save();
     }
 
-    const link = `http://20.219.193.229:3000/reset_password/${user._id}/${token.token}`;
+    const link = `${apiUrl}/reset_password/${user._id}/${token.token}`;
     //console.log(link);
     const text =
       `In the following you will find the link to reset your password!

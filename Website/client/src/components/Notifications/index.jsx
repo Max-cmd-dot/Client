@@ -1,6 +1,7 @@
 import styles from "./styles.module.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const Notifications = () => {
   const [list, setList] = useState([]);
@@ -10,7 +11,7 @@ const Notifications = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://20.219.193.229:8080/api/notification/latestdata/notifications?groupId=${groupId}`
+          `${apiUrl}/api/notification/latestdata/notifications?groupId=${groupId}`
         );
         console.log(response);
         const valuesArr = response.data.map((item) => ({
@@ -40,7 +41,7 @@ const Notifications = () => {
       const formattedTime = new Date(deletedItem.time);
       // Perform the delete request to your backend API with the formatted time
       await axios.post(
-        `https://20.219.193.229:8080/api/notification/notifications/ignore?groupId=${groupId}`,
+        `${apiUrl}/api/notification/notifications/ignore?groupId=${groupId}`,
         { time: formattedTime.toISOString() }
       );
 

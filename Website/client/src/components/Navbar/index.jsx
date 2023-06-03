@@ -7,6 +7,7 @@ import { SidebarData3 } from "./SidebarData3";
 import "./Navbar.css";
 import { IconContext } from "react-icons";
 import axios from "axios";
+const apiUrl = process.env.REACT_APP_API_URL;
 
 function Navbar() {
   const [sidebar, setSidebar] = useState(false);
@@ -18,7 +19,7 @@ function Navbar() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://20.219.193.229:8080/api/group/abo?group=${group}`
+          `${apiUrl}/api/group/abo?group=${group}`
         );
 
         setRightabo(response.data.package);

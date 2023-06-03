@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const Signup = () => {
   const [data, setData] = useState({
@@ -27,7 +28,7 @@ const Signup = () => {
         return;
       }
 
-      const url = "https://20.219.193.229:8080/api/users";
+      const url = `${apiUrl}/api/users`;
       const { data: res } = await axios.post(url, data);
       navigate("/login");
       console.log(res.message);
@@ -44,7 +45,7 @@ const Signup = () => {
 
   const checkGroupExists = async (group) => {
     try {
-      const url = `https://20.219.193.229:8080/api/group/checkGroup?group=${group}`;
+      const url = `${apiUrl}/api/group/checkGroup?group=${group}`;
       const response = await axios.get(url);
       return response.data.exists;
     } catch (error) {

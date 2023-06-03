@@ -4,6 +4,7 @@ import "chartjs-adapter-moment";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
+const apiUrl = process.env.REACT_APP_API_URL;
 import {
   Chart,
   ArcElement,
@@ -51,42 +52,32 @@ const History = () => {
 
         if (checkedHumidity) {
           checkboxPromises.push(
-            axios.get(
-              `https://20.219.193.229:8080/api/data/all/humidity?groupId=${groupId}`
-            )
+            axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
           );
         }
 
         if (checkedLux) {
           checkboxPromises.push(
-            axios.get(
-              `https://20.219.193.229:8080/api/data/all/lux?groupId=${groupId}`
-            )
+            axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
           );
         }
 
         if (checkedTemperature) {
           checkboxPromises.push(
-            axios.get(
-              `https://20.219.193.229:8080/api/data/all/temperature?groupId=${groupId}`
-            )
+            axios.get(`${apiUrl}/api/data/all/temperature?groupId=${groupId}`)
           );
         }
 
         if (checkedMoisture) {
           checkboxPromises.push(
-            axios.get(
-              `https://20.219.193.229:8080/api/data/all/moisture/1?groupId=${groupId}`
-            )
+            axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
+          );
+          checkboxPromises.push(
+            axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
           );
           checkboxPromises.push(
             axios.get(
-              `https://20.219.193.229:8080/api/data/all/moisture/2?groupId=${groupId}`
-            )
-          );
-          checkboxPromises.push(
-            axios.get(
-              `https://20.219.193.229:8080/api/data/all/moisture/3?groupId=${groupId}`
+              `${apiUrl}https://20.219.193.229:8080/api/data/all/moisture/3?groupId=${groupId}`
             )
           );
         }
