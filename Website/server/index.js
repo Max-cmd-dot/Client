@@ -32,6 +32,9 @@ app.use("/api/group", groupRoutes);
 app.get("/", (req, res) => {
   res.send("Running...");
 });
+app.get("/api", (req, res) => {
+  res.send("Running API...");
+});
 module.exports = app;
 //const options = {
 //  key: fs.readFileSync("key.pem"),

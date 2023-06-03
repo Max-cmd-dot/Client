@@ -1,6 +1,8 @@
 const router = require("express").Router();
 const { Data, validate } = require("../models/apidata");
-
+router.get("/", (req, res) => {
+  res.send("Running...");
+});
 router.get("/latestdata/Temperature", async (req, res) => {
   try {
     const { error } = validate(req.body);
