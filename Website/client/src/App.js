@@ -9,7 +9,7 @@ import Navbar from "./components/Navbar";
 import Logout from "./components/Logout";
 import History from "./components/History";
 import Password_reset from "./components/Password_reset";
-import Reset_Password from "./components/Reset_Password";
+import Reset_Password from "./components/reset_password";
 import Doc from "./components/Doc";
 import Notifications from "./components/Notifications";
 import NotFoundPage from "./components/NotFoundPage";
@@ -18,6 +18,7 @@ import Imprint from "./components/Imprint";
 import Privacy from "./components/Privacy";
 import { Outlet } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
+const apiUrl = process.env.REACT_APP_API_URL;
 const NavbarLayout = () => (
   <>
     <Navbar />
@@ -34,7 +35,7 @@ function App() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://20.219.193.229:8080/api/group/abo?group=${group}`
+          `${apiUrl}/api/group/abo?group=${group}`
         );
         setRightabo(response.data.package);
       } catch (error) {
