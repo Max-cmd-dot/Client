@@ -1,5 +1,5 @@
-const fs = require("fs");
-const https = require("https");
+//const fs = require("fs");
+//const https = require("https");
 require("dotenv").config();
 const express = require("express");
 const app = express();
@@ -32,10 +32,10 @@ app.use("/api/group", groupRoutes);
 app.get("/", (req, res) => {
   res.send("Running...");
 });
-const options = {
-  key: fs.readFileSync("key.pem"),
-  cert: fs.readFileSync("cert.pem"),
-};
+//const options = {
+//  key: fs.readFileSync("key.pem"),
+//  cert: fs.readFileSync("cert.pem"),
+//};
 //const port = process.env.PORT || 8080;
 //app.listen(port, console.log(`Listening on port ${port}...`));
 //https
