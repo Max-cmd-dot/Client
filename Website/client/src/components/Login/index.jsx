@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import styles from "./styles.module.css";
-
+const apiUrl = process.env.REACT_APP_API_URL;
 const Login = () => {
   const [data, setData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
@@ -14,7 +14,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = "https://20.219.193.229:8080/api/auth";
+      const url = `${apiUrl}/api/auth`;
       const { data: res } = await axios.post(url, data);
 
       localStorage.setItem("token", res.data.token); // Store the authentication token in local storage
