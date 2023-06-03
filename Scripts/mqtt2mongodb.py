@@ -39,8 +39,8 @@ def on_message(client, userdata, msg):
     collection.insert_one(post)
 
 # Set up client for MongoDB
-mongoClient = MongoClient("mongodb://localhost:27017")
-db = mongoClient.Data2
+mongoClient = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
+db = mongoClient.Website
 collection = db.datas
 
 # Initialize the client that should connect to the Mosquitto broker
