@@ -29,6 +29,9 @@ app.use("/api/notification", notificationRoutes);
 app.use("/api/apiuserdata", apiuserdataRoutes);
 app.use("/api/group", groupRoutes);
 
+app.get("/", (req, res) => {
+  res.send("Running...");
+});
 const options = {
   key: fs.readFileSync("key.pem"),
   cert: fs.readFileSync("cert.pem"),
