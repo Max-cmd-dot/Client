@@ -265,10 +265,11 @@ const History = () => {
                     },
                   },
                 }}
+                className={styles.chart}
               />
             ) : (
               <div className={styles.loading}>
-                <ClipLoader size={150} className={styles.heading} />
+                <ClipLoader size={50} className={styles.heading} />
               </div>
             )}
           </div>
@@ -319,10 +320,11 @@ const History = () => {
                     },
                   },
                 }}
+                className={styles.chart}
               />
             ) : (
               <div className={styles.loading}>
-                <ClipLoader size={150} className={styles.heading} />
+                <ClipLoader size={50} className={styles.heading} />
               </div>
             )}
           </div>
@@ -380,10 +382,11 @@ const History = () => {
                     },
                   },
                 }}
+                className={styles.chart}
               />
             ) : (
               <div className={styles.loading}>
-                <ClipLoader size={150} className={styles.heading} />
+                <ClipLoader size={50} className={styles.heading} />
               </div>
             )}
           </div>
@@ -430,10 +433,11 @@ const History = () => {
                     },
                   },
                 }}
+                className={styles.chart}
               />
             ) : (
               <div className={styles.loading}>
-                <ClipLoader size={150} className={styles.heading} />
+                <ClipLoader size={50} className={styles.heading} />
               </div>
             )}
           </div>

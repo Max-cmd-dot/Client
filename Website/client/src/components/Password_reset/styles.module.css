@@ -8,8 +8,9 @@
 }
 
 .signup_form_container {
-  width: 900px;
-  height: 500px;
+  width: 100%;
+  max-width: 900px;
+  height: 600px; /* Increase the height of the blue box */
   display: flex;
   border-radius: 10px;
   box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 40%),
@@ -30,7 +31,7 @@
 .left h1 {
   margin-top: 0;
   color: white;
-  font-size: 35px;
+  font-size: 30px; /* Reduce the font size of the heading */
   align-self: center;
 }
 
@@ -43,6 +44,37 @@
   background-color: white;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
+}
+
+.right h1 {
+  margin-top: 0;
+  color: black;
+  font-size: 30px; /* Reduce the font size of the heading */
+  align-self: center;
+}
+
+@media (max-width: 768px) {
+  .signup_form_container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .left,
+  .right {
+    border-radius: 10px;
+  }
+
+  .left h1,
+  .right h1 {
+    font-size: 25px; /* Reduce the font size of the heading */
+  }
+
+  .right {
+    margin-top: 20px;
+  }
+  .form_container h1 {
+    font-size: 30px; /* Reduce the font size of the heading on mobile */
+  }
 }
 
 .form_container {
@@ -82,6 +114,7 @@
 .green_btn {
   border: none;
   outline: none;
+  margin: 10px;
   padding: 12px 0;
   background-color: white;
   border-radius: 20px;

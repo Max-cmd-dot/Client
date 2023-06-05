@@ -4,12 +4,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 import "chartjs-adapter-moment";
-import Calendar from "@toast-ui/react-calendar";
-import "@toast-ui/calendar/dist/toastui-calendar.min.css";
-import "tui-date-picker/dist/tui-date-picker.css";
-import "tui-time-picker/dist/tui-time-picker.css";
-import toast, { Toaster } from "react-hot-toast";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 const apiUrl = process.env.REACT_APP_API_URL;
+
 import {
   Chart,
   ArcElement,
@@ -30,7 +28,28 @@ Chart.register(
 const Main = () => {
   let [list, setList] = useState([]);
   const groupId = localStorage.getItem("groupId");
+  const [rightabo, setRightabo] = useState(false);
 
+  const [value, onChange] = useState(new Date());
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${apiUrl}/api/group/abo?group=${groupId}`
+        );
+        setRightabo(response.data.package);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 100000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -113,6 +132,8 @@ const Main = () => {
       </div>
   */
 
+  const isMediumOrBig = rightabo === "medium" || rightabo === "big";
+
   return (
     <div className={styles.main_container}>
       <h1 className={styles.heading}>Sensor Data</h1>
@@ -158,14 +179,24 @@ const Main = () => {
           })}
         </div>
       </div>
-      <div className={styles.CalendarBox}>
-        <Calendar
-          view="month"
-          calendars={calendars}
-          events={initialEvents}
-          styles={styles.CalendarBox}
-        />
-      </div>
+      {isMediumOrBig ? (
+        <>
+          <h1 className={styles.heading}>Calendar</h1>
+          <div className={styles.CalendarBox}>
+            <Calendar
+              view="month"
+              calendars={calendars}
+              events={initialEvents}
+              options={options}
+              styles={styles.CalendarBox}
+              onChange={onChange}
+              value={value}
+            />
+          </div>
+        </>
+      ) : (
+        <h1 className={styles.heading}>Temperature Diagramm</h1>
+      )}
     </div>
   );
 };

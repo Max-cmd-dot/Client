@@ -1,53 +1,54 @@
-.data {
-  display: flex;
-  justify-content: space-evenly;
-}
 .diagramm {
   margin: 5%;
+  margin-bottom: 10%;
 }
 
-.sensordata {
-  width: 250px;
-  height: 100px;
-  border-radius: 10px;
-  margin: 20px;
-  box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 40%),
-    0px 3px 4px 0px rgb(0 0 0 / 24%), 0px 1px 8px 0px rgb(0 0 0 / 22%);
-  background-color: #ff37e4;
-  color: #ffffff;
+.heading {
   text-align: center;
-}
-
-.sensordata:hover {
-  color: #111;
-  background-color: #ff37e4;
-  box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 55%),
-    0px 3px 4px 0px rgb(0 0 0 / 39%), 0px 1px 8px 0px rgb(0 0 0 / 37%);
+  margin-bottom: 20px;
 }
 
 .graph {
   color: #111;
-  width: auto;
-  height: auto;
-  padding-right: 200px;
+  width: 100%; /* Adjust the height as desired */
+  padding-bottom: 10px;
 }
-/* The button used to open the sidebar */
-.heading {
-  text-align: center;
+
+.chart canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
-/* Beginning of the div specifications*/
+
+@media (max-width: 768px) {
+  .graph {
+    height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .graph {
+    height: 200px;
+  }
+}
+
 .blue {
   text-align: center;
 }
+
 .loading {
-  position: fixed;
-  left: 46%;
-  top: 50%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
+
 .select {
   position: fixed;
   left: 50%;
+  transform: translateX(-50%);
 }
+
 .checkbox {
-  margin-left: 38%;
+  text-align: center;
 }

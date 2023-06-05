@@ -9,7 +9,7 @@ import Navbar from "./components/Navbar";
 import Logout from "./components/Logout";
 import History from "./components/History";
 import Password_reset from "./components/Password_reset";
-import Reset_Password from "./components/reset_password";
+import Reset_Password from "./components/Reset_Password";
 import Doc from "./components/Doc";
 import Notifications from "./components/Notifications";
 import NotFoundPage from "./components/NotFoundPage";
