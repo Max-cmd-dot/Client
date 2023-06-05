@@ -114,15 +114,27 @@ router.get("/All/temperature", async (req, res) => {
   try {
     const { error } = validate(req.body);
     const groupId = req.query.groupId;
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
+    const minValue = req.query.minValue; // Add this line
+
     if (error)
       return res.status(400).send({ message: error.details[0].message });
 
     const data = await Data.find({
       topic: "esp/air/temperature",
       group: groupId,
+      time: {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      },
+      value: {
+        $gte: minValue,
+      },
     })
       .sort({ _id: -1 })
       .limit(1000);
+
     if (data) return res.json(data);
   } catch (error) {
     console.log(error);
@@ -133,15 +145,29 @@ router.get("/All/humidity", async (req, res) => {
   try {
     const { error } = validate(req.body);
     const groupId = req.query.groupId;
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
+    const minValue = req.query.minValue;
+    const maxValue = req.query.maxValue;
+
     if (error)
       return res.status(400).send({ message: error.details[0].message });
 
     const data = await Data.find({
       topic: "esp/air/humidity",
       group: groupId,
+      time: {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      },
+      value: {
+        $gte: minValue,
+        $lte: maxValue,
+      },
     })
       .sort({ _id: -1 })
       .limit(1000);
+
     if (data) return res.json(data);
   } catch (error) {
     console.log(error);
@@ -152,15 +178,29 @@ router.get("/All/Lux", async (req, res) => {
   try {
     const { error } = validate(req.body);
     const groupId = req.query.groupId;
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
+    const minValue = req.query.minValue;
+    const maxValue = req.query.maxValue;
+
     if (error)
       return res.status(400).send({ message: error.details[0].message });
 
     const data = await Data.find({
       topic: "esp/ground/light/lux",
       group: groupId,
+      time: {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      },
+      value: {
+        $gte: minValue,
+        $lte: maxValue,
+      },
     })
       .sort({ _id: -1 })
       .limit(1000);
+
     if (data) return res.json(data);
   } catch (error) {
     console.log(error);
@@ -171,15 +211,29 @@ router.get("/All/moisture/1", async (req, res) => {
   try {
     const { error } = validate(req.body);
     const groupId = req.query.groupId;
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
+    const minValue = req.query.minValue;
+    const maxValue = req.query.maxValue;
+
     if (error)
       return res.status(400).send({ message: error.details[0].message });
 
     const data = await Data.find({
       topic: "esp/ground/moisture/1",
       group: groupId,
+      time: {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      },
+      value: {
+        $gte: minValue,
+        $lte: maxValue,
+      },
     })
       .sort({ _id: -1 })
       .limit(1000);
+
     if (data) return res.json(data);
   } catch (error) {
     console.log(error);
@@ -190,15 +244,29 @@ router.get("/All/moisture/2", async (req, res) => {
   try {
     const { error } = validate(req.body);
     const groupId = req.query.groupId;
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
+    const minValue = req.query.minValue;
+    const maxValue = req.query.maxValue;
+
     if (error)
       return res.status(400).send({ message: error.details[0].message });
 
     const data = await Data.find({
       topic: "esp/ground/moisture/2",
       group: groupId,
+      time: {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      },
+      value: {
+        $gte: minValue,
+        $lte: maxValue,
+      },
     })
       .sort({ _id: -1 })
       .limit(1000);
+
     if (data) return res.json(data);
   } catch (error) {
     console.log(error);
@@ -209,15 +277,29 @@ router.get("/All/moisture/3", async (req, res) => {
   try {
     const { error } = validate(req.body);
     const groupId = req.query.groupId;
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
+    const minValue = req.query.minValue;
+    const maxValue = req.query.maxValue;
+
     if (error)
       return res.status(400).send({ message: error.details[0].message });
 
     const data = await Data.find({
       topic: "esp/ground/moisture/3",
       group: groupId,
+      time: {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      },
+      value: {
+        $gte: minValue,
+        $lte: maxValue,
+      },
     })
       .sort({ _id: -1 })
       .limit(1000);
+
     if (data) return res.json(data);
   } catch (error) {
     console.log(error);
