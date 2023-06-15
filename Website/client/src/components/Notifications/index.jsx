@@ -19,6 +19,8 @@ const Notifications = () => {
           time: new Date(item.time).toISOString(), // Convert to ISO string
           group: item.group,
         }));
+        console.log("client values arr");
+        console.log(valuesArr);
 
         setList(valuesArr);
       } catch (error) {

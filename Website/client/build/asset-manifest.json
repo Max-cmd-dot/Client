@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/BLL/static/css/main.452be52a.css",
-    "main.js": "/BLL/static/js/main.af1a771b.js",
-    "static/media/sensor2.png": "/BLL/static/media/sensor2.bc7415f3168f95c2345c.png",
-    "static/media/module2.png": "/BLL/static/media/module2.937caeeefb35a2f6819f.png",
-    "index.html": "/BLL/index.html",
-    "main.452be52a.css.map": "/BLL/static/css/main.452be52a.css.map",
-    "main.af1a771b.js.map": "/BLL/static/js/main.af1a771b.js.map"
+    "main.css": "/static/css/main.5d03097b.css",
+    "main.js": "/static/js/main.e8dfac94.js",
+    "static/media/sensor2.png": "/static/media/sensor2.bc7415f3168f95c2345c.png",
+    "static/media/Gymnasium-Buckhorn-bll-final.pdf": "/static/media/Gymnasium-Buckhorn-bll-final.6b539340967d4f21ee42.pdf",
+    "index.html": "/index.html",
+    "main.5d03097b.css.map": "/static/css/main.5d03097b.css.map",
+    "main.e8dfac94.js.map": "/static/js/main.e8dfac94.js.map"
   },
   "entrypoints": [
-    "static/css/main.452be52a.css",
-    "static/js/main.af1a771b.js"
+    "static/css/main.5d03097b.css",
+    "static/js/main.e8dfac94.js"
   ]
 }

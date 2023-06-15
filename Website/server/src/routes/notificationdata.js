@@ -23,15 +23,19 @@ router.post("/notifications/ignore", async (req, res) => {
   try {
     const { time } = req.body;
     const groupId = req.query.groupId;
-
+    console.log("time");
+    console.log(time);
     // Convert the time to a JavaScript Date object
     const formattedTime = new Date(time);
-
+    console.log("formattedTime");
+    console.log(formattedTime);
     // Find the notification with the given time
     const notification = await Notification.findOne({
       time: formattedTime,
       group: groupId,
     });
+    console.log("notification");
+    console.log(notification);
     if (!notification) {
       return res.status(404).send({ message: "Notification not found" });
     }

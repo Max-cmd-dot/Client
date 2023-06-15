@@ -1,21 +1,20 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
-const router = require("express").Router();
 
 const dataSchema = new mongoose.Schema({
-  time: { type: String, required: true },
-  topic: { type: String, required: true },
-  value: { type: String, required: true },
-  group: { type: String, required: true },
+  time: { type: Date, required: false },
+  topic: { type: String, required: false },
+  value: { type: String, required: false },
+  group: { type: String, required: false },
 });
 
 const Data = mongoose.model("data", dataSchema);
 const validate = (data) => {
   const schema = Joi.object({
-    time: { type: String, required: true },
-    topic: { type: String, required: true },
-    value: { type: String, required: true },
-    group: { type: String, required: true },
+    time: Joi.string(),
+    topic: Joi.string(),
+    value: Joi.string(),
+    group: Joi.string(),
   });
   return schema.validate(data);
 };

@@ -9,8 +9,8 @@ SOIL_MOISTURE_AREA_1_THRESHOLD = 1000
 
 def check_last_message():
     # Connect to MongoDB
-    mongoClient2 = MongoClient("mongodb://localhost:27017")
-    db2 = mongoClient2.Data2
+    mongoClient2 = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
+    db2 = mongoClient2.Website
     collection2 = db2.datas
 
     # Calculate the timestamp 15 minutes ago
@@ -29,8 +29,8 @@ def check_last_message():
     result2 = collection2.find(query2, projection2).sort('time', pymongo.DESCENDING).limit(1)
     result_list2 = list(result2)
     mongoClient2.close()
-    mongoClient3 = MongoClient("mongodb://localhost:27017")
-    db3 = mongoClient3.Data2
+    mongoClient3 = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
+    db3 = mongoClient3.Website
     collection3 = db3.notifications
 
     # Check if there is any temperature data within the last 15 minutes
@@ -57,8 +57,8 @@ def check_last_message():
 
 def check_temperature():
 # Connect to MongoDB
-    mongoClient = MongoClient("mongodb://localhost:27017")
-    db = mongoClient.Data2
+    mongoClient = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
+    db = mongoClient.Website
     collection = db.datas
     
     # Calculate the timestamp 15 minutes ago
@@ -78,8 +78,8 @@ def check_temperature():
     result = collection.find(query, projection).sort('time', pymongo.DESCENDING).limit(1)
     result_list = list(result)
     mongoClient.close()
-    mongoClient3 = MongoClient("mongodb://localhost:27017")
-    db3 = mongoClient3.Data2
+    mongoClient3 = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
+    db3 = mongoClient3.Website
     collection3 = db3.notifications
     # Check if there is any temperature data within the last 15 minutes
     if len(result_list) == 0:
@@ -127,8 +127,8 @@ def check_temperature():
         
 def check_water_area_1():
 # Connect to MongoDB
-    mongoClient = MongoClient("mongodb://localhost:27017")
-    db = mongoClient.Data2
+    mongoClient = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
+    db = mongoClient.Website
     collection = db.datas
     
     # Calculate the timestamp 15 minutes ago
@@ -148,8 +148,8 @@ def check_water_area_1():
     result = collection.find(query, projection).sort('time', pymongo.DESCENDING).limit(1)
     result_list = list(result)
     mongoClient.close()
-    mongoClient3 = MongoClient("mongodb://localhost:27017")
-    db3 = mongoClient3.Data2
+    mongoClient3 = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
+    db3 = mongoClient3.Website
     collection3 = db3.notifications
     # Check if there is any soil moisture data within the last 15 minutes
     if len(result_list) == 0:
@@ -193,8 +193,8 @@ def check_water_area_1():
 
 def check_water_area_2():
 # Connect to MongoDB
-    mongoClient = MongoClient("mongodb://localhost:27017")
-    db = mongoClient.Data2
+    mongoClient = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
+    db = mongoClient.Website
     collection = db.datas
     
     # Calculate the timestamp 15 minutes ago
@@ -214,8 +214,8 @@ def check_water_area_2():
     result = collection.find(query, projection).sort('time', pymongo.DESCENDING).limit(1)
     result_list = list(result)
     mongoClient.close()
-    mongoClient3 = MongoClient("mongodb://localhost:27017")
-    db3 = mongoClient3.Data2
+    mongoClient3 = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
+    db3 = mongoClient3.Website
     collection3 = db3.notifications
     
     # Check if there is any soil moisture 2 data within the last 15 minutes
@@ -262,8 +262,8 @@ def check_water_area_2():
 
 def check_water_area_3():
     # Connect to MongoDB
-    mongoClient = MongoClient("mongodb://localhost:27017")
-    db = mongoClient.Data2
+    mongoClient = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
+    db = mongoClient.Website
     collection = db.datas
     
     # Calculate the timestamp 15 minutes ago
@@ -282,8 +282,8 @@ def check_water_area_3():
     result = collection.find(query, projection).sort('time', pymongo.DESCENDING).limit(1)
     result_list = list(result)
     mongoClient.close()
-    mongoClient3 = MongoClient("mongodb://localhost:27017")
-    db3 = mongoClient3.Data2
+    mongoClient3 = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
+    db3 = mongoClient3.Website
     collection3 = db3.notifications
     
     # Check if there is any soil moisture 3 data within the last 15 minutes
