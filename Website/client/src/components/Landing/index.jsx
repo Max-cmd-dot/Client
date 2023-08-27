@@ -43,7 +43,6 @@ const Landing = () => {
           <img src={image1} alt="Hero" className={styles.img} />
         </div>
       </div>
-
       <div className={styles.info_section}>
         <div className={styles.info_container}>
           <div className={styles.info_text}>

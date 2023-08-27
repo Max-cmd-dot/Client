@@ -1,5 +1,5 @@
 import styles from "./styles.module.css";
-import { Line } from "react-chartjs-2";
+import { Line, Tooltip } from "react-chartjs-2";
 import "chartjs-adapter-moment";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -25,17 +25,50 @@ Chart.register(
 );
 const History = () => {
   const groupId = localStorage.getItem("groupId");
+  const [count_chart_1, setcount_chart_1] = useState(100);
   let [tempchardata, settempchardata] = useState([]);
   let [humchardata, sethumchardata] = useState([]);
   let [luxchardata, setluxchardata] = useState([]);
   let [moi1chardata, setmoi1chardata] = useState([]);
   let [moi2chardata, setmoi2chardata] = useState([]);
   let [moi3chardata, setmoi3chardata] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading_chart_1, setIsLoading_chart_1] = useState(false);
+  const [isLoading_chart_2, setIsLoading_chart_2] = useState(false);
+  const [isLoading_chart_3, setIsLoading_chart_3] = useState(false);
+  const [isLoading_chart_4, setIsLoadingchart_4] = useState(false);
+  const [loadingTime_1, setLoadingTime_1] = useState(false);
+  const [loadingTime_2, setLoadingTime_2] = useState(false);
+  const [loadingTime_3, setLoadingTime_3] = useState(false);
+  const [loadingTime_4, setLoadingTime_4] = useState(false);
   const [chart1Checked, setChart1Checked] = useState(true);
   const [chart2Checked, setChart2Checked] = useState(false);
   const [chart3Checked, setChart3Checked] = useState(false);
   const [chart4Checked, setChart4Checked] = useState(false);
+  const [update_interval_value_chart_1, setupdate_interval_value_chart_1] =
+    useState(15000);
+  const [update_interval_value_chart_2, setupdate_interval_value_chart_2] =
+    useState(15000);
+  const [update_interval_value_chart_3, setupdate_interval_value_chart_3] =
+    useState(15000);
+  const [update_interval_value_chart_4, setupdate_interval_value_chart_4] =
+    useState(15000);
+  const [
+    update_data_interval_value_chart_1,
+    setupdate_data_interval_value_chart_1,
+  ] = useState(15000);
+  const [
+    update_data_interval_value_chart_2,
+    setupdate_data_interval_value_chart_2,
+  ] = useState(15000);
+  const [
+    update_data_interval_value_chart_3,
+    setupdate_data_interval_value_chart_3,
+  ] = useState(15000);
+  const [
+    update_data_interval_value_chart_4,
+    setupdate_data_interval_value_chart_4,
+  ] = useState(15000);
+  //general buttons
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   //chart 1 datasets checks
   const [
@@ -49,6 +82,9 @@ const History = () => {
   const [dataset_lux_Chart1Checked, setdataset_lux_Chart1Checked] =
     useState(false);
   const [IsEditPopupOpen_1, setIsEditPopupOpen_1] = useState(false);
+  const [IsDataPopupOpen_1, setIsDataPopupOpen_1] = useState(false);
+  const [IsCountPopupOpen_1, setIsCountPopupOpen_1] = useState(false);
+  const [IsIntervalPopupOpen_1, setIsIntervalPopupOpen_1] = useState(false);
 
   //chart 2 datasets checks
   const [
@@ -62,6 +98,7 @@ const History = () => {
   const [dataset_lux_Chart2Checked, setdataset_lux_Chart2Checked] =
     useState(false);
   const [IsEditPopupOpen_2, setIsEditPopupOpen_2] = useState(false);
+  const [IsIntervalPopupOpen_2, setIsIntervalPopupOpen_2] = useState(false);
 
   //chart 3 datasets checks
   const [
@@ -75,6 +112,7 @@ const History = () => {
   const [dataset_lux_Chart3Checked, setdataset_lux_Chart3Checked] =
     useState(false);
   const [IsEditPopupOpen_3, setIsEditPopupOpen_3] = useState(false);
+  const [IsIntervalPopupOpen_3, setIsIntervalPopupOpen_3] = useState(false);
 
   //chart 4 datasets checks
   const [
@@ -88,6 +126,7 @@ const History = () => {
   const [dataset_lux_Chart4Checked, setdataset_lux_Chart4Checked] =
     useState(true);
   const [IsEditPopupOpen_4, setIsEditPopupOpen_4] = useState(false);
+  const [IsIntervalPopupOpen_4, setIsIntervalPopupOpen_4] = useState(false);
 
   //general settings
   const openPopup = () => {
@@ -106,6 +145,27 @@ const History = () => {
   const closeEditPopup_1 = () => {
     setIsEditPopupOpen_1(false);
   };
+  const openIntervalPopup_1 = () => {
+    setIsIntervalPopupOpen_1(true);
+  };
+
+  const closeIntervalPopup_1 = () => {
+    setIsIntervalPopupOpen_1(false);
+  };
+  const openDataPopup_1 = () => {
+    setIsDataPopupOpen_1(true);
+  };
+
+  const closeDataPopup_1 = () => {
+    setIsDataPopupOpen_1(false);
+  };
+  const openCountPopup_1 = () => {
+    setIsCountPopupOpen_1(true);
+  };
+
+  const closeCountPopup_1 = () => {
+    setIsCountPopupOpen_1(false);
+  };
   const addFilter_1 = () => {
     console.log("Added filter");
   };
@@ -121,22 +181,43 @@ const History = () => {
   const max_count_values_1 = () => {
     console.log("Added chart_1");
   };
-  const skip_every_1 = () => {
+  const data_interval_1 = () => {
     console.log("Added chart_1");
   };
   const live_data_1 = () => {
     console.log("live data_1");
   };
-  const update_every_1 = () => {
-    console.log("update every_1");
+  const handleIntervalChange_chart_1 = (event) => {
+    //gets value of drop down
+    const selectedInterval_chart_1 = parseInt(event.target.value);
+    //updates the value of the interval
+    setupdate_interval_value_chart_1(selectedInterval_chart_1);
   };
-
+  const handleDataIntervalChange_chart_1 = (event) => {
+    //gets value of drop down
+    const selectedDataInterval_chart_1 = parseInt(event.target.value);
+    //updates the value of the interval
+    setupdate_data_interval_value_chart_1(selectedDataInterval_chart_1);
+  };
+  const handleCountChange_chart_1 = (event) => {
+    //gets value of drop down
+    const selectedCount_chart_1 = parseInt(event.target.value);
+    //updates the value of the interval
+    setcount_chart_1(selectedCount_chart_1);
+  };
   //chart 2
   const openEditPopup_2 = () => {
     setIsEditPopupOpen_2(true);
   };
   const closeEditPopup_2 = () => {
     setIsEditPopupOpen_2(false);
+  };
+  const openIntervalPopup_2 = () => {
+    setIsIntervalPopupOpen_2(true);
+  };
+
+  const closeIntervalPopup_2 = () => {
+    setIsIntervalPopupOpen_2(false);
   };
   const addFilter_2 = () => {
     console.log("Added filter");
@@ -147,14 +228,14 @@ const History = () => {
   const max_count_values_2 = () => {
     console.log("Added chart _2");
   };
-  const skip_every_2 = () => {
+  const data_interval_2 = () => {
     console.log("Added chart _2");
   };
   const live_data_2 = () => {
     console.log("live data _2");
   };
-  const update_every_2 = () => {
-    console.log("update every _2");
+  const update_interval_2 = () => {
+    console.log("update interval _2");
   };
 
   //chart 3
@@ -165,6 +246,13 @@ const History = () => {
   const closeEditPopup_3 = () => {
     setIsEditPopupOpen_3(false);
   };
+  const openIntervalPopup_3 = () => {
+    setIsIntervalPopupOpen_3(true);
+  };
+
+  const closeIntervalPopup_3 = () => {
+    setIsIntervalPopupOpen_3(false);
+  };
   const addFilter_3 = () => {
     console.log("Added filter");
   };
@@ -174,14 +262,14 @@ const History = () => {
   const max_count_values_3 = () => {
     console.log("Added chart _3");
   };
-  const skip_every_3 = () => {
+  const data_interval_3 = () => {
     console.log("Added chart _3");
   };
   const live_data_3 = () => {
     console.log("live data _3");
   };
-  const update_every_3 = () => {
-    console.log("update every _3");
+  const update_interval_3 = () => {
+    console.log("update interval _3");
   };
 
   //chart 4
@@ -192,6 +280,13 @@ const History = () => {
   const closeEditPopup_4 = () => {
     setIsEditPopupOpen_4(false);
   };
+  const openIntervalPopup_4 = () => {
+    setIsIntervalPopupOpen_4(true);
+  };
+
+  const closeIntervalPopup_4 = () => {
+    setIsIntervalPopupOpen_4(false);
+  };
   const addFilter_4 = () => {
     console.log("Added filter");
   };
@@ -201,140 +296,508 @@ const History = () => {
   const max_count_values_4 = () => {
     console.log("Added chart _4");
   };
-  const skip_every_4 = () => {
+  const data_interval_4 = () => {
     console.log("Added chart _4");
   };
   const live_data_4 = () => {
     console.log("live data _4");
   };
-  const update_every_4 = () => {
-    console.log("update every _4");
+  const update_interval_4 = () => {
+    console.log("update interval _4");
   };
   useEffect(() => {
     let isMounted = true;
-
-    const fetchData = async () => {
+    const fetchdata_chart_1 = async () => {
       try {
-        setIsLoading(true);
+        setLoadingTime_1(Date.now());
 
         const checkboxPromise_Lux = [];
         const checkboxPromise_Humidity = [];
         const checkboxPromise_Temperature = [];
         const checkboxPromise_Moisture = [];
 
-        if (chart2Checked) {
-          if (dataset_temperature_Chart2Checked) {
-            checkboxPromise_Temperature.push(
-              axios.get(`${apiUrl}/api/data/all/temperature?groupId=${groupId}`)
-            );
-          }
-          if (dataset_humidity_Chart2Checked) {
-            checkboxPromise_Humidity.push(
-              axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
-            );
-          }
-          if (dataset_moisture_Chart2Checked) {
-            checkboxPromise_Moisture.push(
-              axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
-            );
-            checkboxPromise_Moisture.push(
-              axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
-            );
-            checkboxPromise_Moisture.push(
-              axios.get(`${apiUrl}/api/data/all/moisture/3?groupId=${groupId}`)
-            );
-          }
-          if (dataset_lux_Chart2Checked) {
-            checkboxPromise_Lux.push(
-              axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
-            );
-          }
+        if (dataset_temperature_Chart1Checked) {
+          checkboxPromise_Temperature.push(
+            axios.get(
+              `${apiUrl}/api/data/all/temperature?groupId=${groupId}&count=${count_chart_1}`
+            )
+          );
         }
+        if (dataset_humidity_Chart1Checked) {
+          checkboxPromise_Humidity.push(
+            axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
+          );
+        }
+        if (dataset_moisture_Chart1Checked) {
+          checkboxPromise_Moisture.push(
+            axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
+          );
+          checkboxPromise_Moisture.push(
+            axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
+          );
+          checkboxPromise_Moisture.push(
+            axios.get(`${apiUrl}/api/data/all/moisture/3?groupId=${groupId}`)
+          );
+        }
+        if (dataset_lux_Chart1Checked) {
+          checkboxPromise_Lux.push(
+            axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
+          );
+        }
+        const response_Moisture = await Promise.all(checkboxPromise_Moisture);
+        const response_Humdidity = await Promise.all(checkboxPromise_Humidity);
+        const response_Temperature = await Promise.all(
+          checkboxPromise_Temperature
+        );
+        const response_Lux = await Promise.all(checkboxPromise_Lux);
 
-        if (chart4Checked) {
-          if (dataset_temperature_Chart4Checked) {
-            checkboxPromise_Temperature.push(
-              axios.get(`${apiUrl}/api/data/all/temperature?groupId=${groupId}`)
-            );
-          }
-          if (dataset_humidity_Chart4Checked) {
-            checkboxPromise_Humidity.push(
-              axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
-            );
-          }
-          if (dataset_moisture_Chart4Checked) {
-            checkboxPromise_Moisture.push(
-              axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
-            );
-            checkboxPromise_Moisture.push(
-              axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
-            );
-            checkboxPromise_Moisture.push(
-              axios.get(`${apiUrl}/api/data/all/moisture/3?groupId=${groupId}`)
-            );
-          }
-          if (dataset_lux_Chart4Checked) {
-            checkboxPromise_Lux.push(
-              axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
-            );
-          }
-        }
         if (chart1Checked) {
           if (dataset_temperature_Chart1Checked) {
-            checkboxPromise_Temperature.push(
-              axios.get(`${apiUrl}/api/data/all/temperature?groupId=${groupId}`)
-            );
+            const temperatureDataArr = [];
+            let countertemperature = 0;
+            for (let thing in response_Temperature[0].data) {
+              if (countertemperature < 10000) {
+                temperatureDataArr.push({
+                  time: response_Temperature[0].data[thing].time,
+                  value: response_Temperature[0].data[thing].value,
+                });
+                countertemperature++;
+              }
+            }
+            const reversedtemperatureDataArr = temperatureDataArr.reverse();
+
+            if (isMounted) {
+              settempchardata(reversedtemperatureDataArr);
+            }
           }
+          //humidity data
           if (dataset_humidity_Chart1Checked) {
-            checkboxPromise_Humidity.push(
-              axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
-            );
+            const humidityDataArr = [];
+            let counterhumidity = 0;
+            for (let thing in response_Humdidity[0].data) {
+              if (counterhumidity < 100) {
+                humidityDataArr.push({
+                  time: response_Humdidity[0].data[thing].time,
+                  value: response_Humdidity[0].data[thing].value,
+                });
+                counterhumidity++;
+              }
+            }
+            const reversedhumidityDataArr = humidityDataArr.reverse();
+
+            if (isMounted) {
+              sethumchardata(reversedhumidityDataArr);
+            }
           }
+          //moisture data
           if (dataset_moisture_Chart1Checked) {
-            checkboxPromise_Moisture.push(
-              axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
-            );
-            checkboxPromise_Moisture.push(
-              axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
-            );
-            checkboxPromise_Moisture.push(
-              axios.get(`${apiUrl}/api/data/all/moisture/3?groupId=${groupId}`)
-            );
+            const moisture1DataArr = [];
+            let countermoisture1 = 0;
+            for (let thing in response_Moisture[0].data) {
+              if (countermoisture1 < 100) {
+                moisture1DataArr.push({
+                  time: response_Moisture[0].data[thing].time,
+                  value: response_Moisture[0].data[thing].value,
+                });
+                countermoisture1++;
+              }
+            }
+            const reversedmoisture1DataArr = moisture1DataArr.reverse();
+
+            const moisture2DataArr = [];
+            let countermoisture2 = 0;
+            for (let thing in response_Moisture[0].data) {
+              if (countermoisture2 < 100) {
+                moisture2DataArr.push({
+                  time: response_Moisture[0].data[thing].time,
+                  value: response_Moisture[0].data[thing].value,
+                });
+                countermoisture2++;
+              }
+            }
+            const reversedmoisture2DataArr = moisture2DataArr.reverse();
+
+            const moisture3DataArr = [];
+            let countermoisture3 = 0;
+            for (let thing in response_Moisture[0].data) {
+              if (countermoisture3 < 100) {
+                moisture3DataArr.push({
+                  time: response_Moisture[0].data[thing].time,
+                  value: response_Moisture[0].data[thing].value,
+                });
+                countermoisture3++;
+              }
+            }
+            const reversedmoisture3DataArr = moisture3DataArr.reverse();
+
+            if (isMounted) {
+              setmoi1chardata(reversedmoisture1DataArr);
+              setmoi2chardata(reversedmoisture2DataArr);
+              setmoi3chardata(reversedmoisture3DataArr);
+            }
           }
           if (dataset_lux_Chart1Checked) {
-            checkboxPromise_Lux.push(
-              axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
-            );
+            const luxDataArr = [];
+            let counterlux = 0;
+            for (let thing in response_Lux[0].data) {
+              if (counterlux < 100) {
+                luxDataArr.push({
+                  time: response_Lux[0].data[thing].time,
+                  value: response_Lux[0].data[thing].value,
+                });
+                counterlux++;
+              }
+            }
+            const reversedluxDataArr = luxDataArr.reverse();
+
+            if (isMounted) {
+              setluxchardata(reversedluxDataArr);
+            }
           }
         }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        if (isMounted) {
+          const elapsedTime = Date.now() - loadingTime_1;
+          if (elapsedTime > 100) {
+            setIsLoading_chart_1(true);
+          }
+        }
+      }
+    };
+    const fetchdata_chart_2 = async () => {
+      try {
+        setIsLoading_chart_2(true);
+        const checkboxPromise_Lux = [];
+        const checkboxPromise_Humidity = [];
+        const checkboxPromise_Temperature = [];
+        const checkboxPromise_Moisture = [];
+        if (dataset_temperature_Chart2Checked) {
+          checkboxPromise_Temperature.push(
+            axios.get(`${apiUrl}/api/data/all/temperature?groupId=${groupId}`)
+          );
+        }
+        if (dataset_humidity_Chart2Checked) {
+          checkboxPromise_Humidity.push(
+            axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
+          );
+        }
+        if (dataset_moisture_Chart2Checked) {
+          checkboxPromise_Moisture.push(
+            axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
+          );
+          checkboxPromise_Moisture.push(
+            axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
+          );
+          checkboxPromise_Moisture.push(
+            axios.get(`${apiUrl}/api/data/all/moisture/3?groupId=${groupId}`)
+          );
+        }
+        if (dataset_lux_Chart2Checked) {
+          checkboxPromise_Lux.push(
+            axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
+          );
+        }
+        const response_Moisture = await Promise.all(checkboxPromise_Moisture);
+        const response_Humdidity = await Promise.all(checkboxPromise_Humidity);
+        const response_Temperature = await Promise.all(
+          checkboxPromise_Temperature
+        );
+        const response_Lux = await Promise.all(checkboxPromise_Lux);
+        if (dataset_temperature_Chart2Checked) {
+          const temperatureDataArr = [];
+          let countertemperature = 0;
+          for (let thing in response_Temperature[0].data) {
+            if (countertemperature < 100) {
+              temperatureDataArr.push({
+                time: response_Temperature[0].data[thing].time,
+                value: response_Temperature[0].data[thing].value,
+              });
+              countertemperature++;
+            }
+          }
+          const reversedtemperatureDataArr = temperatureDataArr.reverse();
 
-        if (chart3Checked) {
-          if (dataset_temperature_Chart3Checked) {
-            checkboxPromise_Temperature.push(
-              axios.get(`${apiUrl}/api/data/all/temperature?groupId=${groupId}`)
-            );
+          if (isMounted) {
+            settempchardata(reversedtemperatureDataArr);
           }
-          if (dataset_humidity_Chart3Checked) {
-            checkboxPromise_Humidity.push(
-              axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
-            );
+        }
+        //humidity data
+        if (dataset_humidity_Chart2Checked) {
+          const humidityDataArr = [];
+          let counterhumidity = 0;
+          for (let thing in response_Humdidity[0].data) {
+            if (counterhumidity < 100) {
+              humidityDataArr.push({
+                time: response_Humdidity[0].data[thing].time,
+                value: response_Humdidity[0].data[thing].value,
+              });
+              counterhumidity++;
+            }
           }
-          if (dataset_moisture_Chart3Checked) {
-            checkboxPromise_Moisture.push(
-              axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
-            );
-            checkboxPromise_Moisture.push(
-              axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
-            );
-            checkboxPromise_Moisture.push(
-              axios.get(`${apiUrl}/api/data/all/moisture/3?groupId=${groupId}`)
-            );
+          const reversedhumidityDataArr = humidityDataArr.reverse();
+
+          if (isMounted) {
+            sethumchardata(reversedhumidityDataArr);
           }
-          if (dataset_lux_Chart3Checked) {
-            checkboxPromise_Lux.push(
-              axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
-            );
+        }
+        //moisture data
+        if (dataset_moisture_Chart2Checked) {
+          const moisture1DataArr = [];
+          let countermoisture1 = 0;
+          for (let thing in response_Moisture[0].data) {
+            if (countermoisture1 < 100) {
+              moisture1DataArr.push({
+                time: response_Moisture[0].data[thing].time,
+                value: response_Moisture[0].data[thing].value,
+              });
+              countermoisture1++;
+            }
           }
+          const reversedmoisture1DataArr = moisture1DataArr.reverse();
+
+          const moisture2DataArr = [];
+          let countermoisture2 = 0;
+          for (let thing in response_Moisture[0].data) {
+            if (countermoisture2 < 100) {
+              moisture2DataArr.push({
+                time: response_Moisture[0].data[thing].time,
+                value: response_Moisture[0].data[thing].value,
+              });
+              countermoisture2++;
+            }
+          }
+          const reversedmoisture2DataArr = moisture2DataArr.reverse();
+
+          const moisture3DataArr = [];
+          let countermoisture3 = 0;
+          for (let thing in response_Moisture[0].data) {
+            if (countermoisture3 < 100) {
+              moisture3DataArr.push({
+                time: response_Moisture[0].data[thing].time,
+                value: response_Moisture[0].data[thing].value,
+              });
+              countermoisture3++;
+            }
+          }
+          const reversedmoisture3DataArr = moisture3DataArr.reverse();
+
+          if (isMounted) {
+            setmoi1chardata(reversedmoisture1DataArr);
+            setmoi2chardata(reversedmoisture2DataArr);
+            setmoi3chardata(reversedmoisture3DataArr);
+          }
+        }
+        if (dataset_lux_Chart2Checked) {
+          const luxDataArr = [];
+          let counterlux = 0;
+          for (let thing in response_Lux[0].data) {
+            if (counterlux < 100) {
+              luxDataArr.push({
+                time: response_Lux[0].data[thing].time,
+                value: response_Lux[0].data[thing].value,
+              });
+              counterlux++;
+            }
+          }
+          const reversedluxDataArr = luxDataArr.reverse();
+
+          if (isMounted) {
+            setluxchardata(reversedluxDataArr);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        if (isMounted) {
+          setIsLoading_chart_2(false);
+        }
+      }
+    };
+    const fetchdata_chart_3 = async () => {
+      try {
+        setIsLoading_chart_3(true);
+        const checkboxPromise_Lux = [];
+        const checkboxPromise_Humidity = [];
+        const checkboxPromise_Temperature = [];
+        const checkboxPromise_Moisture = [];
+        if (dataset_temperature_Chart3Checked) {
+          checkboxPromise_Temperature.push(
+            axios.get(`${apiUrl}/api/data/all/temperature?groupId=${groupId}`)
+          );
+        }
+        if (dataset_humidity_Chart3Checked) {
+          checkboxPromise_Humidity.push(
+            axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
+          );
+        }
+        if (dataset_moisture_Chart3Checked) {
+          checkboxPromise_Moisture.push(
+            axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
+          );
+          checkboxPromise_Moisture.push(
+            axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
+          );
+          checkboxPromise_Moisture.push(
+            axios.get(`${apiUrl}/api/data/all/moisture/3?groupId=${groupId}`)
+          );
+        }
+        if (dataset_lux_Chart3Checked) {
+          checkboxPromise_Lux.push(
+            axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
+          );
+        }
+        const response_Moisture = await Promise.all(checkboxPromise_Moisture);
+        const response_Humdidity = await Promise.all(checkboxPromise_Humidity);
+        const response_Temperature = await Promise.all(
+          checkboxPromise_Temperature
+        );
+        const response_Lux = await Promise.all(checkboxPromise_Lux);
+        if (dataset_temperature_Chart3Checked) {
+          const temperatureDataArr = [];
+          let countertemperature = 0;
+          for (let thing in response_Temperature[0].data) {
+            if (countertemperature < 100) {
+              temperatureDataArr.push({
+                time: response_Temperature[0].data[thing].time,
+                value: response_Temperature[0].data[thing].value,
+              });
+              countertemperature++;
+            }
+          }
+          const reversedtemperatureDataArr = temperatureDataArr.reverse();
+
+          if (isMounted) {
+            settempchardata(reversedtemperatureDataArr);
+          }
+        }
+        //humidity data
+        if (dataset_humidity_Chart3Checked) {
+          const humidityDataArr = [];
+          let counterhumidity = 0;
+          for (let thing in response_Humdidity[0].data) {
+            if (counterhumidity < 100) {
+              humidityDataArr.push({
+                time: response_Humdidity[0].data[thing].time,
+                value: response_Humdidity[0].data[thing].value,
+              });
+              counterhumidity++;
+            }
+          }
+          const reversedhumidityDataArr = humidityDataArr.reverse();
+
+          if (isMounted) {
+            sethumchardata(reversedhumidityDataArr);
+          }
+        }
+        //moisture data
+        if (dataset_moisture_Chart3Checked) {
+          const moisture1DataArr = [];
+          let countermoisture1 = 0;
+          for (let thing in response_Moisture[0].data) {
+            if (countermoisture1 < 100) {
+              moisture1DataArr.push({
+                time: response_Moisture[0].data[thing].time,
+                value: response_Moisture[0].data[thing].value,
+              });
+              countermoisture1++;
+            }
+          }
+          const reversedmoisture1DataArr = moisture1DataArr.reverse();
+
+          const moisture2DataArr = [];
+          let countermoisture2 = 0;
+          for (let thing in response_Moisture[0].data) {
+            if (countermoisture2 < 100) {
+              moisture2DataArr.push({
+                time: response_Moisture[0].data[thing].time,
+                value: response_Moisture[0].data[thing].value,
+              });
+              countermoisture2++;
+            }
+          }
+          const reversedmoisture2DataArr = moisture2DataArr.reverse();
+
+          const moisture3DataArr = [];
+          let countermoisture3 = 0;
+          for (let thing in response_Moisture[0].data) {
+            if (countermoisture3 < 100) {
+              moisture3DataArr.push({
+                time: response_Moisture[0].data[thing].time,
+                value: response_Moisture[0].data[thing].value,
+              });
+              countermoisture3++;
+            }
+          }
+          const reversedmoisture3DataArr = moisture3DataArr.reverse();
+
+          if (isMounted) {
+            setmoi1chardata(reversedmoisture1DataArr);
+            setmoi2chardata(reversedmoisture2DataArr);
+            setmoi3chardata(reversedmoisture3DataArr);
+          }
+        }
+        if (dataset_lux_Chart3Checked) {
+          const luxDataArr = [];
+          let counterlux = 0;
+          for (let thing in response_Lux[0].data) {
+            if (counterlux < 100) {
+              luxDataArr.push({
+                time: response_Lux[0].data[thing].time,
+                value: response_Lux[0].data[thing].value,
+              });
+              counterlux++;
+            }
+          }
+          const reversedluxDataArr = luxDataArr.reverse();
+
+          if (isMounted) {
+            setluxchardata(reversedluxDataArr);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        if (isMounted) {
+          setIsLoading_chart_3(false);
+        }
+      }
+    };
+    const fetchdata_chart_4 = async () => {
+      try {
+        setIsLoadingchart_4(true);
+
+        const checkboxPromise_Lux = [];
+        const checkboxPromise_Humidity = [];
+        const checkboxPromise_Temperature = [];
+        const checkboxPromise_Moisture = [];
+
+        if (dataset_temperature_Chart4Checked) {
+          checkboxPromise_Temperature.push(
+            axios.get(`${apiUrl}/api/data/all/temperature?groupId=${groupId}`)
+          );
+        }
+        if (dataset_humidity_Chart4Checked) {
+          checkboxPromise_Humidity.push(
+            axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
+          );
+        }
+        if (dataset_moisture_Chart4Checked) {
+          checkboxPromise_Moisture.push(
+            axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
+          );
+          checkboxPromise_Moisture.push(
+            axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
+          );
+          checkboxPromise_Moisture.push(
+            axios.get(`${apiUrl}/api/data/all/moisture/3?groupId=${groupId}`)
+          );
+        }
+        if (dataset_lux_Chart4Checked) {
+          checkboxPromise_Lux.push(
+            axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
+          );
         }
 
         const response_Moisture = await Promise.all(checkboxPromise_Moisture);
@@ -345,424 +808,106 @@ const History = () => {
         const response_Lux = await Promise.all(checkboxPromise_Lux);
         // Process the responses and update the respective chart data statess
 
-        if (chart2Checked) {
-          if (dataset_temperature_Chart2Checked) {
-            const temperatureDataArr = [];
-            let countertemperature = 0;
-            for (let thing in response_Temperature[0].data) {
-              if (countertemperature < 100) {
-                temperatureDataArr.push({
-                  time: response_Temperature[0].data[thing].time,
-                  value: response_Temperature[0].data[thing].value,
-                });
-                countertemperature++;
-              }
-            }
-            const reversedtemperatureDataArr = temperatureDataArr.reverse();
-
-            if (isMounted) {
-              settempchardata(reversedtemperatureDataArr);
+        if (dataset_temperature_Chart4Checked) {
+          const temperatureDataArr = [];
+          let countertemperature = 0;
+          for (let thing in response_Temperature[0].data) {
+            if (countertemperature < 100) {
+              temperatureDataArr.push({
+                time: response_Temperature[0].data[thing].time,
+                value: response_Temperature[0].data[thing].value,
+              });
+              countertemperature++;
             }
           }
-          //humidity data
-          if (dataset_humidity_Chart2Checked) {
-            const humidityDataArr = [];
-            let counterhumidity = 0;
-            for (let thing in response_Humdidity[0].data) {
-              if (counterhumidity < 100) {
-                humidityDataArr.push({
-                  time: response_Humdidity[0].data[thing].time,
-                  value: response_Humdidity[0].data[thing].value,
-                });
-                counterhumidity++;
-              }
-            }
-            const reversedhumidityDataArr = humidityDataArr.reverse();
+          const reversedtemperatureDataArr = temperatureDataArr.reverse();
 
-            if (isMounted) {
-              sethumchardata(reversedhumidityDataArr);
-            }
-          }
-          //moisture data
-          if (dataset_moisture_Chart2Checked) {
-            const moisture1DataArr = [];
-            let countermoisture1 = 0;
-            for (let thing in response_Moisture[0].data) {
-              if (countermoisture1 < 100) {
-                moisture1DataArr.push({
-                  time: response_Moisture[0].data[thing].time,
-                  value: response_Moisture[0].data[thing].value,
-                });
-                countermoisture1++;
-              }
-            }
-            const reversedmoisture1DataArr = moisture1DataArr.reverse();
-
-            const moisture2DataArr = [];
-            let countermoisture2 = 0;
-            for (let thing in response_Moisture[0].data) {
-              if (countermoisture2 < 100) {
-                moisture2DataArr.push({
-                  time: response_Moisture[0].data[thing].time,
-                  value: response_Moisture[0].data[thing].value,
-                });
-                countermoisture2++;
-              }
-            }
-            const reversedmoisture2DataArr = moisture2DataArr.reverse();
-
-            const moisture3DataArr = [];
-            let countermoisture3 = 0;
-            for (let thing in response_Moisture[0].data) {
-              if (countermoisture3 < 100) {
-                moisture3DataArr.push({
-                  time: response_Moisture[0].data[thing].time,
-                  value: response_Moisture[0].data[thing].value,
-                });
-                countermoisture3++;
-              }
-            }
-            const reversedmoisture3DataArr = moisture3DataArr.reverse();
-
-            if (isMounted) {
-              setmoi1chardata(reversedmoisture1DataArr);
-              setmoi2chardata(reversedmoisture2DataArr);
-              setmoi3chardata(reversedmoisture3DataArr);
-            }
-          }
-          if (dataset_lux_Chart2Checked) {
-            const luxDataArr = [];
-            let counterlux = 0;
-            for (let thing in response_Lux[0].data) {
-              if (counterlux < 100) {
-                luxDataArr.push({
-                  time: response_Lux[0].data[thing].time,
-                  value: response_Lux[0].data[thing].value,
-                });
-                counterlux++;
-              }
-            }
-            const reversedluxDataArr = luxDataArr.reverse();
-
-            if (isMounted) {
-              setluxchardata(reversedluxDataArr);
-            }
+          if (isMounted) {
+            settempchardata(reversedtemperatureDataArr);
           }
         }
-
-        if (chart4Checked) {
-          if (dataset_temperature_Chart4Checked) {
-            const temperatureDataArr = [];
-            let countertemperature = 0;
-            for (let thing in response_Temperature[0].data) {
-              if (countertemperature < 100) {
-                temperatureDataArr.push({
-                  time: response_Temperature[0].data[thing].time,
-                  value: response_Temperature[0].data[thing].value,
-                });
-                countertemperature++;
-              }
-            }
-            const reversedtemperatureDataArr = temperatureDataArr.reverse();
-
-            if (isMounted) {
-              settempchardata(reversedtemperatureDataArr);
+        //humidity data
+        if (dataset_humidity_Chart4Checked) {
+          const humidityDataArr = [];
+          let counterhumidity = 0;
+          for (let thing in response_Humdidity[0].data) {
+            if (counterhumidity < 100) {
+              humidityDataArr.push({
+                time: response_Humdidity[0].data[thing].time,
+                value: response_Humdidity[0].data[thing].value,
+              });
+              counterhumidity++;
             }
           }
-          //humidity data
-          if (dataset_humidity_Chart4Checked) {
-            const humidityDataArr = [];
-            let counterhumidity = 0;
-            for (let thing in response_Humdidity[0].data) {
-              if (counterhumidity < 100) {
-                humidityDataArr.push({
-                  time: response_Humdidity[0].data[thing].time,
-                  value: response_Humdidity[0].data[thing].value,
-                });
-                counterhumidity++;
-              }
-            }
-            const reversedhumidityDataArr = humidityDataArr.reverse();
+          const reversedhumidityDataArr = humidityDataArr.reverse();
 
-            if (isMounted) {
-              sethumchardata(reversedhumidityDataArr);
-            }
-          }
-          //moisture data
-          if (dataset_moisture_Chart4Checked) {
-            const moisture1DataArr = [];
-            let countermoisture1 = 0;
-            for (let thing in response_Moisture[0].data) {
-              if (countermoisture1 < 100) {
-                moisture1DataArr.push({
-                  time: response_Moisture[0].data[thing].time,
-                  value: response_Moisture[0].data[thing].value,
-                });
-                countermoisture1++;
-              }
-            }
-            const reversedmoisture1DataArr = moisture1DataArr.reverse();
-
-            const moisture2DataArr = [];
-            let countermoisture2 = 0;
-            for (let thing in response_Moisture[0].data) {
-              if (countermoisture2 < 100) {
-                moisture2DataArr.push({
-                  time: response_Moisture[0].data[thing].time,
-                  value: response_Moisture[0].data[thing].value,
-                });
-                countermoisture2++;
-              }
-            }
-            const reversedmoisture2DataArr = moisture2DataArr.reverse();
-
-            const moisture3DataArr = [];
-            let countermoisture3 = 0;
-            for (let thing in response_Moisture[0].data) {
-              if (countermoisture3 < 100) {
-                moisture3DataArr.push({
-                  time: response_Moisture[0].data[thing].time,
-                  value: response_Moisture[0].data[thing].value,
-                });
-                countermoisture3++;
-              }
-            }
-            const reversedmoisture3DataArr = moisture3DataArr.reverse();
-
-            if (isMounted) {
-              setmoi1chardata(reversedmoisture1DataArr);
-              setmoi2chardata(reversedmoisture2DataArr);
-              setmoi3chardata(reversedmoisture3DataArr);
-            }
-          }
-          if (dataset_lux_Chart4Checked) {
-            const luxDataArr = [];
-            let counterlux = 0;
-            for (let thing in response_Lux[0].data) {
-              if (counterlux < 100) {
-                luxDataArr.push({
-                  time: response_Lux[0].data[thing].time,
-                  value: response_Lux[0].data[thing].value,
-                });
-                counterlux++;
-              }
-            }
-            const reversedluxDataArr = luxDataArr.reverse();
-
-            if (isMounted) {
-              setluxchardata(reversedluxDataArr);
-            }
+          if (isMounted) {
+            sethumchardata(reversedhumidityDataArr);
           }
         }
-
-        if (chart1Checked) {
-          if (dataset_temperature_Chart1Checked) {
-            const temperatureDataArr = [];
-            let countertemperature = 0;
-            for (let thing in response_Temperature[0].data) {
-              if (countertemperature < 100) {
-                temperatureDataArr.push({
-                  time: response_Temperature[0].data[thing].time,
-                  value: response_Temperature[0].data[thing].value,
-                });
-                countertemperature++;
-              }
-            }
-            const reversedtemperatureDataArr = temperatureDataArr.reverse();
-
-            if (isMounted) {
-              settempchardata(reversedtemperatureDataArr);
+        //moisture data
+        if (dataset_moisture_Chart4Checked) {
+          const moisture1DataArr = [];
+          let countermoisture1 = 0;
+          for (let thing in response_Moisture[0].data) {
+            if (countermoisture1 < 100) {
+              moisture1DataArr.push({
+                time: response_Moisture[0].data[thing].time,
+                value: response_Moisture[0].data[thing].value,
+              });
+              countermoisture1++;
             }
           }
-          //humidity data
-          if (dataset_humidity_Chart1Checked) {
-            const humidityDataArr = [];
-            let counterhumidity = 0;
-            for (let thing in response_Humdidity[0].data) {
-              if (counterhumidity < 100) {
-                humidityDataArr.push({
-                  time: response_Humdidity[0].data[thing].time,
-                  value: response_Humdidity[0].data[thing].value,
-                });
-                counterhumidity++;
-              }
-            }
-            const reversedhumidityDataArr = humidityDataArr.reverse();
+          const reversedmoisture1DataArr = moisture1DataArr.reverse();
 
-            if (isMounted) {
-              sethumchardata(reversedhumidityDataArr);
+          const moisture2DataArr = [];
+          let countermoisture2 = 0;
+          for (let thing in response_Moisture[0].data) {
+            if (countermoisture2 < 100) {
+              moisture2DataArr.push({
+                time: response_Moisture[0].data[thing].time,
+                value: response_Moisture[0].data[thing].value,
+              });
+              countermoisture2++;
             }
           }
-          //moisture data
-          if (dataset_moisture_Chart1Checked) {
-            const moisture1DataArr = [];
-            let countermoisture1 = 0;
-            for (let thing in response_Moisture[0].data) {
-              if (countermoisture1 < 100) {
-                moisture1DataArr.push({
-                  time: response_Moisture[0].data[thing].time,
-                  value: response_Moisture[0].data[thing].value,
-                });
-                countermoisture1++;
-              }
-            }
-            const reversedmoisture1DataArr = moisture1DataArr.reverse();
+          const reversedmoisture2DataArr = moisture2DataArr.reverse();
 
-            const moisture2DataArr = [];
-            let countermoisture2 = 0;
-            for (let thing in response_Moisture[0].data) {
-              if (countermoisture2 < 100) {
-                moisture2DataArr.push({
-                  time: response_Moisture[0].data[thing].time,
-                  value: response_Moisture[0].data[thing].value,
-                });
-                countermoisture2++;
-              }
-            }
-            const reversedmoisture2DataArr = moisture2DataArr.reverse();
-
-            const moisture3DataArr = [];
-            let countermoisture3 = 0;
-            for (let thing in response_Moisture[0].data) {
-              if (countermoisture3 < 100) {
-                moisture3DataArr.push({
-                  time: response_Moisture[0].data[thing].time,
-                  value: response_Moisture[0].data[thing].value,
-                });
-                countermoisture3++;
-              }
-            }
-            const reversedmoisture3DataArr = moisture3DataArr.reverse();
-
-            if (isMounted) {
-              setmoi1chardata(reversedmoisture1DataArr);
-              setmoi2chardata(reversedmoisture2DataArr);
-              setmoi3chardata(reversedmoisture3DataArr);
+          const moisture3DataArr = [];
+          let countermoisture3 = 0;
+          for (let thing in response_Moisture[0].data) {
+            if (countermoisture3 < 100) {
+              moisture3DataArr.push({
+                time: response_Moisture[0].data[thing].time,
+                value: response_Moisture[0].data[thing].value,
+              });
+              countermoisture3++;
             }
           }
-          if (dataset_lux_Chart1Checked) {
-            const luxDataArr = [];
-            let counterlux = 0;
-            for (let thing in response_Lux[0].data) {
-              if (counterlux < 100) {
-                luxDataArr.push({
-                  time: response_Lux[0].data[thing].time,
-                  value: response_Lux[0].data[thing].value,
-                });
-                counterlux++;
-              }
-            }
-            const reversedluxDataArr = luxDataArr.reverse();
+          const reversedmoisture3DataArr = moisture3DataArr.reverse();
 
-            if (isMounted) {
-              setluxchardata(reversedluxDataArr);
-            }
+          if (isMounted) {
+            setmoi1chardata(reversedmoisture1DataArr);
+            setmoi2chardata(reversedmoisture2DataArr);
+            setmoi3chardata(reversedmoisture3DataArr);
           }
         }
-
-        //chart3
-        if (chart3Checked) {
-          if (dataset_temperature_Chart3Checked) {
-            const temperatureDataArr = [];
-            let countertemperature = 0;
-            for (let thing in response_Temperature[0].data) {
-              if (countertemperature < 100) {
-                temperatureDataArr.push({
-                  time: response_Temperature[0].data[thing].time,
-                  value: response_Temperature[0].data[thing].value,
-                });
-                countertemperature++;
-              }
-            }
-            const reversedtemperatureDataArr = temperatureDataArr.reverse();
-
-            if (isMounted) {
-              settempchardata(reversedtemperatureDataArr);
+        if (dataset_lux_Chart4Checked) {
+          const luxDataArr = [];
+          let counterlux = 0;
+          for (let thing in response_Lux[0].data) {
+            if (counterlux < 100) {
+              luxDataArr.push({
+                time: response_Lux[0].data[thing].time,
+                value: response_Lux[0].data[thing].value,
+              });
+              counterlux++;
             }
           }
-          //humidity data
-          if (dataset_humidity_Chart3Checked) {
-            const humidityDataArr = [];
-            let counterhumidity = 0;
-            for (let thing in response_Humdidity[0].data) {
-              if (counterhumidity < 100) {
-                humidityDataArr.push({
-                  time: response_Humdidity[0].data[thing].time,
-                  value: response_Humdidity[0].data[thing].value,
-                });
-                counterhumidity++;
-              }
-            }
-            const reversedhumidityDataArr = humidityDataArr.reverse();
+          const reversedluxDataArr = luxDataArr.reverse();
 
-            if (isMounted) {
-              sethumchardata(reversedhumidityDataArr);
-            }
-          }
-          //moisture data
-          if (dataset_moisture_Chart3Checked) {
-            const moisture1DataArr = [];
-            let countermoisture1 = 0;
-            for (let thing in response_Moisture[0].data) {
-              if (countermoisture1 < 100) {
-                moisture1DataArr.push({
-                  time: response_Moisture[0].data[thing].time,
-                  value: response_Moisture[0].data[thing].value,
-                });
-                countermoisture1++;
-              }
-            }
-            const reversedmoisture1DataArr = moisture1DataArr.reverse();
-
-            const moisture2DataArr = [];
-            let countermoisture2 = 0;
-            for (let thing in response_Moisture[0].data) {
-              if (countermoisture2 < 100) {
-                moisture2DataArr.push({
-                  time: response_Moisture[0].data[thing].time,
-                  value: response_Moisture[0].data[thing].value,
-                });
-                countermoisture2++;
-              }
-            }
-            const reversedmoisture2DataArr = moisture2DataArr.reverse();
-
-            const moisture3DataArr = [];
-            let countermoisture3 = 0;
-            for (let thing in response_Moisture[0].data) {
-              if (countermoisture3 < 100) {
-                moisture3DataArr.push({
-                  time: response_Moisture[0].data[thing].time,
-                  value: response_Moisture[0].data[thing].value,
-                });
-                countermoisture3++;
-              }
-            }
-            const reversedmoisture3DataArr = moisture3DataArr.reverse();
-
-            if (isMounted) {
-              setmoi1chardata(reversedmoisture1DataArr);
-              setmoi2chardata(reversedmoisture2DataArr);
-              setmoi3chardata(reversedmoisture3DataArr);
-            }
-          }
-          if (dataset_lux_Chart3Checked) {
-            const luxDataArr = [];
-            let counterlux = 0;
-            for (let thing in response_Lux[0].data) {
-              if (counterlux < 100) {
-                luxDataArr.push({
-                  time: response_Lux[0].data[thing].time,
-                  value: response_Lux[0].data[thing].value,
-                });
-                counterlux++;
-              }
-            }
-            const reversedluxDataArr = luxDataArr.reverse();
-
-            if (isMounted) {
-              setluxchardata(reversedluxDataArr);
-            }
+          if (isMounted) {
+            setluxchardata(reversedluxDataArr);
           }
         }
 
@@ -771,24 +916,54 @@ const History = () => {
         console.error("Error fetching data:", error);
       } finally {
         if (isMounted) {
-          setIsLoading(false);
+          setIsLoadingchart_4(false);
         }
       }
     };
 
-    fetchData();
+    if (chart1Checked) {
+      fetchdata_chart_1();
+    }
+    if (chart2Checked) {
+      fetchdata_chart_2();
+    }
+    if (chart3Checked) {
+      fetchdata_chart_3();
+    }
+    if (chart1Checked) {
+      fetchdata_chart_4();
+    }
 
-    const interval = setInterval(fetchData, 15000);
+    const interval_chart_1 = setInterval(
+      fetchdata_chart_1,
+      update_interval_value_chart_1
+    );
 
+    const interval_chart_2 = setInterval(
+      fetchdata_chart_2,
+      update_interval_value_chart_2
+    );
+    const interval_chart_3 = setInterval(
+      fetchdata_chart_3,
+      update_interval_value_chart_3
+    );
+    const interval_chart_4 = setInterval(
+      fetchdata_chart_4,
+      update_interval_value_chart_4
+    );
     return () => {
       isMounted = false;
-      clearInterval(interval);
+      clearInterval(interval_chart_1);
+      clearInterval(interval_chart_2);
+      clearInterval(interval_chart_3);
+      clearInterval(interval_chart_4);
     };
   }, [
-    chart2Checked,
-    chart4Checked,
     chart1Checked,
+    chart2Checked,
     chart3Checked,
+    chart4Checked,
+
     dataset_temperature_Chart1Checked,
     dataset_humidity_Chart1Checked,
     dataset_moisture_Chart1Checked,
@@ -808,6 +983,9 @@ const History = () => {
     dataset_humidity_Chart4Checked,
     dataset_moisture_Chart4Checked,
     dataset_lux_Chart4Checked,
+
+    update_interval_value_chart_1,
+    update_data_interval_value_chart_1,
   ]);
 
   const handleChangeChart1 = (event) => {
@@ -887,7 +1065,7 @@ const History = () => {
         <div>
           <h2 className={styles.heading}>Chart 1</h2>
           <div className={styles.graph}>
-            {!isLoading ? (
+            {isLoading_chart_1 ? (
               <div>
                 <Line
                   data={{
@@ -928,6 +1106,21 @@ const History = () => {
                   options={{
                     animation: false,
                     pointRadius: 0,
+                    interaction: {
+                      intersect: false,
+                      mode: "index",
+                    },
+                    tooltips: {
+                      enabled: true, // enable tooltips
+                      callbacks: {
+                        // customize tooltip content
+                        label: (context) => {
+                          const datasetLabel = context.dataset.label || "";
+                          const value = context.parsed.y;
+                          return `${datasetLabel}: ${value}`;
+                        },
+                      },
+                    },
                     scales: {
                       x: {
                         type: "time",
@@ -962,22 +1155,25 @@ const History = () => {
                     change type
                   </button>
                   <button
-                    onClick={max_count_values_1}
+                    onClick={openCountPopup_1}
                     className={styles.edit_popup}
                   >
                     max count
                   </button>
-                  <button onClick={skip_every_1} className={styles.edit_popup}>
-                    skip every
+                  <button
+                    onClick={openDataPopup_1}
+                    className={styles.edit_popup}
+                  >
+                    data interval
                   </button>
                   <button onClick={live_data_1} className={styles.edit_popup}>
                     live data
                   </button>
                   <button
-                    onClick={update_every_1}
+                    onClick={openIntervalPopup_1}
                     className={styles.edit_popup}
                   >
-                    update every
+                    update interval
                   </button>
                 </div>
               </div>
@@ -1000,7 +1196,7 @@ const History = () => {
         <div>
           <h2 className={styles.heading}>Chart 2</h2>
           <div className={styles.graph}>
-            {!isLoading ? (
+            {!isLoading_chart_2 ? (
               <div>
                 <Line
                   data={{
@@ -1073,17 +1269,20 @@ const History = () => {
                   >
                     max count
                   </button>
-                  <button onClick={skip_every_2} className={styles.edit_popup}>
-                    skip every
+                  <button
+                    onClick={data_interval_2}
+                    className={styles.edit_popup}
+                  >
+                    data interval
                   </button>
                   <button onClick={live_data_2} className={styles.edit_popup}>
                     live data
                   </button>
                   <button
-                    onClick={update_every_2}
+                    onClick={openIntervalPopup_2}
                     className={styles.edit_popup}
                   >
-                    update every
+                    update interval
                   </button>
                 </div>
               </div>
@@ -1106,7 +1305,7 @@ const History = () => {
         <div>
           <h2 className={styles.heading}>Chart 3</h2>
           <div className={styles.graph}>
-            {!isLoading ? (
+            {!isLoading_chart_3 ? (
               <div>
                 <Line
                   data={{
@@ -1186,17 +1385,20 @@ const History = () => {
                   >
                     max count
                   </button>
-                  <button onClick={skip_every_3} className={styles.edit_popup}>
-                    skip every
+                  <button
+                    onClick={data_interval_3}
+                    className={styles.edit_popup}
+                  >
+                    data interval
                   </button>
                   <button onClick={live_data_3} className={styles.edit_popup}>
                     live data
                   </button>
                   <button
-                    onClick={update_every_3}
+                    onClick={openIntervalPopup_3}
                     className={styles.edit_popup}
                   >
-                    update every
+                    update interval
                   </button>
                 </div>
               </div>
@@ -1216,7 +1418,7 @@ const History = () => {
         <div>
           <h2 className={styles.heading}>Chart 4 </h2>
           <div className={styles.graph}>
-            {!isLoading ? (
+            {!isLoading_chart_4 ? (
               <div>
                 <Line
                   data={{
@@ -1296,17 +1498,20 @@ const History = () => {
                   >
                     max count
                   </button>
-                  <button onClick={skip_every_4} className={styles.edit_popup}>
-                    skip every
+                  <button
+                    onClick={data_interval_4}
+                    className={styles.edit_popup}
+                  >
+                    data interval
                   </button>
                   <button onClick={live_data_4} className={styles.edit_popup}>
                     live data
                   </button>
                   <button
-                    onClick={update_every_4}
+                    onClick={openIntervalPopup_4}
                     className={styles.edit_popup}
                   >
-                    update every
+                    update interval
                   </button>
                 </div>
               </div>
@@ -1574,6 +1779,128 @@ const History = () => {
                 </div>
                 <button
                   onClick={closeEditPopup_4}
+                  className={styles.edit_popup}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
+          {IsDataPopupOpen_1 && (
+            <div className={styles.popup}>
+              <div className={styles.popupContent}>
+                <h3>Select your data Interval</h3>
+                <label htmlFor="updateInterval_chart_1">Data Interval: </label>
+                <select
+                  id="updateInterval_chart_1"
+                  value={update_interval_value_chart_1}
+                  onChange={handleDataIntervalChange_chart_1}
+                >
+                  <option value={100}>Live</option>
+                  <option value={60000}>1 minutes</option>
+                  <option value={600000}>10 minutes</option>
+                  <option value={900000}>15 minutes</option>
+                  <option value={1800000}>30 minutes</option>
+                  <option value={2700000}>45 minutes</option>
+                  <option value={3600000}>1 hour</option>
+                </select>
+                <div className={styles.checkbox}></div>
+                <button
+                  onClick={closeDataPopup_1}
+                  className={styles.edit_popup}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
+          {IsCountPopupOpen_1 && (
+            <div className={styles.popup}>
+              <div className={styles.popupContent}>
+                <h3>Select your max count of data points</h3>
+                <label htmlFor="updateInterval_chart_1">Data Interval: </label>
+                <select
+                  id="updateInterval_chart_1"
+                  value={count_chart_1}
+                  onChange={handleCountChange_chart_1}
+                >
+                  <option value={100}>100</option>
+                  <option value={500}>500</option>
+                  <option value={1000}>1000</option>
+                  <option value={2000}>2000</option>
+                </select>
+                <div className={styles.checkbox}></div>
+                <button
+                  onClick={closeCountPopup_1}
+                  className={styles.edit_popup}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
+          {IsIntervalPopupOpen_1 && (
+            <div className={styles.popup}>
+              <div className={styles.popupContent}>
+                <h3>Choose your Datasets for Chart 4</h3>
+                <label htmlFor="updateInterval_chart_1">
+                  Update Interval:{" "}
+                </label>
+                <select
+                  id="updateInterval_chart_1"
+                  value={update_interval_value_chart_1}
+                  onChange={handleIntervalChange_chart_1}
+                >
+                  <option value={100}>Live</option>
+                  <option value={5000}>5 seconds</option>
+                  <option value={10000}>10 seconds</option>
+                  <option value={15000}>15 seconds</option>
+                </select>
+                <div className={styles.checkbox}></div>
+                <button
+                  onClick={closeIntervalPopup_1}
+                  className={styles.edit_popup}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
+          {IsIntervalPopupOpen_2 && (
+            <div className={styles.popup}>
+              <div className={styles.popupContent}>
+                <h3>Choose your Datasets for Chart 4</h3>
+                <div className={styles.checkbox}></div>
+                <button
+                  onClick={closeIntervalPopup_2}
+                  className={styles.edit_popup}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
+          {IsIntervalPopupOpen_3 && (
+            <div className={styles.popup}>
+              <div className={styles.popupContent}>
+                <h3>Choose your Datasets for Chart 4</h3>
+                <div className={styles.checkbox}></div>
+                <button
+                  onClick={closeIntervalPopup_3}
+                  className={styles.edit_popup}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
+          {IsIntervalPopupOpen_4 && (
+            <div className={styles.popup}>
+              <div className={styles.popupContent}>
+                <h3>Choose your Datasets for Chart 4</h3>
+                <div className={styles.checkbox}></div>
+                <button
+                  onClick={closeIntervalPopup_4}
                   className={styles.edit_popup}
                 >
                   Close

@@ -118,6 +118,7 @@ router.get("/All/temperature", async (req, res) => {
     const endDate = req.query.endDate;
     const minValue = parseFloat(req.query.minValue);
     const maxValue = parseFloat(req.query.maxValue);
+    const count = parseInt(req.query.count);
 
     if (error)
       return res.status(400).send({ message: error.details[0].message });
@@ -157,7 +158,7 @@ router.get("/All/temperature", async (req, res) => {
       };
     }
 
-    let data = await Data.find(query).sort({ _id: -1 }).limit(1000);
+    let data = await Data.find(query).sort({ _id: -1 }).limit(count);
 
     if (data.length > 0) {
       return res.json(data);
@@ -274,7 +275,7 @@ router.get("/All/Lux", async (req, res) => {
 
     let data = await Data.find(query).sort({ _id: -1 }).limit(1000);
 
-    console.log("Data:", data);
+    //console.log("Data:", data);
 
     if (data.length > 0) {
       return res.json(data);
@@ -294,6 +295,7 @@ router.get("/All/moisture/1", async (req, res) => {
     const endDate = req.query.endDate;
     const minValue = parseFloat(req.query.minValue);
     const maxValue = parseFloat(req.query.maxValue);
+    const count = parseInt(req.query.count);
 
     if (error)
       return res.status(400).send({ message: error.details[0].message });
@@ -333,7 +335,7 @@ router.get("/All/moisture/1", async (req, res) => {
       };
     }
 
-    let data = await Data.find(query).sort({ _id: -1 }).limit(1000);
+    let data = await Data.find(query).sort({ _id: -1 }).limit(count);
 
     if (data.length > 0) {
       return res.json(data);
