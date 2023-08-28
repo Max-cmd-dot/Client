@@ -8,6 +8,8 @@ import Landing from "./components/Landing";
 import Navbar from "./components/Navbar";
 import Logout from "./components/Logout";
 import History from "./components/History";
+import Forecast from "./components/Forecast";
+import Calendar from "./components/Calendar";
 import Password_reset from "./components/Password_reset";
 import Reset_Password from "./components/Reset_Password";
 import Doc from "./components/Doc";
@@ -66,6 +68,12 @@ function App() {
             )}
             {rightabo === "big" && (
               <Route path="/notifications" element={<Notifications />} />
+            )}
+            {rightabo === "big" && (
+              <Route path="/forecast" element={<Forecast />} />
+            )}
+            {rightabo === "big" && (
+              <Route path="/calendar" element={<Calendar />} />
             )}
             <Route path="/imprint" element={<Imprint />}></Route>
             <Route path="/privacy" element={<Privacy />}></Route>

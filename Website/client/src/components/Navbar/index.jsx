@@ -58,7 +58,7 @@ function Navbar() {
       ));
     }
     if (rightabo === "big") {
-      return SidebarData2.map((item, index) => (
+      return SidebarData3.map((item, index) => (
         <li key={index} className={item.cName}>
           <Link to={item.path}>
             {item.icon}

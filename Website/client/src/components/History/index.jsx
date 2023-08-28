@@ -1,5 +1,5 @@
 import styles from "./styles.module.css";
-import { Line, Tooltip } from "react-chartjs-2";
+import { Line, Scatter, Tooltip } from "react-chartjs-2";
 import "chartjs-adapter-moment";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -44,6 +44,7 @@ const History = () => {
   const [chart2Checked, setChart2Checked] = useState(false);
   const [chart3Checked, setChart3Checked] = useState(false);
   const [chart4Checked, setChart4Checked] = useState(false);
+  const [type_chart_1, settype_chart_1] = useState(1);
   const [update_interval_value_chart_1, setupdate_interval_value_chart_1] =
     useState(15000);
   const [update_interval_value_chart_2, setupdate_interval_value_chart_2] =
@@ -84,6 +85,7 @@ const History = () => {
   const [IsEditPopupOpen_1, setIsEditPopupOpen_1] = useState(false);
   const [IsDataPopupOpen_1, setIsDataPopupOpen_1] = useState(false);
   const [IsCountPopupOpen_1, setIsCountPopupOpen_1] = useState(false);
+  const [IsTypePopupOpen_1, setIsTypePopupOpen_1] = useState(false);
   const [IsIntervalPopupOpen_1, setIsIntervalPopupOpen_1] = useState(false);
 
   //chart 2 datasets checks
@@ -166,6 +168,13 @@ const History = () => {
   const closeCountPopup_1 = () => {
     setIsCountPopupOpen_1(false);
   };
+  const openTypePopup_1 = () => {
+    setIsTypePopupOpen_1(true);
+  };
+
+  const closeTypePopup_1 = () => {
+    setIsTypePopupOpen_1(false);
+  };
   const addFilter_1 = () => {
     console.log("Added filter");
   };
@@ -174,16 +183,7 @@ const History = () => {
     console.log("edit chart number");
     openPopup();
   };
-  const change_type_1 = () => {
-    console.log("Added filter");
-  };
 
-  const max_count_values_1 = () => {
-    console.log("Added chart_1");
-  };
-  const data_interval_1 = () => {
-    console.log("Added chart_1");
-  };
   const live_data_1 = () => {
     console.log("live data_1");
   };
@@ -204,6 +204,12 @@ const History = () => {
     const selectedCount_chart_1 = parseInt(event.target.value);
     //updates the value of the interval
     setcount_chart_1(selectedCount_chart_1);
+  };
+  const handleTypeChange_chart_1 = (event) => {
+    //gets value of drop down
+    const selectedType_chart_1 = parseInt(event.target.value);
+    //updates the value of the interval
+    settype_chart_1(selectedType_chart_1);
   };
   //chart 2
   const openEditPopup_2 = () => {
@@ -986,6 +992,7 @@ const History = () => {
 
     update_interval_value_chart_1,
     update_data_interval_value_chart_1,
+    count_chart_1,
   ]);
 
   const handleChangeChart1 = (event) => {
@@ -1067,80 +1074,162 @@ const History = () => {
           <div className={styles.graph}>
             {isLoading_chart_1 ? (
               <div>
-                <Line
-                  data={{
-                    labels: tempchardata.map(
-                      (tempchardata) => tempchardata.time
-                    ),
-                    datasets: [
-                      dataset_temperature_Chart1Checked && {
-                        label: "tempchardata",
-                        data: tempchardata.map(
-                          (tempchardata) => tempchardata.value
-                        ),
-                        borderColor: ["rgba(0, 0, 237, 1)"],
-                      },
-                      dataset_humidity_Chart1Checked && {
-                        label: "humchardata",
-                        data: humchardata.map(
-                          (humchardata) => humchardata.value
-                        ),
-                        borderColor: ["rgba(0, 0, 237, 1)"],
-                      },
-                      dataset_moisture_Chart1Checked && {
-                        label: "moisturedata",
-                        data: moi1chardata.map(
-                          (moi1chardata) => moi1chardata.value
-                        ),
-                        borderColor: ["rgba(0, 0, 237, 1)"],
-                      },
-                      dataset_lux_Chart1Checked && {
-                        label: "luxchardata",
-                        data: luxchardata.map(
-                          (luxchardata) => luxchardata.value
-                        ),
-                        borderColor: ["rgba(0, 0, 237, 1)"],
-                      },
-                    ].filter(Boolean),
-                  }}
-                  options={{
-                    animation: false,
-                    pointRadius: 0,
-                    interaction: {
-                      intersect: false,
-                      mode: "index",
-                    },
-                    tooltips: {
-                      enabled: true, // enable tooltips
-                      callbacks: {
-                        // customize tooltip content
-                        label: (context) => {
-                          const datasetLabel = context.dataset.label || "";
-                          const value = context.parsed.y;
-                          return `${datasetLabel}: ${value}`;
+                {type_chart_1 === 1 ? (
+                  <Line
+                    data={{
+                      labels: tempchardata.map(
+                        (tempchardata) => tempchardata.time
+                      ),
+                      datasets: [
+                        dataset_temperature_Chart1Checked && {
+                          label: "tempchardata",
+                          data: tempchardata.map(
+                            (tempchardata) => tempchardata.value
+                          ),
+                          borderColor: ["rgba(0, 0, 237, 1)"],
                         },
+                        dataset_humidity_Chart1Checked && {
+                          label: "humchardata",
+                          data: humchardata.map(
+                            (humchardata) => humchardata.value
+                          ),
+                          borderColor: ["rgba(0, 0, 237, 1)"],
+                        },
+                        dataset_moisture_Chart1Checked && {
+                          label: "moisturedata",
+                          data: moi1chardata.map(
+                            (moi1chardata) => moi1chardata.value
+                          ),
+                          borderColor: ["rgba(0, 0, 237, 1)"],
+                        },
+                        dataset_lux_Chart1Checked && {
+                          label: "luxchardata",
+                          data: luxchardata.map(
+                            (luxchardata) => luxchardata.value
+                          ),
+                          borderColor: ["rgba(0, 0, 237, 1)"],
+                        },
+                      ].filter(Boolean),
+                    }}
+                    options={{
+                      animation: false,
+                      pointRadius: 0,
+                      interaction: {
+                        intersect: false,
+                        mode: "index",
                       },
-                    },
-                    scales: {
-                      x: {
-                        type: "time",
-                        time: {
-                          displayFormats: {
-                            hour: "HH:MM",
+                      tooltips: {
+                        enabled: true, // enable tooltips
+                        callbacks: {
+                          // customize tooltip content
+                          label: (context) => {
+                            const datasetLabel = context.dataset.label || "";
+                            const value = context.parsed.y;
+                            return `${datasetLabel}: ${value}`;
                           },
                         },
-                        ticks: {
-                          source: "auto",
-                          // Disabled rotation for performance
-                          maxRotation: 0,
-                          autoSkip: true,
-                          reverse: true,
+                      },
+                      scales: {
+                        x: {
+                          type: "time",
+                          time: {
+                            displayFormats: {
+                              hour: "HH:MM",
+                            },
+                          },
+                          ticks: {
+                            source: "auto",
+                            // Disabled rotation for performance
+                            maxRotation: 0,
+                            autoSkip: true,
+                            reverse: true,
+                          },
                         },
                       },
-                    },
-                  }}
-                  className={styles.chart}
-                />
+                    }}
+                    className={styles.chart}
+                  />
+                ) : type_chart_1 === 2 ? (
+                  <Scatter
+                    data={{
+                      labels: tempchardata.map(
+                        (tempchardata) => tempchardata.time
+                      ),
+                      datasets: [
+                        dataset_temperature_Chart1Checked && {
+                          label: "tempchardata",
+                          data: tempchardata.map(
+                            (tempchardata) => tempchardata.value
+                          ),
+                          borderColor: ["rgba(0, 0, 237, 1)"],
+                        },
+                        dataset_humidity_Chart1Checked && {
+                          label: "humchardata",
+                          data: humchardata.map(
+                            (humchardata) => humchardata.value
+                          ),
+                          borderColor: ["rgba(0, 0, 237, 1)"],
+                        },
+                        dataset_moisture_Chart1Checked && {
+                          label: "moisturedata",
+                          data: moi1chardata.map(
+                            (moi1chardata) => moi1chardata.value
+                          ),
+                          borderColor: ["rgba(0, 0, 237, 1)"],
+                        },
+                        dataset_lux_Chart1Checked && {
+                          label: "luxchardata",
+                          data: luxchardata.map(
+                            (luxchardata) => luxchardata.value
+                          ),
+                          borderColor: ["rgba(0, 0, 237, 1)"],
+                        },
+                      ].filter(Boolean),
+                    }}
+                    options={{
+                      animation: false,
+                      pointRadius: 5,
+                      interaction: {
+                        intersect: false,
+                        mode: "index",
+                      },
+                      tooltips: {
+                        enabled: true, // enable tooltips
+                        callbacks: {
+                          // customize tooltip content
+                          label: (context) => {
+                            const datasetLabel = context.dataset.label || "";
+                            const value = context.parsed.y;
+                            return `${datasetLabel}: ${value}`;
+                          },
+                        },
+                      },
+                      scales: {
+                        x: {
+                          type: "time",
+                          time: {
+                            displayFormats: {
+                              hour: "HH:MM",
+                            },
+                          },
+                          ticks: {
+                            source: "auto",
+                            // Disabled rotation for performance
+                            maxRotation: 0,
+                            autoSkip: true,
+                            reverse: true,
+                          },
+                        },
+                      },
+                    }}
+                    className={styles.chart}
+                  />
+                ) : (
+                  <div>
+                    <h1>error</h1>
+                  </div>
+                )}
+
                 <div>
                   <button
                     onClick={openEditPopup_1}
@@ -1149,9 +1238,12 @@ const History = () => {
                     Edit Dataset
                   </button>
                   <button onClick={addFilter_1} className={styles.edit_popup}>
-                    Add Filter
+                    .Add Filter.
                   </button>
-                  <button onClick={change_type_1} className={styles.edit_popup}>
+                  <button
+                    onClick={openTypePopup_1}
+                    className={styles.edit_popup}
+                  >
                     change type
                   </button>
                   <button
@@ -1276,7 +1368,7 @@ const History = () => {
                     data interval
                   </button>
                   <button onClick={live_data_2} className={styles.edit_popup}>
-                    live data
+                    .live data.
                   </button>
                   <button
                     onClick={openIntervalPopup_2}
@@ -1828,10 +1920,35 @@ const History = () => {
                   <option value={500}>500</option>
                   <option value={1000}>1000</option>
                   <option value={2000}>2000</option>
+                  <option value={3000}>3000</option>
+                  <option value={4000}>4000</option>
                 </select>
                 <div className={styles.checkbox}></div>
                 <button
                   onClick={closeCountPopup_1}
+                  className={styles.edit_popup}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
+          {IsTypePopupOpen_1 && (
+            <div className={styles.popup}>
+              <div className={styles.popupContent}>
+                <h3>Select yourtype of chart</h3>
+                <label htmlFor="updateInterval_chart_1">Type </label>
+                <select
+                  id="updateInterval_chart_1"
+                  value={count_chart_1}
+                  onChange={handleTypeChange_chart_1}
+                >
+                  <option value={1}>line</option>
+                  <option value={2}>scatter</option>
+                </select>
+                <div className={styles.checkbox}></div>
+                <button
+                  onClick={closeTypePopup_1}
                   className={styles.edit_popup}
                 >
                   Close
