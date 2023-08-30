@@ -1259,7 +1259,7 @@ const History = () => {
                     data interval
                   </button>
                   <button onClick={live_data_1} className={styles.edit_popup}>
-                    live data
+                    .live data.
                   </button>
                   <button
                     onClick={openIntervalPopup_1}

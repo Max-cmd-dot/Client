@@ -14,13 +14,13 @@
 
 .box {
   position: relative;
-  width: 1050px;
   height: 150px;
   border-radius: 10px;
-  margin-left: 10%;
+  margin-left: 20%;
+  margin-right: 20%;
   box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 40%),
     0px 3px 4px 0px rgb(0 0 0 / 24%), 0px 1px 8px 0px rgb(0 0 0 / 22%);
-  background-color: #ff37e4;
+  background-color: #2c3e50;
   color: #ffffff;
   text-align: center;
 }
@@ -31,7 +31,7 @@
   right: 10px;
   width: 20px;
   height: 20px;
-  background-color: red;
+  background-color: rgb(248, 94, 94);
   border: none;
   border-radius: 50%;
 }

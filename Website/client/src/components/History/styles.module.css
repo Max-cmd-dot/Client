@@ -1,6 +1,7 @@
 .diagramm {
-  margin: 5%;
-  margin-bottom: 10%;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-bottom: 5%;
 }
 
 .graph {
@@ -55,7 +56,6 @@
 }
 .heading {
   text-align: center;
-  margin-bottom: 20px;
 }
 .header {
   display: flex;
