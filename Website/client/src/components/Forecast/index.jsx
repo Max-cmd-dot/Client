@@ -14,6 +14,7 @@ import {
   PointElement,
   TimeScale,
 } from "chart.js";
+import DatePicker from "../DatePicker/DatePicker";
 Chart.register(
   ArcElement,
   CategoryScale,
@@ -115,17 +116,22 @@ const Forecast = () => {
 
   const startOfDayInMilliseconds = startOfDay.getTime();
   const endOfDayInMilliseconds = endOfDay.getTime();
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const dayAfterTomorrow = new Date(today);
+  dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+
+  const todayString = today.toLocaleDateString() + " (today)";
+  const tomorrowString = tomorrow.toLocaleDateString() + " (tomorrow)";
+  const dayAfterTomorrowString = dayAfterTomorrow.toLocaleDateString();
   return (
     <div>
       <div className={styles.container}>
         <h1 className={styles.h1}>Forecast</h1>
         {/* */}
         <div className={styles.buttonGroup}>
-          <ButtonGroup
-            buttons={["Today", "Tomorrow", "20."]}
-            doSomethingAfterClick={printButtonLabel}
-            defaultActiveButton={0}
-          />
+          <DatePicker />
         </div>
         <div className={styles.buttonGroup}>
           <ButtonGroup

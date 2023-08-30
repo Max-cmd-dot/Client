@@ -1,0 +1,28 @@
+.date-picker {
+  display: flex;
+  align-items: center;
+}
+
+.date-picker button {
+  background-color: #0088ff;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.date-picker button:hover {
+  background-color: #2c3e50;
+}
+
+.date-picker button:disabled {
+  color: #cccccc;
+  cursor: not-allowed;
+}
+
+.date-picker span {
+  margin: 0 10px;
+  width: 80px;
+  text-align: center;
+}
