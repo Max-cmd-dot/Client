@@ -37,19 +37,16 @@ const Main = () => {
 
   const [value, onChange] = useState(new Date());
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData_notification = async () => {
       try {
         const response = await axios.get(
           `${apiUrl}/api/notification/latestdata/notifications?groupId=${groupId}`
         );
-        console.log(response);
-        const valuesArr = response.data.map((item) => ({
-          message: item.message,
-          time: new Date(item.time).toISOString(), // Convert to ISO string
-          group: item.group,
+        const valuesArr = response.data.map((item2) => ({
+          message: item2.message,
+          time: new Date(item2.time).toISOString(), // Convert to ISO string
+          group: item2.group,
         }));
-        console.log("client values arr");
-        console.log(valuesArr);
 
         setList2(valuesArr);
       } catch (error) {
@@ -57,8 +54,8 @@ const Main = () => {
       }
     };
 
-    fetchData();
-    const interval = setInterval(fetchData, 5000);
+    fetchData_notification();
+    const interval = setInterval(fetchData_notification, 5000);
 
     return () => {
       clearInterval(interval);
@@ -73,16 +70,16 @@ const Main = () => {
       end: "2023-08-30T13:30:00",
     },
     ...list2
-      .filter((item) => item.ignore !== "true")
-      .map((item) => ({
-        title: item.message,
+      .filter((item2) => item2.ignore !== "true")
+      .map((item2) => ({
+        title: item2.message,
         category: "time",
-        start: item.time,
-        end: item.time,
+        start: item2.time,
+        end: item2.time,
       })),
   ];
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData_abo = async () => {
       try {
         const response = await axios.get(
           `${apiUrl}/api/group/abo?group=${groupId}`
@@ -93,8 +90,8 @@ const Main = () => {
       }
     };
 
-    fetchData();
-    const interval = setInterval(fetchData, 100000);
+    fetchData_abo();
+    const interval = setInterval(fetchData_abo, 100000);
 
     return () => {
       clearInterval(interval);
@@ -117,8 +114,14 @@ const Main = () => {
             counter++;
           }
         }
-        console.log(response);
-        setList(valuesArr);
+
+        // Filter out any duplicate items from valuesArr
+        const uniqueValuesArr = valuesArr.filter(
+          (item, index, self) =>
+            index === self.findIndex((t) => t.topic === item.topic)
+        );
+
+        setList(uniqueValuesArr);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -133,13 +136,24 @@ const Main = () => {
   }, []);
 
   const isMediumOrBig = rightabo === "medium" || rightabo === "big";
+  const topicOrder = [
+    "esp/air/temperature",
+    "esp/ground/light/lux",
+    "esp/ground/moisture/1",
+    "esp/air/pressure",
+    "esp/air/humidity",
+  ];
 
+  // Sort the list array based on the desired order of topics
+  const sortedList = list.sort(
+    (a, b) => topicOrder.indexOf(a.topic) - topicOrder.indexOf(b.topic)
+  );
   return (
     <div className={styles.main_container}>
       <h1 className={styles.heading}>Sensor Data</h1>
       <div className={styles.main_container}>
         <div className={styles.data}>
-          {list.map((item) => {
+          {sortedList.map((item) => {
             if (item.topic === "esp/ground/light/lux") {
               return (
                 <div className={styles.sensordata} key={item.topic}>

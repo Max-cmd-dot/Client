@@ -9,8 +9,9 @@
   font-size: 3rem;
 }
 .buttonGroup {
-  margin-left: 28%;
-  margin-right: 28%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .loading {
   text-align: center;
