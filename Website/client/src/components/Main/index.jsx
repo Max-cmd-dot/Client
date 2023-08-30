@@ -31,10 +31,54 @@ Chart.register(
 );
 const Main = () => {
   let [list, setList] = useState([]);
+  let [list2, setList2] = useState([]);
   const groupId = localStorage.getItem("groupId");
   const [rightabo, setRightabo] = useState(false);
 
   const [value, onChange] = useState(new Date());
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${apiUrl}/api/notification/latestdata/notifications?groupId=${groupId}`
+        );
+        console.log(response);
+        const valuesArr = response.data.map((item) => ({
+          message: item.message,
+          time: new Date(item.time).toISOString(), // Convert to ISO string
+          group: item.group,
+        }));
+        console.log("client values arr");
+        console.log(valuesArr);
+
+        setList2(valuesArr);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 5000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [groupId]);
+
+  const events = [
+    {
+      title: "Bereich 1 gießen",
+      category: "time",
+      start: "2023-08-30T12:00:00",
+      end: "2023-08-30T13:30:00",
+    },
+    ...list2.map((item) => ({
+      title: item.message,
+      category: "time",
+      start: item.time,
+      end: item.time,
+    })),
+  ];
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -85,41 +129,6 @@ const Main = () => {
       clearInterval(interval);
     };
   }, []);
-
-  const events = [
-    {
-      id: "1",
-      calendarId: "cal2",
-      title: "Bereich 1 gießen",
-      category: "time",
-      start: "2023-08-26T12:00:00",
-      end: "2023-08-26T13:30:00",
-    },
-    {
-      id: "2",
-      calendarId: "cal1",
-      title: "Bereich 2 Pflanzen",
-      category: "time",
-      start: "2023-08-24T15:00:00",
-      end: "2023-08-27T15:30:00",
-      backgroundColor: "lightblue",
-    },
-    {
-      title: "Bereich 1 Pflanzen",
-      category: "time",
-      start: "2023-08-07T15:00:00",
-      end: "2023-08-13T15:30:00",
-      backgroundColor: "orange",
-    },
-    {
-      id: "4",
-      calendarId: "cal1",
-      title: "Bereich 1 ernten",
-      category: "time",
-      start: "2023-08-04T15:00:00",
-      end: "2023-08-06T15:30:00",
-    },
-  ];
 
   const isMediumOrBig = rightabo === "medium" || rightabo === "big";
 
