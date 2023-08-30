@@ -36,7 +36,7 @@ def check_last_message():
     # Check if there is any temperature data within the last 15 minutes
     if len(result_list2) == 0:
         print("----------data_check--------")
-        print("No data received in the last 15 minutes.")
+        print("["+datetime.now()+"] "+"No data received in the last 15 minutes.")
         # Perform your alert action here
         # For example, send an email or trigger a notification
         receiveTime = datetime.now()
@@ -326,11 +326,24 @@ def check_water_area_3():
     mongoClient.close()
 
 while True:
-   
+    now = datetime.now()
+    wait_time = (60 - now.minute) * 60 - now.second
+    time.sleep(wait_time)
+    
     if check_last_message() == True:
         check_temperature()
         check_water_area_1()
         check_water_area_2()
         check_water_area_3()
-
-    time.sleep(900)  
+        
+#for half an hour        
+#while True:
+#    now = datetime.now()
+#    wait_time = (30 - now.minute % 30) * 60 - now.second
+#    time.sleep(wait_time)
+#    
+#    if check_last_message() == True:
+#        check_temperature()
+#        check_water_area_1()
+#        check_water_area_2()
+#        check_water_area_3()

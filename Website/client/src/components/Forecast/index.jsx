@@ -105,6 +105,16 @@ const Forecast = () => {
     var m = Number((Math.abs(num) * 100).toPrecision(15));
     return (Math.round(m) / 100) * Math.sign(num);
   }
+  const now = new Date();
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const endOfDay = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() + 1
+  );
+
+  const startOfDayInMilliseconds = startOfDay.getTime();
+  const endOfDayInMilliseconds = endOfDay.getTime();
   return (
     <div>
       <div className={styles.container}>
@@ -172,6 +182,8 @@ const Forecast = () => {
                       autoSkip: true,
                       reverse: true,
                     },
+                    min: startOfDayInMilliseconds,
+                    max: endOfDayInMilliseconds,
                   },
                   y: {
                     ticks: {

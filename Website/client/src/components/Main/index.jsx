@@ -72,12 +72,14 @@ const Main = () => {
       start: "2023-08-30T12:00:00",
       end: "2023-08-30T13:30:00",
     },
-    ...list2.map((item) => ({
-      title: item.message,
-      category: "time",
-      start: item.time,
-      end: item.time,
-    })),
+    ...list2
+      .filter((item) => item.ignore !== "true")
+      .map((item) => ({
+        title: item.message,
+        category: "time",
+        start: item.time,
+        end: item.time,
+      })),
   ];
   useEffect(() => {
     const fetchData = async () => {
