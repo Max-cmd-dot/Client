@@ -123,25 +123,27 @@ const Calendar = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.h1}>Calendar</h1>
-      <div className={styles.calendar}>
-        <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          headerToolbar={{
-            left: "prev,next today",
-            center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay",
-          }}
-          initialView="dayGridMonth"
-          editable={true}
-          selectable={true}
-          selectMirror={true}
-          dayMaxEvents={true}
-          events={events}
-          weekends={state.weekendsVisible}
-          eventContent={renderEventContent}
-          select={handleDateSelect}
-          eventClick={handleEventClick}
-        />
+      <div className={styles.box}>
+        <div className={styles.calendar}>
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay",
+            }}
+            initialView="dayGridMonth"
+            editable={true}
+            selectable={true}
+            selectMirror={true}
+            dayMaxEvents={true}
+            events={events}
+            weekends={state.weekendsVisible}
+            eventContent={renderEventContent}
+            select={handleDateSelect}
+            eventClick={handleEventClick}
+          />
+        </div>
       </div>
     </div>
   );

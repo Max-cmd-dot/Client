@@ -1669,9 +1669,15 @@ const History = () => {
             <div className={styles.chart_container}>
               <div style={{ margin: "3%" }}>{Chart_1()}</div>
             </div>
-            <div className={styles.chart_container}>{Chart_2()}</div>
-            <div className={styles.chart_container}>{Chart_3()}</div>
-            <div className={styles.chart_container}>{Chart_4()}</div>
+            <div className={styles.chart_container}>
+              <div style={{ margin: "3%" }}>{Chart_2()}</div>
+            </div>
+            <div className={styles.chart_container}>
+              <div style={{ margin: "3%" }}>{Chart_3()}</div>
+            </div>
+            <div className={styles.chart_container}>
+              <div style={{ margin: "3%" }}>{Chart_4()}</div>
+            </div>
           </div>
           <button onClick={edit_chart_number} className={styles.edit_popup}>
             edit chart number

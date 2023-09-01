@@ -15,18 +15,20 @@ const ButtonGroup = ({
 
   return (
     <>
-      {buttons.map((buttonLabel, i) => (
-        <button
-          key={i}
-          name={buttonLabel}
-          onClick={(event) => handleClick(event, i)}
-          className={
-            i === clickedId ? "customButton activeButton" : "customButton"
-          }
-        >
-          {buttonLabel}
-        </button>
-      ))}
+      <div className={"box-container"}>
+        {buttons.map((buttonLabel, i) => (
+          <button
+            key={i}
+            name={buttonLabel}
+            onClick={(event) => handleClick(event, i)}
+            className={
+              i === clickedId ? "customButton activeButton" : "customButton"
+            }
+          >
+            {buttonLabel}
+          </button>
+        ))}
+      </div>
     </>
   );
 };
