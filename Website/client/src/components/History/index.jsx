@@ -4,7 +4,7 @@ import "chartjs-adapter-moment";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
-const apiUrl = process.env.REACT_APP_API_URL;
+import classNames from "classnames";
 import {
   Chart,
   ArcElement,
@@ -23,6 +23,7 @@ Chart.register(
   PointElement,
   TimeScale
 );
+const apiUrl = process.env.REACT_APP_API_URL;
 const History = () => {
   const groupId = localStorage.getItem("groupId");
   const [count_chart_1, setcount_chart_1] = useState(100);
@@ -69,6 +70,10 @@ const History = () => {
     update_data_interval_value_chart_4,
     setupdate_data_interval_value_chart_4,
   ] = useState(15000);
+  const [settings_state_chart_1, setsettings_state_chart_1] = useState(true);
+  const [settings_state_chart_2, setsettings_state_chart_2] = useState(true);
+  const [settings_state_chart_3, setsettings_state_chart_3] = useState(true);
+  const [settings_state_chart_4, setsettings_state_chart_4] = useState(true);
   //general buttons
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   //chart 1 datasets checks
@@ -175,9 +180,6 @@ const History = () => {
   const closeTypePopup_1 = () => {
     setIsTypePopupOpen_1(false);
   };
-  const addFilter_1 = () => {
-    console.log("Added filter");
-  };
 
   const edit_chart_number = () => {
     console.log("edit chart number");
@@ -211,6 +213,12 @@ const History = () => {
     //updates the value of the interval
     settype_chart_1(selectedType_chart_1);
   };
+  const settings_chart_1 = () => {
+    setsettings_state_chart_1(!settings_state_chart_1);
+    console.log(`Settings turned ${!settings_state_chart_1 ? "off" : "on"}`);
+    console.log("state:" + !settings_state_chart_1);
+  };
+
   //chart 2
   const openEditPopup_2 = () => {
     setIsEditPopupOpen_2(true);
@@ -1066,6 +1074,8 @@ const History = () => {
   const handleChange_dataset_lux_Chart4 = (event) => {
     setdataset_lux_Chart1Checked(event.target.checked);
   };
+  console.log(`Button state: ${settings_state_chart_1}`);
+
   const Chart_1 = () => {
     if (chart1Checked === true) {
       return (
@@ -1230,43 +1240,57 @@ const History = () => {
                   </div>
                 )}
 
-                <div>
+                <div style={{ display: "flex", flexDirection: "row" }}>
                   <button
-                    onClick={openEditPopup_1}
+                    onClick={settings_chart_1}
                     className={styles.edit_popup}
+                    style={{
+                      backgroundColor: settings_state_chart_1
+                        ? "#2c3e50"
+                        : "#0088ff",
+                    }}
                   >
-                    Edit Dataset
+                    Settings
                   </button>
-                  <button onClick={addFilter_1} className={styles.edit_popup}>
-                    .Add Filter.
-                  </button>
-                  <button
-                    onClick={openTypePopup_1}
-                    className={styles.edit_popup}
+                  <div
+                    style={{
+                      visibility: settings_state_chart_1 ? "visible" : "hidden",
+                    }}
                   >
-                    change type
-                  </button>
-                  <button
-                    onClick={openCountPopup_1}
-                    className={styles.edit_popup}
-                  >
-                    max count
-                  </button>
-                  <button
-                    onClick={openDataPopup_1}
-                    className={styles.edit_popup}
-                  >
-                    data interval
-                  </button>
-                  <button onClick={live_data_1} className={styles.edit_popup}>
-                    .live data.
-                  </button>
-                  <button
-                    onClick={openIntervalPopup_1}
-                    className={styles.edit_popup}
-                  >
-                    update interval
-                  </button>
+                    <button
+                      onClick={openEditPopup_1}
+                      className={styles.edit_popup}
+                    >
+                      Edit Dataset
+                    </button>
+                    <button
+                      onClick={openTypePopup_1}
+                      className={styles.edit_popup}
+                    >
+                      change type
+                    </button>
+                    <button
+                      onClick={openCountPopup_1}
+                      className={styles.edit_popup}
+                    >
+                      max count
+                    </button>
+                    <button
+                      onClick={openDataPopup_1}
+                      className={styles.edit_popup}
+                    >
+                      data interval
+                    </button>
+                    <button onClick={live_data_1} className={styles.edit_popup}>
+                      .live data.
+                    </button>
+                    <button
+                      onClick={openIntervalPopup_1}
+                      className={styles.edit_popup}
+                    >
+                      update interval
+                    </button>
+                  </div>
                 </div>
               </div>
             ) : (
