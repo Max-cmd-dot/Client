@@ -4,7 +4,6 @@ import "chartjs-adapter-moment";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
-import classNames from "classnames";
 import {
   Chart,
   ArcElement,
@@ -215,8 +214,6 @@ const History = () => {
   };
   const settings_chart_1 = () => {
     setsettings_state_chart_1(!settings_state_chart_1);
-    console.log(`Settings turned ${!settings_state_chart_1 ? "off" : "on"}`);
-    console.log("state:" + !settings_state_chart_1);
   };
 
   //chart 2
@@ -1074,7 +1071,6 @@ const History = () => {
   const handleChange_dataset_lux_Chart4 = (event) => {
     setdataset_lux_Chart1Checked(event.target.checked);
   };
-  console.log(`Button state: ${settings_state_chart_1}`);
 
   const Chart_1 = () => {
     if (chart1Checked === true) {
@@ -1240,7 +1236,24 @@ const History = () => {
                   </div>
                 )}
 
-                <div style={{ display: "flex", flexDirection: "row" }}>
+                <div
+                  style={{
+                    transition: "width 200s",
+                    position: "relative",
+                    display: "flex",
+                    flexDirection: "row",
+                    backgroundColor: settings_state_chart_1
+                      ? "#f1f1f1"
+                      : "transparent",
+                    borderRadius: "50px",
+                    boxShadow: settings_state_chart_1
+                      ? "0px 0px 20px rgba(0, 0, 0, 0.25)"
+                      : "none",
+                    alignItems: "center",
+                    width: "fit-content",
+                    marginLeft: "2%",
+                  }}
+                >
                   <button
                     onClick={settings_chart_1}
                     className={styles.edit_popup}
@@ -1248,6 +1261,7 @@ const History = () => {
                       backgroundColor: settings_state_chart_1
                         ? "#2c3e50"
                         : "#0088ff",
+                      color: "white",
                     }}
                   >
                     Settings
@@ -1255,6 +1269,11 @@ const History = () => {
                   <div
                     style={{
                       visibility: settings_state_chart_1 ? "visible" : "hidden",
+                      overflow: "hidden",
+                      transition: "width 10s",
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
                     }}
                   >
                     <button
@@ -1647,10 +1666,12 @@ const History = () => {
         <h1 className={styles.heading}>History</h1>
         <div>
           <div className={styles.diagramm}>
-            {Chart_1()}
-            {Chart_2()}
-            {Chart_3()}
-            {Chart_4()}
+            <div className={styles.chart_container}>
+              <div style={{ margin: "3%" }}>{Chart_1()}</div>
+            </div>
+            <div className={styles.chart_container}>{Chart_2()}</div>
+            <div className={styles.chart_container}>{Chart_3()}</div>
+            <div className={styles.chart_container}>{Chart_4()}</div>
           </div>
           <button onClick={edit_chart_number} className={styles.edit_popup}>
             edit chart number
