@@ -7,7 +7,6 @@ const Landing = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const handlegoback = () => {
     changeRoute("/");
-    console.log("clicked");
   };
   useEffect(() => {
     // Check if user is logged in based on userId in local storage

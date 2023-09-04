@@ -5,6 +5,8 @@ const ButtonGroup = ({
   buttons,
   doSomethingAfterClick,
   defaultActiveButton,
+  overrideBoxColor,
+  overrideButtonColor,
 }) => {
   const [clickedId, setClickedId] = useState(defaultActiveButton);
 
@@ -15,15 +17,19 @@ const ButtonGroup = ({
 
   return (
     <>
-      <div className={"box-container"}>
+      <div
+        className={`box-container ${
+          overrideBoxColor ? "override-box-color" : ""
+        }`}
+      >
         {buttons.map((buttonLabel, i) => (
           <button
             key={i}
             name={buttonLabel}
             onClick={(event) => handleClick(event, i)}
-            className={
+            className={`${
               i === clickedId ? "customButton activeButton" : "customButton"
-            }
+            } ${overrideButtonColor ? "override_button_color" : ""}`}
           >
             {buttonLabel}
           </button>

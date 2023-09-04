@@ -18,6 +18,7 @@ import NotFoundPage from "./components/NotFoundPage";
 import Profile from "./components/Profile";
 import Imprint from "./components/Imprint";
 import Privacy from "./components/Privacy";
+import Actions from "./components/Actions";
 import { Outlet } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 const apiUrl = process.env.REACT_APP_API_URL;
@@ -74,6 +75,9 @@ function App() {
             )}
             {rightabo === "big" && (
               <Route path="/calendar" element={<Calendar />} />
+            )}
+            {rightabo === "big" && (
+              <Route path="/actions" element={<Actions />} />
             )}
             <Route path="/imprint" element={<Imprint />}></Route>
             <Route path="/privacy" element={<Privacy />}></Route>

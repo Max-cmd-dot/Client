@@ -4,7 +4,6 @@ import { createStore } from "redux";
 // Define an action
 const CHANGE_ROUTE = "CHANGE_ROUTE";
 export function changeRoute(route) {
-  console.log("changeRoute", route);
   return { type: CHANGE_ROUTE, route };
 }
 

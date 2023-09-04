@@ -1632,7 +1632,7 @@ const History = () => {
                     },
                   }}
                   className={styles.chart}
-                />{" "}
+                />
                 <div>
                   <button
                     onClick={openEditPopup_4}

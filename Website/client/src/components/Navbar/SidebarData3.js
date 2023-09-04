@@ -23,6 +23,12 @@ export const SidebarData3 = [
     cName: "nav-text",
   },
   {
+    title: "Actions",
+    path: "/actions",
+    icon: <bifrom.BiDumbbell />,
+    cName: "nav-text",
+  },
+  {
     title: "Calendar",
     path: "/calendar",
     icon: <bifrom.BiCalendar />,

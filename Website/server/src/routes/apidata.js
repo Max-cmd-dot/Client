@@ -119,7 +119,6 @@ router.get("/All/temperature", async (req, res) => {
     const minValue = parseFloat(req.query.minValue);
     const maxValue = parseFloat(req.query.maxValue);
     const count = parseInt(req.query.count);
-    console.log("request made");
     if (error)
       return res.status(400).send({ message: error.details[0].message });
 
@@ -178,7 +177,6 @@ router.get("/All/humidity", async (req, res) => {
     const endDate = req.query.endDate;
     const minValue = parseFloat(req.query.minValue);
     const maxValue = parseFloat(req.query.maxValue);
-    console.log("request made humidity");
     if (error)
       return res.status(400).send({ message: error.details[0].message });
 
@@ -235,7 +233,6 @@ router.get("/All/Lux", async (req, res) => {
     const endDate = req.query.endDate;
     const minValue = parseFloat(req.query.minValue);
     const maxValue = parseFloat(req.query.maxValue);
-    console.log("request made lux");
 
     if (error)
       return res.status(400).send({ message: error.details[0].message });
