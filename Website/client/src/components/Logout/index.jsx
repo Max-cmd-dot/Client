@@ -1,5 +1,6 @@
 import styles from "./styles.module.css";
 import { Link } from "react-router-dom";
+import { changeRoute } from "../../reduxStore";
 
 const Logout = () => {
   const handleLogout = (e) => {
@@ -11,7 +12,10 @@ const Logout = () => {
       window.location.href = "/Landing"; // Redirect to the landing page after a delay
     }, 1000); // Delay of 1000 milliseconds (1 second)
   };
-
+  // Use another effect hook to dispatch changeRoute when the component mounts
+  const handlegoback = () => {
+    changeRoute("/");
+  };
   return (
     <div className={styles.login_container}>
       <div className={styles.login_form_container}>
@@ -30,7 +34,11 @@ const Logout = () => {
         <div className={styles.right}>
           <h1>Nope?</h1>
           <Link to="/">
-            <button type="button" className={styles.white_btn}>
+            <button
+              type="button"
+              className={styles.white_btn}
+              onClick={handlegoback}
+            >
               Go Back
             </button>
           </Link>

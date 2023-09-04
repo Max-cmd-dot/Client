@@ -2,39 +2,47 @@ import styles from "./styles.module.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ButtonGroup from "../ButtonGroup/button-group";
-
+import { changeRoute } from "../../reduxStore";
+import { useSelector, useDispatch } from "react-redux";
 const apiUrl = process.env.REACT_APP_API_URL;
 const Notifications = () => {
   const [list, setList] = useState([]);
   const groupId = localStorage.getItem("groupId");
   const [notificationtype, setnotificationtype] = useState("alerts");
   const [releaseNotes, setReleaseNotes] = useState("Comming soon");
-
+  const currentPage = useSelector((state) => state.currentPage);
+  const dispatch = useDispatch();
+  // Use another effect hook to dispatch changeRoute when the component mounts
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `${apiUrl}/api/notification/latestdata/notifications?groupId=${groupId}`
-        );
-        const valuesArr = response.data.map((item) => ({
-          message: item.message,
-          time: new Date(item.time).toISOString(), // Convert to ISO string
-          group: item.group,
-        }));
+    dispatch(changeRoute("/forecast"));
+  }, [dispatch]); // Re-run the effect if dispatch changes
+  useEffect(() => {
+    if (currentPage === "/forecast") {
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(
+            `${apiUrl}/api/notification/latestdata/notifications?groupId=${groupId}`
+          );
+          const valuesArr = response.data.map((item) => ({
+            message: item.message,
+            time: new Date(item.time).toISOString(), // Convert to ISO string
+            group: item.group,
+          }));
 
-        setList(valuesArr);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+          setList(valuesArr);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
 
-    fetchData();
-    const interval = setInterval(fetchData, 5000);
+      fetchData();
+      const interval = setInterval(fetchData, 5000);
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, [groupId]);
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [groupId, currentPage]);
 
   const handleDelete = async (index) => {
     const deletedItem = list[index];

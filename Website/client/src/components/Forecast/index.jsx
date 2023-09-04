@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 import ButtonGroup from "../ButtonGroup/button-group";
+import { changeRoute } from "../../reduxStore";
 import {
   Chart,
   ArcElement,
@@ -23,7 +24,7 @@ Chart.register(
   PointElement,
   TimeScale
 );
-
+import { useSelector, useDispatch } from "react-redux";
 const apiUrl = process.env.REACT_APP_API_URL;
 const Forecast = () => {
   let [tempchardata, settempchardata] = useState([]);
@@ -31,11 +32,22 @@ const Forecast = () => {
   let [brightchardata, setbrightchardata] = useState([]);
   const groupId = localStorage.getItem("groupId");
   const [isLoading_chart_1, setIsLoading_chart_1] = useState(false);
+  const [isLoading_chart_2, setIsLoading_chart_2] = useState(false);
+  const [isLoading_chart_3, setIsLoading_chart_3] = useState(false);
   const [loadingTime_1, setLoadingTime_1] = useState(false);
+  const [loadingTime_2, setLoadingTime_2] = useState(false);
+  const [loadingTime_3, setLoadingTime_3] = useState(false);
   const [update_interval_value_chart_1, setupdate_interval_value_chart_1] =
     useState(15000);
-  const [count_chart_1, setcount_chart_1] = useState(1000);
+  const [update_interval_value_chart_2, setupdate_interval_value_chart_2] =
+    useState(15000);
+  const [update_interval_value_chart_3, setupdate_interval_value_chart_3] =
+    useState(15000);
+  const [count_chart_1, setcount_chart_1] = useState(2000);
   const [charttype, setcharttype] = useState("temperature");
+  const currentPage = useSelector((state) => state.currentPage);
+  const dispatch = useDispatch();
+
   const handleButtonTemperature = () => {
     setcharttype("temperature");
   };
@@ -56,172 +68,11 @@ const Forecast = () => {
       handleLux();
     }
   };
+
+  // Use another effect hook to dispatch changeRoute when the component mounts
   useEffect(() => {
-    let isMounted = true;
-    const fetchdata_chart_1 = async () => {
-      try {
-        setLoadingTime_1(Date.now());
-
-        const checkboxPromise_Temperature = [];
-        checkboxPromise_Temperature.push(
-          axios.get(
-            `${apiUrl}/api/data/all/temperature?groupId=${groupId}&count=${count_chart_1}`
-          )
-        );
-        const response_Temperature = await Promise.all(
-          checkboxPromise_Temperature
-        );
-
-        const temperatureDataArr = [];
-        let countertemperature = 0;
-        for (let thing in response_Temperature[0].data) {
-          if (countertemperature < 10000) {
-            temperatureDataArr.push({
-              time: response_Temperature[0].data[thing].time,
-              value: response_Temperature[0].data[thing].value,
-            });
-            countertemperature++;
-          }
-        }
-        const reversedtemperatureDataArr = temperatureDataArr.reverse();
-
-        if (isMounted) {
-          settempchardata(reversedtemperatureDataArr);
-        }
-
-        console.log("Temperature T");
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        if (isMounted) {
-          const elapsedTime = Date.now() - loadingTime_1;
-          if (elapsedTime > 100) {
-            setIsLoading_chart_1(true);
-          }
-        }
-      }
-    };
-    const fetchdata_chart_2 = async () => {
-      try {
-        setLoadingTime_1(Date.now());
-
-        const checkboxPromise_Brightness = [];
-        checkboxPromise_Brightness.push(
-          axios.get(
-            `${apiUrl}/api/data/all/lux?groupId=${groupId}&count=${count_chart_1}`
-          )
-        );
-        const response_Brightness = await Promise.all(
-          checkboxPromise_Brightness
-        );
-
-        const BrightnessDataArr = [];
-        let counterBrightness = 0;
-        for (let thing in response_Brightness[0].data) {
-          if (counterBrightness < 10000) {
-            BrightnessDataArr.push({
-              time: response_Brightness[0].data[thing].time,
-              value: response_Brightness[0].data[thing].value,
-            });
-            counterBrightness++;
-          }
-        }
-        const reversedBrightnessDataArr = BrightnessDataArr.reverse();
-
-        if (isMounted) {
-          setbrightchardata(reversedBrightnessDataArr);
-        }
-        console.log("Brightness T");
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        if (isMounted) {
-          const elapsedTime = Date.now() - loadingTime_1;
-          if (elapsedTime > 100) {
-            setIsLoading_chart_1(true);
-          }
-        }
-      }
-    };
-    const fetchdata_chart_3 = async () => {
-      try {
-        setLoadingTime_1(Date.now());
-
-        const checkboxPromise_Humidity = [];
-        checkboxPromise_Humidity.push(
-          axios.get(
-            `${apiUrl}/api/data/all/Humidity?groupId=${groupId}&count=${count_chart_1}`
-          )
-        );
-        const response_Humidity = await Promise.all(checkboxPromise_Humidity);
-
-        const HumidityDataArr = [];
-        let counterHumidity = 0;
-        for (let thing in response_Humidity[0].data) {
-          if (counterHumidity < 10000) {
-            HumidityDataArr.push({
-              time: response_Humidity[0].data[thing].time,
-              value: response_Humidity[0].data[thing].value,
-            });
-            counterHumidity++;
-          }
-        }
-        const reversedHumidityDataArr = HumidityDataArr.reverse();
-
-        if (isMounted) {
-          sethumchardata(reversedHumidityDataArr);
-        }
-
-        console.log("Humidity T");
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        if (isMounted) {
-          const elapsedTime = Date.now() - loadingTime_1;
-          if (elapsedTime > 100) {
-            setIsLoading_chart_1(true);
-          }
-        }
-      }
-    };
-    if (charttype === "temperature") {
-      fetchdata_chart_1();
-      console.log(charttype);
-    }
-    if (charttype === "humidity") {
-      fetchdata_chart_2();
-      console.log(charttype);
-    }
-    if (charttype === "lux") {
-      fetchdata_chart_3();
-      console.log(charttype);
-    }
-
-    const interval_chart_1 = setInterval(
-      fetchdata_chart_1,
-      update_interval_value_chart_1
-    );
-    const interval_chart_2 = setInterval(
-      fetchdata_chart_2,
-      update_interval_value_chart_1
-    );
-    const interval_chart_3 = setInterval(
-      fetchdata_chart_3,
-      update_interval_value_chart_1
-    );
-    return () => {
-      isMounted = false;
-      if (charttype === "temperature") {
-        clearInterval(interval_chart_1);
-      }
-      if (charttype === "humidity") {
-        clearInterval(interval_chart_2);
-      }
-      if (charttype === "lux") {
-        clearInterval(interval_chart_3);
-      }
-    };
-  }, [, update_interval_value_chart_1, count_chart_1, charttype]);
+    dispatch(changeRoute("/forecast"));
+  }, [dispatch]); // Re-run the effect if dispatch changes
   function round(num) {
     var m = Number((Math.abs(num) * 100).toPrecision(15));
     return (Math.round(m) / 100) * Math.sign(num);
@@ -241,6 +92,148 @@ const Forecast = () => {
   tomorrow.setDate(tomorrow.getDate() + 1);
   const dayAfterTomorrow = new Date(today);
   dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+
+  // Use an effect hook to run the function every 15 seconds if currentPage is /forecast
+  useEffect(() => {
+    if (currentPage === "/forecast") {
+      // Call the function once when the component mounts
+      const fetchdata_chart_1 = async () => {
+        try {
+          setLoadingTime_1(Date.now());
+          const checkboxPromise_Temperature = [];
+          checkboxPromise_Temperature.push(
+            axios.get(
+              `${apiUrl}/api/data/all/temperature?groupId=${groupId}&count=${count_chart_1}`
+            )
+          );
+          const response_Temperature = await Promise.all(
+            checkboxPromise_Temperature
+          );
+
+          const temperatureDataArr = [];
+          let countertemperature = 0;
+          for (let thing in response_Temperature[0].data) {
+            if (countertemperature < 10000) {
+              temperatureDataArr.push({
+                time: response_Temperature[0].data[thing].time,
+                value: response_Temperature[0].data[thing].value,
+              });
+              countertemperature++;
+            }
+          }
+          const reversedtemperatureDataArr = temperatureDataArr.reverse();
+
+          settempchardata(reversedtemperatureDataArr);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          const elapsedTime = Date.now() - loadingTime_1;
+          if (elapsedTime > 100) {
+            setIsLoading_chart_1(true);
+          }
+        }
+      };
+      const fetchdata_chart_2 = async () => {
+        try {
+          setLoadingTime_2(Date.now());
+
+          const checkboxPromise_Brightness = [];
+          checkboxPromise_Brightness.push(
+            axios.get(
+              `${apiUrl}/api/data/all/lux?groupId=${groupId}&count=${count_chart_1}`
+            )
+          );
+          const response_Brightness = await Promise.all(
+            checkboxPromise_Brightness
+          );
+
+          const BrightnessDataArr = [];
+          let counterBrightness = 0;
+          for (let thing in response_Brightness[0].data) {
+            if (counterBrightness < 10000) {
+              BrightnessDataArr.push({
+                time: response_Brightness[0].data[thing].time,
+                value: response_Brightness[0].data[thing].value,
+              });
+              counterBrightness++;
+            }
+          }
+          const reversedBrightnessDataArr = BrightnessDataArr.reverse();
+
+          setbrightchardata(reversedBrightnessDataArr);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          const elapsedTime = Date.now() - loadingTime_2;
+          if (elapsedTime > 100) {
+            setIsLoading_chart_2(true);
+          }
+        }
+      };
+      const fetchdata_chart_3 = async () => {
+        try {
+          setLoadingTime_3(Date.now());
+
+          const checkboxPromise_Humidity = [];
+          checkboxPromise_Humidity.push(
+            axios.get(
+              `${apiUrl}/api/data/all/Humidity?groupId=${groupId}&count=${count_chart_1}`
+            )
+          );
+          const response_Humidity = await Promise.all(checkboxPromise_Humidity);
+
+          const HumidityDataArr = [];
+          let counterHumidity = 0;
+          for (let thing in response_Humidity[0].data) {
+            if (counterHumidity < 10000) {
+              HumidityDataArr.push({
+                time: response_Humidity[0].data[thing].time,
+                value: response_Humidity[0].data[thing].value,
+              });
+              counterHumidity++;
+            }
+          }
+          const reversedHumidityDataArr = HumidityDataArr.reverse();
+
+          sethumchardata(reversedHumidityDataArr);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          const elapsedTime = Date.now() - loadingTime_3;
+          if (elapsedTime > 100) {
+            setIsLoading_chart_3(true);
+          }
+        }
+      };
+
+      // Define a variable to store the function to fetch
+      let fetchFunction;
+
+      // Check the value of charttype and assign the corresponding function to fetchFunction
+      switch (charttype) {
+        case "temperature":
+          fetchFunction = fetchdata_chart_1;
+          break;
+        case "humidity":
+          fetchFunction = fetchdata_chart_2;
+          break;
+        case "lux":
+          fetchFunction = fetchdata_chart_3;
+          break;
+        default:
+          break;
+      }
+
+      // Call the function once when the component mounts
+      fetchFunction();
+
+      // Set up an interval to call the function every 10 seconds
+      const interval = setInterval(fetchFunction, 10000);
+
+      // Return a cleanup function that clears the interval
+      return () => clearInterval(interval);
+    }
+  }, [currentPage, charttype]); // Re-run the effect if currentPage or fetchdata_chart_3 changes
 
   return (
     <div>
@@ -336,7 +329,7 @@ const Forecast = () => {
           )}
           {charttype === "humidity" ? (
             <div>
-              {isLoading_chart_1 ? (
+              {isLoading_chart_2 ? (
                 <div className={styles.chart_container}>
                   <div style={{ margin: "2%" }}>
                     <Line
@@ -413,7 +406,7 @@ const Forecast = () => {
           )}
           {charttype === "lux" ? (
             <div>
-              {isLoading_chart_1 ? (
+              {isLoading_chart_3 ? (
                 <div className={styles.chart_container}>
                   <div style={{ margin: "2%" }}>
                     <Line

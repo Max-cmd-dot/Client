@@ -2,9 +2,13 @@ import { Link, useHistory } from "react-router-dom";
 import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import image1 from "../images/sensor2.png";
+import { changeRoute } from "../../reduxStore";
 const Landing = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  const handlegoback = () => {
+    changeRoute("/");
+    console.log("clicked");
+  };
   useEffect(() => {
     // Check if user is logged in based on userId in local storage
     const userId = localStorage.getItem("id");
@@ -17,7 +21,11 @@ const Landing = () => {
     if (isLoggedIn) {
       return (
         <Link to="/">
-          <button type="button" className={styles.white_btn}>
+          <button
+            type="button"
+            className={styles.white_btn}
+            onClick={handlegoback}
+          >
             Go Back
           </button>
         </Link>

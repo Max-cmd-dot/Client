@@ -6,10 +6,10 @@ import ClipLoader from "react-spinners/ClipLoader";
 import "chartjs-adapter-moment";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 const apiUrl = process.env.REACT_APP_API_URL;
+import { changeRoute } from "../../reduxStore";
 // needed for dayClick
 
 import {
@@ -29,37 +29,45 @@ Chart.register(
   PointElement,
   TimeScale
 );
+
+import { useSelector, useDispatch } from "react-redux";
 const Main = () => {
   let [list, setList] = useState([]);
   let [list2, setList2] = useState([]);
   const groupId = localStorage.getItem("groupId");
   const [rightabo, setRightabo] = useState(false);
-
-  const [value, onChange] = useState(new Date());
+  const currentPage = useSelector((state) => state.currentPage);
+  const dispatch = useDispatch();
+  // Use another effect hook to dispatch changeRoute when the component mounts
   useEffect(() => {
-    const fetchData_notification = async () => {
-      try {
-        const response = await axios.get(
-          `${apiUrl}/api/notification/latestdata/notifications?groupId=${groupId}`
-        );
-        const valuesArr = response.data.map((item2) => ({
-          message: item2.message,
-          time: new Date(item2.time).toISOString(), // Convert to ISO string
-          group: item2.group,
-        }));
+    dispatch(changeRoute("/"));
+  }, [dispatch]); // Re-run the effect if dispatch changes
 
-        setList2(valuesArr);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+  useEffect(() => {
+    if (currentPage === "/") {
+      const fetchData_notification = async () => {
+        try {
+          const response = await axios.get(
+            `${apiUrl}/api/notification/latestdata/notifications?groupId=${groupId}`
+          );
+          const valuesArr = response.data.map((item2) => ({
+            message: item2.message,
+            time: new Date(item2.time).toISOString(), // Convert to ISO string
+            group: item2.group,
+          }));
+          setList2(valuesArr);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
 
-    fetchData_notification();
-    const interval = setInterval(fetchData_notification, 5000);
+      fetchData_notification();
+      const interval = setInterval(fetchData_notification, 5000);
 
-    return () => {
-      clearInterval(interval);
-    };
+      return () => {
+        clearInterval(interval);
+      };
+    }
   }, [groupId]);
 
   const events = [
@@ -79,60 +87,65 @@ const Main = () => {
       })),
   ];
   useEffect(() => {
-    const fetchData_abo = async () => {
-      try {
-        const response = await axios.get(
-          `${apiUrl}/api/group/abo?group=${groupId}`
-        );
-        setRightabo(response.data.package);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+    if (currentPage === "/") {
+      const fetchData_abo = async () => {
+        try {
+          const response = await axios.get(
+            `${apiUrl}/api/group/abo?group=${groupId}`
+          );
 
-    fetchData_abo();
-    const interval = setInterval(fetchData_abo, 100000);
+          setRightabo(response.data.package);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
 
-    return () => {
-      clearInterval(interval);
-    };
+      fetchData_abo();
+      const interval = setInterval(fetchData_abo, 10000);
+
+      return () => {
+        clearInterval(interval);
+      };
+    }
   }, []);
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `${apiUrl}/api/data/latestdata/all?groupId=${groupId}`
-        );
-        const valuesArr = [];
-        let counter = 0;
-        for (let item in response.data) {
-          if (counter < 100) {
-            valuesArr.push({
-              topic: response.data[item].topic,
-              value: response.data[item].value,
-            });
-            counter++;
+    if (currentPage === "/") {
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(
+            `${apiUrl}/api/data/latestdata/all?groupId=${groupId}`
+          );
+          const valuesArr = [];
+          let counter = 0;
+          for (let item in response.data) {
+            if (counter < 100) {
+              valuesArr.push({
+                topic: response.data[item].topic,
+                value: response.data[item].value,
+              });
+              counter++;
+            }
           }
+
+          // Filter out any duplicate items from valuesArr
+          const uniqueValuesArr = valuesArr.filter(
+            (item, index, self) =>
+              index === self.findIndex((t) => t.topic === item.topic)
+          );
+
+          setList(uniqueValuesArr);
+        } catch (error) {
+          console.error("Error fetching data:", error);
         }
+      };
 
-        // Filter out any duplicate items from valuesArr
-        const uniqueValuesArr = valuesArr.filter(
-          (item, index, self) =>
-            index === self.findIndex((t) => t.topic === item.topic)
-        );
+      fetchData();
+      const interval = setInterval(fetchData, 5000);
 
-        setList(uniqueValuesArr);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-    const interval = setInterval(fetchData, 5000);
-
-    return () => {
-      clearInterval(interval);
-    };
+      return () => {
+        clearInterval(interval);
+      };
+    }
   }, []);
 
   const isMediumOrBig = rightabo === "medium" || rightabo === "big";

@@ -4,6 +4,7 @@ import "chartjs-adapter-moment";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
+import { changeRoute } from "../../reduxStore";
 import {
   Chart,
   ArcElement,
@@ -22,10 +23,17 @@ Chart.register(
   PointElement,
   TimeScale
 );
+
+import { useSelector, useDispatch } from "react-redux";
 const apiUrl = process.env.REACT_APP_API_URL;
 const History = () => {
   const groupId = localStorage.getItem("groupId");
   const [count_chart_1, setcount_chart_1] = useState(100);
+  const currentPage = useSelector((state) => state.currentPage);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(changeRoute("/history"));
+  }, [dispatch]); // Re-run the effect if dispatch changes
   let [tempchardata, settempchardata] = useState([]);
   let [humchardata, sethumchardata] = useState([]);
   let [luxchardata, setluxchardata] = useState([]);
@@ -317,57 +325,215 @@ const History = () => {
     console.log("update interval _4");
   };
   useEffect(() => {
-    let isMounted = true;
-    const fetchdata_chart_1 = async () => {
-      try {
-        setLoadingTime_1(Date.now());
+    if (currentPage === "/history") {
+      let isMounted = true;
+      const fetchdata_chart_1 = async () => {
+        try {
+          setLoadingTime_1(Date.now());
 
-        const checkboxPromise_Lux = [];
-        const checkboxPromise_Humidity = [];
-        const checkboxPromise_Temperature = [];
-        const checkboxPromise_Moisture = [];
+          const checkboxPromise_Lux = [];
+          const checkboxPromise_Humidity = [];
+          const checkboxPromise_Temperature = [];
+          const checkboxPromise_Moisture = [];
 
-        if (dataset_temperature_Chart1Checked) {
-          checkboxPromise_Temperature.push(
-            axios.get(
-              `${apiUrl}/api/data/all/temperature?groupId=${groupId}&count=${count_chart_1}`
-            )
-          );
-        }
-        if (dataset_humidity_Chart1Checked) {
-          checkboxPromise_Humidity.push(
-            axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
-          );
-        }
-        if (dataset_moisture_Chart1Checked) {
-          checkboxPromise_Moisture.push(
-            axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
-          );
-          checkboxPromise_Moisture.push(
-            axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
-          );
-          checkboxPromise_Moisture.push(
-            axios.get(`${apiUrl}/api/data/all/moisture/3?groupId=${groupId}`)
-          );
-        }
-        if (dataset_lux_Chart1Checked) {
-          checkboxPromise_Lux.push(
-            axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
-          );
-        }
-        const response_Moisture = await Promise.all(checkboxPromise_Moisture);
-        const response_Humdidity = await Promise.all(checkboxPromise_Humidity);
-        const response_Temperature = await Promise.all(
-          checkboxPromise_Temperature
-        );
-        const response_Lux = await Promise.all(checkboxPromise_Lux);
-
-        if (chart1Checked) {
           if (dataset_temperature_Chart1Checked) {
+            checkboxPromise_Temperature.push(
+              axios.get(
+                `${apiUrl}/api/data/all/temperature?groupId=${groupId}&count=${count_chart_1}`
+              )
+            );
+          }
+          if (dataset_humidity_Chart1Checked) {
+            checkboxPromise_Humidity.push(
+              axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
+            );
+          }
+          if (dataset_moisture_Chart1Checked) {
+            checkboxPromise_Moisture.push(
+              axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
+            );
+            checkboxPromise_Moisture.push(
+              axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
+            );
+            checkboxPromise_Moisture.push(
+              axios.get(`${apiUrl}/api/data/all/moisture/3?groupId=${groupId}`)
+            );
+          }
+          if (dataset_lux_Chart1Checked) {
+            checkboxPromise_Lux.push(
+              axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
+            );
+          }
+          const response_Moisture = await Promise.all(checkboxPromise_Moisture);
+          const response_Humdidity = await Promise.all(
+            checkboxPromise_Humidity
+          );
+          const response_Temperature = await Promise.all(
+            checkboxPromise_Temperature
+          );
+          const response_Lux = await Promise.all(checkboxPromise_Lux);
+
+          if (chart1Checked) {
+            if (dataset_temperature_Chart1Checked) {
+              const temperatureDataArr = [];
+              let countertemperature = 0;
+              for (let thing in response_Temperature[0].data) {
+                if (countertemperature < 10000) {
+                  temperatureDataArr.push({
+                    time: response_Temperature[0].data[thing].time,
+                    value: response_Temperature[0].data[thing].value,
+                  });
+                  countertemperature++;
+                }
+              }
+              const reversedtemperatureDataArr = temperatureDataArr.reverse();
+
+              if (isMounted) {
+                settempchardata(reversedtemperatureDataArr);
+              }
+            }
+            //humidity data
+            if (dataset_humidity_Chart1Checked) {
+              const humidityDataArr = [];
+              let counterhumidity = 0;
+              for (let thing in response_Humdidity[0].data) {
+                if (counterhumidity < 100) {
+                  humidityDataArr.push({
+                    time: response_Humdidity[0].data[thing].time,
+                    value: response_Humdidity[0].data[thing].value,
+                  });
+                  counterhumidity++;
+                }
+              }
+              const reversedhumidityDataArr = humidityDataArr.reverse();
+
+              if (isMounted) {
+                sethumchardata(reversedhumidityDataArr);
+              }
+            }
+            //moisture data
+            if (dataset_moisture_Chart1Checked) {
+              const moisture1DataArr = [];
+              let countermoisture1 = 0;
+              for (let thing in response_Moisture[0].data) {
+                if (countermoisture1 < 100) {
+                  moisture1DataArr.push({
+                    time: response_Moisture[0].data[thing].time,
+                    value: response_Moisture[0].data[thing].value,
+                  });
+                  countermoisture1++;
+                }
+              }
+              const reversedmoisture1DataArr = moisture1DataArr.reverse();
+
+              const moisture2DataArr = [];
+              let countermoisture2 = 0;
+              for (let thing in response_Moisture[0].data) {
+                if (countermoisture2 < 100) {
+                  moisture2DataArr.push({
+                    time: response_Moisture[0].data[thing].time,
+                    value: response_Moisture[0].data[thing].value,
+                  });
+                  countermoisture2++;
+                }
+              }
+              const reversedmoisture2DataArr = moisture2DataArr.reverse();
+
+              const moisture3DataArr = [];
+              let countermoisture3 = 0;
+              for (let thing in response_Moisture[0].data) {
+                if (countermoisture3 < 100) {
+                  moisture3DataArr.push({
+                    time: response_Moisture[0].data[thing].time,
+                    value: response_Moisture[0].data[thing].value,
+                  });
+                  countermoisture3++;
+                }
+              }
+              const reversedmoisture3DataArr = moisture3DataArr.reverse();
+
+              if (isMounted) {
+                setmoi1chardata(reversedmoisture1DataArr);
+                setmoi2chardata(reversedmoisture2DataArr);
+                setmoi3chardata(reversedmoisture3DataArr);
+              }
+            }
+            if (dataset_lux_Chart1Checked) {
+              const luxDataArr = [];
+              let counterlux = 0;
+              for (let thing in response_Lux[0].data) {
+                if (counterlux < 100) {
+                  luxDataArr.push({
+                    time: response_Lux[0].data[thing].time,
+                    value: response_Lux[0].data[thing].value,
+                  });
+                  counterlux++;
+                }
+              }
+              const reversedluxDataArr = luxDataArr.reverse();
+
+              if (isMounted) {
+                setluxchardata(reversedluxDataArr);
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          if (isMounted) {
+            const elapsedTime = Date.now() - loadingTime_1;
+            if (elapsedTime > 100) {
+              setIsLoading_chart_1(true);
+            }
+          }
+        }
+      };
+      const fetchdata_chart_2 = async () => {
+        try {
+          setIsLoading_chart_2(true);
+          const checkboxPromise_Lux = [];
+          const checkboxPromise_Humidity = [];
+          const checkboxPromise_Temperature = [];
+          const checkboxPromise_Moisture = [];
+          if (dataset_temperature_Chart2Checked) {
+            checkboxPromise_Temperature.push(
+              axios.get(`${apiUrl}/api/data/all/temperature?groupId=${groupId}`)
+            );
+          }
+          if (dataset_humidity_Chart2Checked) {
+            checkboxPromise_Humidity.push(
+              axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
+            );
+          }
+          if (dataset_moisture_Chart2Checked) {
+            checkboxPromise_Moisture.push(
+              axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
+            );
+            checkboxPromise_Moisture.push(
+              axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
+            );
+            checkboxPromise_Moisture.push(
+              axios.get(`${apiUrl}/api/data/all/moisture/3?groupId=${groupId}`)
+            );
+          }
+          if (dataset_lux_Chart2Checked) {
+            checkboxPromise_Lux.push(
+              axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
+            );
+          }
+          const response_Moisture = await Promise.all(checkboxPromise_Moisture);
+          const response_Humdidity = await Promise.all(
+            checkboxPromise_Humidity
+          );
+          const response_Temperature = await Promise.all(
+            checkboxPromise_Temperature
+          );
+          const response_Lux = await Promise.all(checkboxPromise_Lux);
+          if (dataset_temperature_Chart2Checked) {
             const temperatureDataArr = [];
             let countertemperature = 0;
             for (let thing in response_Temperature[0].data) {
-              if (countertemperature < 10000) {
+              if (countertemperature < 100) {
                 temperatureDataArr.push({
                   time: response_Temperature[0].data[thing].time,
                   value: response_Temperature[0].data[thing].value,
@@ -382,7 +548,7 @@ const History = () => {
             }
           }
           //humidity data
-          if (dataset_humidity_Chart1Checked) {
+          if (dataset_humidity_Chart2Checked) {
             const humidityDataArr = [];
             let counterhumidity = 0;
             for (let thing in response_Humdidity[0].data) {
@@ -401,7 +567,7 @@ const History = () => {
             }
           }
           //moisture data
-          if (dataset_moisture_Chart1Checked) {
+          if (dataset_moisture_Chart2Checked) {
             const moisture1DataArr = [];
             let countermoisture1 = 0;
             for (let thing in response_Moisture[0].data) {
@@ -447,7 +613,7 @@ const History = () => {
               setmoi3chardata(reversedmoisture3DataArr);
             }
           }
-          if (dataset_lux_Chart1Checked) {
+          if (dataset_lux_Chart2Checked) {
             const luxDataArr = [];
             let counterlux = 0;
             for (let thing in response_Lux[0].data) {
@@ -465,511 +631,364 @@ const History = () => {
               setluxchardata(reversedluxDataArr);
             }
           }
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        if (isMounted) {
-          const elapsedTime = Date.now() - loadingTime_1;
-          if (elapsedTime > 100) {
-            setIsLoading_chart_1(true);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          if (isMounted) {
+            setIsLoading_chart_2(false);
           }
         }
+      };
+      const fetchdata_chart_3 = async () => {
+        try {
+          setIsLoading_chart_3(true);
+          const checkboxPromise_Lux = [];
+          const checkboxPromise_Humidity = [];
+          const checkboxPromise_Temperature = [];
+          const checkboxPromise_Moisture = [];
+          if (dataset_temperature_Chart3Checked) {
+            checkboxPromise_Temperature.push(
+              axios.get(`${apiUrl}/api/data/all/temperature?groupId=${groupId}`)
+            );
+          }
+          if (dataset_humidity_Chart3Checked) {
+            checkboxPromise_Humidity.push(
+              axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
+            );
+          }
+          if (dataset_moisture_Chart3Checked) {
+            checkboxPromise_Moisture.push(
+              axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
+            );
+            checkboxPromise_Moisture.push(
+              axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
+            );
+            checkboxPromise_Moisture.push(
+              axios.get(`${apiUrl}/api/data/all/moisture/3?groupId=${groupId}`)
+            );
+          }
+          if (dataset_lux_Chart3Checked) {
+            checkboxPromise_Lux.push(
+              axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
+            );
+          }
+          const response_Moisture = await Promise.all(checkboxPromise_Moisture);
+          const response_Humdidity = await Promise.all(
+            checkboxPromise_Humidity
+          );
+          const response_Temperature = await Promise.all(
+            checkboxPromise_Temperature
+          );
+          const response_Lux = await Promise.all(checkboxPromise_Lux);
+          if (dataset_temperature_Chart3Checked) {
+            const temperatureDataArr = [];
+            let countertemperature = 0;
+            for (let thing in response_Temperature[0].data) {
+              if (countertemperature < 100) {
+                temperatureDataArr.push({
+                  time: response_Temperature[0].data[thing].time,
+                  value: response_Temperature[0].data[thing].value,
+                });
+                countertemperature++;
+              }
+            }
+            const reversedtemperatureDataArr = temperatureDataArr.reverse();
+
+            if (isMounted) {
+              settempchardata(reversedtemperatureDataArr);
+            }
+          }
+          //humidity data
+          if (dataset_humidity_Chart3Checked) {
+            const humidityDataArr = [];
+            let counterhumidity = 0;
+            for (let thing in response_Humdidity[0].data) {
+              if (counterhumidity < 100) {
+                humidityDataArr.push({
+                  time: response_Humdidity[0].data[thing].time,
+                  value: response_Humdidity[0].data[thing].value,
+                });
+                counterhumidity++;
+              }
+            }
+            const reversedhumidityDataArr = humidityDataArr.reverse();
+
+            if (isMounted) {
+              sethumchardata(reversedhumidityDataArr);
+            }
+          }
+          //moisture data
+          if (dataset_moisture_Chart3Checked) {
+            const moisture1DataArr = [];
+            let countermoisture1 = 0;
+            for (let thing in response_Moisture[0].data) {
+              if (countermoisture1 < 100) {
+                moisture1DataArr.push({
+                  time: response_Moisture[0].data[thing].time,
+                  value: response_Moisture[0].data[thing].value,
+                });
+                countermoisture1++;
+              }
+            }
+            const reversedmoisture1DataArr = moisture1DataArr.reverse();
+
+            const moisture2DataArr = [];
+            let countermoisture2 = 0;
+            for (let thing in response_Moisture[0].data) {
+              if (countermoisture2 < 100) {
+                moisture2DataArr.push({
+                  time: response_Moisture[0].data[thing].time,
+                  value: response_Moisture[0].data[thing].value,
+                });
+                countermoisture2++;
+              }
+            }
+            const reversedmoisture2DataArr = moisture2DataArr.reverse();
+
+            const moisture3DataArr = [];
+            let countermoisture3 = 0;
+            for (let thing in response_Moisture[0].data) {
+              if (countermoisture3 < 100) {
+                moisture3DataArr.push({
+                  time: response_Moisture[0].data[thing].time,
+                  value: response_Moisture[0].data[thing].value,
+                });
+                countermoisture3++;
+              }
+            }
+            const reversedmoisture3DataArr = moisture3DataArr.reverse();
+
+            if (isMounted) {
+              setmoi1chardata(reversedmoisture1DataArr);
+              setmoi2chardata(reversedmoisture2DataArr);
+              setmoi3chardata(reversedmoisture3DataArr);
+            }
+          }
+          if (dataset_lux_Chart3Checked) {
+            const luxDataArr = [];
+            let counterlux = 0;
+            for (let thing in response_Lux[0].data) {
+              if (counterlux < 100) {
+                luxDataArr.push({
+                  time: response_Lux[0].data[thing].time,
+                  value: response_Lux[0].data[thing].value,
+                });
+                counterlux++;
+              }
+            }
+            const reversedluxDataArr = luxDataArr.reverse();
+
+            if (isMounted) {
+              setluxchardata(reversedluxDataArr);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          if (isMounted) {
+            setIsLoading_chart_3(false);
+          }
+        }
+      };
+      const fetchdata_chart_4 = async () => {
+        try {
+          setIsLoadingchart_4(true);
+
+          const checkboxPromise_Lux = [];
+          const checkboxPromise_Humidity = [];
+          const checkboxPromise_Temperature = [];
+          const checkboxPromise_Moisture = [];
+
+          if (dataset_temperature_Chart4Checked) {
+            checkboxPromise_Temperature.push(
+              axios.get(`${apiUrl}/api/data/all/temperature?groupId=${groupId}`)
+            );
+          }
+          if (dataset_humidity_Chart4Checked) {
+            checkboxPromise_Humidity.push(
+              axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
+            );
+          }
+          if (dataset_moisture_Chart4Checked) {
+            checkboxPromise_Moisture.push(
+              axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
+            );
+            checkboxPromise_Moisture.push(
+              axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
+            );
+            checkboxPromise_Moisture.push(
+              axios.get(`${apiUrl}/api/data/all/moisture/3?groupId=${groupId}`)
+            );
+          }
+          if (dataset_lux_Chart4Checked) {
+            checkboxPromise_Lux.push(
+              axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
+            );
+          }
+
+          const response_Moisture = await Promise.all(checkboxPromise_Moisture);
+          const response_Humdidity = await Promise.all(
+            checkboxPromise_Humidity
+          );
+          const response_Temperature = await Promise.all(
+            checkboxPromise_Temperature
+          );
+          const response_Lux = await Promise.all(checkboxPromise_Lux);
+          // Process the responses and update the respective chart data statess
+
+          if (dataset_temperature_Chart4Checked) {
+            const temperatureDataArr = [];
+            let countertemperature = 0;
+            for (let thing in response_Temperature[0].data) {
+              if (countertemperature < 100) {
+                temperatureDataArr.push({
+                  time: response_Temperature[0].data[thing].time,
+                  value: response_Temperature[0].data[thing].value,
+                });
+                countertemperature++;
+              }
+            }
+            const reversedtemperatureDataArr = temperatureDataArr.reverse();
+
+            if (isMounted) {
+              settempchardata(reversedtemperatureDataArr);
+            }
+          }
+          //humidity data
+          if (dataset_humidity_Chart4Checked) {
+            const humidityDataArr = [];
+            let counterhumidity = 0;
+            for (let thing in response_Humdidity[0].data) {
+              if (counterhumidity < 100) {
+                humidityDataArr.push({
+                  time: response_Humdidity[0].data[thing].time,
+                  value: response_Humdidity[0].data[thing].value,
+                });
+                counterhumidity++;
+              }
+            }
+            const reversedhumidityDataArr = humidityDataArr.reverse();
+
+            if (isMounted) {
+              sethumchardata(reversedhumidityDataArr);
+            }
+          }
+          //moisture data
+          if (dataset_moisture_Chart4Checked) {
+            const moisture1DataArr = [];
+            let countermoisture1 = 0;
+            for (let thing in response_Moisture[0].data) {
+              if (countermoisture1 < 100) {
+                moisture1DataArr.push({
+                  time: response_Moisture[0].data[thing].time,
+                  value: response_Moisture[0].data[thing].value,
+                });
+                countermoisture1++;
+              }
+            }
+            const reversedmoisture1DataArr = moisture1DataArr.reverse();
+
+            const moisture2DataArr = [];
+            let countermoisture2 = 0;
+            for (let thing in response_Moisture[0].data) {
+              if (countermoisture2 < 100) {
+                moisture2DataArr.push({
+                  time: response_Moisture[0].data[thing].time,
+                  value: response_Moisture[0].data[thing].value,
+                });
+                countermoisture2++;
+              }
+            }
+            const reversedmoisture2DataArr = moisture2DataArr.reverse();
+
+            const moisture3DataArr = [];
+            let countermoisture3 = 0;
+            for (let thing in response_Moisture[0].data) {
+              if (countermoisture3 < 100) {
+                moisture3DataArr.push({
+                  time: response_Moisture[0].data[thing].time,
+                  value: response_Moisture[0].data[thing].value,
+                });
+                countermoisture3++;
+              }
+            }
+            const reversedmoisture3DataArr = moisture3DataArr.reverse();
+
+            if (isMounted) {
+              setmoi1chardata(reversedmoisture1DataArr);
+              setmoi2chardata(reversedmoisture2DataArr);
+              setmoi3chardata(reversedmoisture3DataArr);
+            }
+          }
+          if (dataset_lux_Chart4Checked) {
+            const luxDataArr = [];
+            let counterlux = 0;
+            for (let thing in response_Lux[0].data) {
+              if (counterlux < 100) {
+                luxDataArr.push({
+                  time: response_Lux[0].data[thing].time,
+                  value: response_Lux[0].data[thing].value,
+                });
+                counterlux++;
+              }
+            }
+            const reversedluxDataArr = luxDataArr.reverse();
+
+            if (isMounted) {
+              setluxchardata(reversedluxDataArr);
+            }
+          }
+
+          // Similar processing for other responses based on checkbox selection
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          if (isMounted) {
+            setIsLoadingchart_4(false);
+          }
+        }
+      };
+
+      if (chart1Checked) {
+        fetchdata_chart_1();
       }
-    };
-    const fetchdata_chart_2 = async () => {
-      try {
-        setIsLoading_chart_2(true);
-        const checkboxPromise_Lux = [];
-        const checkboxPromise_Humidity = [];
-        const checkboxPromise_Temperature = [];
-        const checkboxPromise_Moisture = [];
-        if (dataset_temperature_Chart2Checked) {
-          checkboxPromise_Temperature.push(
-            axios.get(`${apiUrl}/api/data/all/temperature?groupId=${groupId}`)
-          );
-        }
-        if (dataset_humidity_Chart2Checked) {
-          checkboxPromise_Humidity.push(
-            axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
-          );
-        }
-        if (dataset_moisture_Chart2Checked) {
-          checkboxPromise_Moisture.push(
-            axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
-          );
-          checkboxPromise_Moisture.push(
-            axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
-          );
-          checkboxPromise_Moisture.push(
-            axios.get(`${apiUrl}/api/data/all/moisture/3?groupId=${groupId}`)
-          );
-        }
-        if (dataset_lux_Chart2Checked) {
-          checkboxPromise_Lux.push(
-            axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
-          );
-        }
-        const response_Moisture = await Promise.all(checkboxPromise_Moisture);
-        const response_Humdidity = await Promise.all(checkboxPromise_Humidity);
-        const response_Temperature = await Promise.all(
-          checkboxPromise_Temperature
-        );
-        const response_Lux = await Promise.all(checkboxPromise_Lux);
-        if (dataset_temperature_Chart2Checked) {
-          const temperatureDataArr = [];
-          let countertemperature = 0;
-          for (let thing in response_Temperature[0].data) {
-            if (countertemperature < 100) {
-              temperatureDataArr.push({
-                time: response_Temperature[0].data[thing].time,
-                value: response_Temperature[0].data[thing].value,
-              });
-              countertemperature++;
-            }
-          }
-          const reversedtemperatureDataArr = temperatureDataArr.reverse();
-
-          if (isMounted) {
-            settempchardata(reversedtemperatureDataArr);
-          }
-        }
-        //humidity data
-        if (dataset_humidity_Chart2Checked) {
-          const humidityDataArr = [];
-          let counterhumidity = 0;
-          for (let thing in response_Humdidity[0].data) {
-            if (counterhumidity < 100) {
-              humidityDataArr.push({
-                time: response_Humdidity[0].data[thing].time,
-                value: response_Humdidity[0].data[thing].value,
-              });
-              counterhumidity++;
-            }
-          }
-          const reversedhumidityDataArr = humidityDataArr.reverse();
-
-          if (isMounted) {
-            sethumchardata(reversedhumidityDataArr);
-          }
-        }
-        //moisture data
-        if (dataset_moisture_Chart2Checked) {
-          const moisture1DataArr = [];
-          let countermoisture1 = 0;
-          for (let thing in response_Moisture[0].data) {
-            if (countermoisture1 < 100) {
-              moisture1DataArr.push({
-                time: response_Moisture[0].data[thing].time,
-                value: response_Moisture[0].data[thing].value,
-              });
-              countermoisture1++;
-            }
-          }
-          const reversedmoisture1DataArr = moisture1DataArr.reverse();
-
-          const moisture2DataArr = [];
-          let countermoisture2 = 0;
-          for (let thing in response_Moisture[0].data) {
-            if (countermoisture2 < 100) {
-              moisture2DataArr.push({
-                time: response_Moisture[0].data[thing].time,
-                value: response_Moisture[0].data[thing].value,
-              });
-              countermoisture2++;
-            }
-          }
-          const reversedmoisture2DataArr = moisture2DataArr.reverse();
-
-          const moisture3DataArr = [];
-          let countermoisture3 = 0;
-          for (let thing in response_Moisture[0].data) {
-            if (countermoisture3 < 100) {
-              moisture3DataArr.push({
-                time: response_Moisture[0].data[thing].time,
-                value: response_Moisture[0].data[thing].value,
-              });
-              countermoisture3++;
-            }
-          }
-          const reversedmoisture3DataArr = moisture3DataArr.reverse();
-
-          if (isMounted) {
-            setmoi1chardata(reversedmoisture1DataArr);
-            setmoi2chardata(reversedmoisture2DataArr);
-            setmoi3chardata(reversedmoisture3DataArr);
-          }
-        }
-        if (dataset_lux_Chart2Checked) {
-          const luxDataArr = [];
-          let counterlux = 0;
-          for (let thing in response_Lux[0].data) {
-            if (counterlux < 100) {
-              luxDataArr.push({
-                time: response_Lux[0].data[thing].time,
-                value: response_Lux[0].data[thing].value,
-              });
-              counterlux++;
-            }
-          }
-          const reversedluxDataArr = luxDataArr.reverse();
-
-          if (isMounted) {
-            setluxchardata(reversedluxDataArr);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        if (isMounted) {
-          setIsLoading_chart_2(false);
-        }
+      if (chart2Checked) {
+        fetchdata_chart_2();
       }
-    };
-    const fetchdata_chart_3 = async () => {
-      try {
-        setIsLoading_chart_3(true);
-        const checkboxPromise_Lux = [];
-        const checkboxPromise_Humidity = [];
-        const checkboxPromise_Temperature = [];
-        const checkboxPromise_Moisture = [];
-        if (dataset_temperature_Chart3Checked) {
-          checkboxPromise_Temperature.push(
-            axios.get(`${apiUrl}/api/data/all/temperature?groupId=${groupId}`)
-          );
-        }
-        if (dataset_humidity_Chart3Checked) {
-          checkboxPromise_Humidity.push(
-            axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
-          );
-        }
-        if (dataset_moisture_Chart3Checked) {
-          checkboxPromise_Moisture.push(
-            axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
-          );
-          checkboxPromise_Moisture.push(
-            axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
-          );
-          checkboxPromise_Moisture.push(
-            axios.get(`${apiUrl}/api/data/all/moisture/3?groupId=${groupId}`)
-          );
-        }
-        if (dataset_lux_Chart3Checked) {
-          checkboxPromise_Lux.push(
-            axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
-          );
-        }
-        const response_Moisture = await Promise.all(checkboxPromise_Moisture);
-        const response_Humdidity = await Promise.all(checkboxPromise_Humidity);
-        const response_Temperature = await Promise.all(
-          checkboxPromise_Temperature
-        );
-        const response_Lux = await Promise.all(checkboxPromise_Lux);
-        if (dataset_temperature_Chart3Checked) {
-          const temperatureDataArr = [];
-          let countertemperature = 0;
-          for (let thing in response_Temperature[0].data) {
-            if (countertemperature < 100) {
-              temperatureDataArr.push({
-                time: response_Temperature[0].data[thing].time,
-                value: response_Temperature[0].data[thing].value,
-              });
-              countertemperature++;
-            }
-          }
-          const reversedtemperatureDataArr = temperatureDataArr.reverse();
-
-          if (isMounted) {
-            settempchardata(reversedtemperatureDataArr);
-          }
-        }
-        //humidity data
-        if (dataset_humidity_Chart3Checked) {
-          const humidityDataArr = [];
-          let counterhumidity = 0;
-          for (let thing in response_Humdidity[0].data) {
-            if (counterhumidity < 100) {
-              humidityDataArr.push({
-                time: response_Humdidity[0].data[thing].time,
-                value: response_Humdidity[0].data[thing].value,
-              });
-              counterhumidity++;
-            }
-          }
-          const reversedhumidityDataArr = humidityDataArr.reverse();
-
-          if (isMounted) {
-            sethumchardata(reversedhumidityDataArr);
-          }
-        }
-        //moisture data
-        if (dataset_moisture_Chart3Checked) {
-          const moisture1DataArr = [];
-          let countermoisture1 = 0;
-          for (let thing in response_Moisture[0].data) {
-            if (countermoisture1 < 100) {
-              moisture1DataArr.push({
-                time: response_Moisture[0].data[thing].time,
-                value: response_Moisture[0].data[thing].value,
-              });
-              countermoisture1++;
-            }
-          }
-          const reversedmoisture1DataArr = moisture1DataArr.reverse();
-
-          const moisture2DataArr = [];
-          let countermoisture2 = 0;
-          for (let thing in response_Moisture[0].data) {
-            if (countermoisture2 < 100) {
-              moisture2DataArr.push({
-                time: response_Moisture[0].data[thing].time,
-                value: response_Moisture[0].data[thing].value,
-              });
-              countermoisture2++;
-            }
-          }
-          const reversedmoisture2DataArr = moisture2DataArr.reverse();
-
-          const moisture3DataArr = [];
-          let countermoisture3 = 0;
-          for (let thing in response_Moisture[0].data) {
-            if (countermoisture3 < 100) {
-              moisture3DataArr.push({
-                time: response_Moisture[0].data[thing].time,
-                value: response_Moisture[0].data[thing].value,
-              });
-              countermoisture3++;
-            }
-          }
-          const reversedmoisture3DataArr = moisture3DataArr.reverse();
-
-          if (isMounted) {
-            setmoi1chardata(reversedmoisture1DataArr);
-            setmoi2chardata(reversedmoisture2DataArr);
-            setmoi3chardata(reversedmoisture3DataArr);
-          }
-        }
-        if (dataset_lux_Chart3Checked) {
-          const luxDataArr = [];
-          let counterlux = 0;
-          for (let thing in response_Lux[0].data) {
-            if (counterlux < 100) {
-              luxDataArr.push({
-                time: response_Lux[0].data[thing].time,
-                value: response_Lux[0].data[thing].value,
-              });
-              counterlux++;
-            }
-          }
-          const reversedluxDataArr = luxDataArr.reverse();
-
-          if (isMounted) {
-            setluxchardata(reversedluxDataArr);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        if (isMounted) {
-          setIsLoading_chart_3(false);
-        }
+      if (chart3Checked) {
+        fetchdata_chart_3();
       }
-    };
-    const fetchdata_chart_4 = async () => {
-      try {
-        setIsLoadingchart_4(true);
-
-        const checkboxPromise_Lux = [];
-        const checkboxPromise_Humidity = [];
-        const checkboxPromise_Temperature = [];
-        const checkboxPromise_Moisture = [];
-
-        if (dataset_temperature_Chart4Checked) {
-          checkboxPromise_Temperature.push(
-            axios.get(`${apiUrl}/api/data/all/temperature?groupId=${groupId}`)
-          );
-        }
-        if (dataset_humidity_Chart4Checked) {
-          checkboxPromise_Humidity.push(
-            axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
-          );
-        }
-        if (dataset_moisture_Chart4Checked) {
-          checkboxPromise_Moisture.push(
-            axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
-          );
-          checkboxPromise_Moisture.push(
-            axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
-          );
-          checkboxPromise_Moisture.push(
-            axios.get(`${apiUrl}/api/data/all/moisture/3?groupId=${groupId}`)
-          );
-        }
-        if (dataset_lux_Chart4Checked) {
-          checkboxPromise_Lux.push(
-            axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
-          );
-        }
-
-        const response_Moisture = await Promise.all(checkboxPromise_Moisture);
-        const response_Humdidity = await Promise.all(checkboxPromise_Humidity);
-        const response_Temperature = await Promise.all(
-          checkboxPromise_Temperature
-        );
-        const response_Lux = await Promise.all(checkboxPromise_Lux);
-        // Process the responses and update the respective chart data statess
-
-        if (dataset_temperature_Chart4Checked) {
-          const temperatureDataArr = [];
-          let countertemperature = 0;
-          for (let thing in response_Temperature[0].data) {
-            if (countertemperature < 100) {
-              temperatureDataArr.push({
-                time: response_Temperature[0].data[thing].time,
-                value: response_Temperature[0].data[thing].value,
-              });
-              countertemperature++;
-            }
-          }
-          const reversedtemperatureDataArr = temperatureDataArr.reverse();
-
-          if (isMounted) {
-            settempchardata(reversedtemperatureDataArr);
-          }
-        }
-        //humidity data
-        if (dataset_humidity_Chart4Checked) {
-          const humidityDataArr = [];
-          let counterhumidity = 0;
-          for (let thing in response_Humdidity[0].data) {
-            if (counterhumidity < 100) {
-              humidityDataArr.push({
-                time: response_Humdidity[0].data[thing].time,
-                value: response_Humdidity[0].data[thing].value,
-              });
-              counterhumidity++;
-            }
-          }
-          const reversedhumidityDataArr = humidityDataArr.reverse();
-
-          if (isMounted) {
-            sethumchardata(reversedhumidityDataArr);
-          }
-        }
-        //moisture data
-        if (dataset_moisture_Chart4Checked) {
-          const moisture1DataArr = [];
-          let countermoisture1 = 0;
-          for (let thing in response_Moisture[0].data) {
-            if (countermoisture1 < 100) {
-              moisture1DataArr.push({
-                time: response_Moisture[0].data[thing].time,
-                value: response_Moisture[0].data[thing].value,
-              });
-              countermoisture1++;
-            }
-          }
-          const reversedmoisture1DataArr = moisture1DataArr.reverse();
-
-          const moisture2DataArr = [];
-          let countermoisture2 = 0;
-          for (let thing in response_Moisture[0].data) {
-            if (countermoisture2 < 100) {
-              moisture2DataArr.push({
-                time: response_Moisture[0].data[thing].time,
-                value: response_Moisture[0].data[thing].value,
-              });
-              countermoisture2++;
-            }
-          }
-          const reversedmoisture2DataArr = moisture2DataArr.reverse();
-
-          const moisture3DataArr = [];
-          let countermoisture3 = 0;
-          for (let thing in response_Moisture[0].data) {
-            if (countermoisture3 < 100) {
-              moisture3DataArr.push({
-                time: response_Moisture[0].data[thing].time,
-                value: response_Moisture[0].data[thing].value,
-              });
-              countermoisture3++;
-            }
-          }
-          const reversedmoisture3DataArr = moisture3DataArr.reverse();
-
-          if (isMounted) {
-            setmoi1chardata(reversedmoisture1DataArr);
-            setmoi2chardata(reversedmoisture2DataArr);
-            setmoi3chardata(reversedmoisture3DataArr);
-          }
-        }
-        if (dataset_lux_Chart4Checked) {
-          const luxDataArr = [];
-          let counterlux = 0;
-          for (let thing in response_Lux[0].data) {
-            if (counterlux < 100) {
-              luxDataArr.push({
-                time: response_Lux[0].data[thing].time,
-                value: response_Lux[0].data[thing].value,
-              });
-              counterlux++;
-            }
-          }
-          const reversedluxDataArr = luxDataArr.reverse();
-
-          if (isMounted) {
-            setluxchardata(reversedluxDataArr);
-          }
-        }
-
-        // Similar processing for other responses based on checkbox selection
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        if (isMounted) {
-          setIsLoadingchart_4(false);
-        }
+      if (chart1Checked) {
+        fetchdata_chart_4();
       }
-    };
 
-    if (chart1Checked) {
-      fetchdata_chart_1();
-    }
-    if (chart2Checked) {
-      fetchdata_chart_2();
-    }
-    if (chart3Checked) {
-      fetchdata_chart_3();
-    }
-    if (chart1Checked) {
-      fetchdata_chart_4();
-    }
+      const interval_chart_1 = setInterval(
+        fetchdata_chart_1,
+        update_interval_value_chart_1
+      );
 
-    const interval_chart_1 = setInterval(
-      fetchdata_chart_1,
-      update_interval_value_chart_1
-    );
-
-    const interval_chart_2 = setInterval(
-      fetchdata_chart_2,
-      update_interval_value_chart_2
-    );
-    const interval_chart_3 = setInterval(
-      fetchdata_chart_3,
-      update_interval_value_chart_3
-    );
-    const interval_chart_4 = setInterval(
-      fetchdata_chart_4,
-      update_interval_value_chart_4
-    );
-    return () => {
-      isMounted = false;
-      clearInterval(interval_chart_1);
-      clearInterval(interval_chart_2);
-      clearInterval(interval_chart_3);
-      clearInterval(interval_chart_4);
-    };
+      const interval_chart_2 = setInterval(
+        fetchdata_chart_2,
+        update_interval_value_chart_2
+      );
+      const interval_chart_3 = setInterval(
+        fetchdata_chart_3,
+        update_interval_value_chart_3
+      );
+      const interval_chart_4 = setInterval(
+        fetchdata_chart_4,
+        update_interval_value_chart_4
+      );
+      return () => {
+        isMounted = false;
+        clearInterval(interval_chart_1);
+        clearInterval(interval_chart_2);
+        clearInterval(interval_chart_3);
+        clearInterval(interval_chart_4);
+      };
+    }
   }, [
+    currentPage,
     chart1Checked,
     chart2Checked,
     chart3Checked,

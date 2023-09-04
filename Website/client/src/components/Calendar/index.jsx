@@ -6,6 +6,8 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import { changeRoute } from "../../reduxStore";
 const apiUrl = process.env.REACT_APP_API_URL;
 const Calendar = () => {
   const groupId = localStorage.getItem("groupId");
@@ -14,6 +16,12 @@ const Calendar = () => {
     weekendsVisible: true,
     currentEvents: [],
   };
+  const currentPage = useSelector((state) => state.currentPage);
+  const dispatch = useDispatch();
+  // Use another effect hook to dispatch changeRoute when the component mounts
+  useEffect(() => {
+    dispatch(changeRoute("/forecast"));
+  }, [dispatch]); // Re-run the effect if dispatch changes
 
   function renderEventContent(eventInfo) {
     return (
@@ -24,31 +32,30 @@ const Calendar = () => {
     );
   }
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `${apiUrl}/api/notification/latestdata/notifications?groupId=${groupId}`
-        );
-        const valuesArr = response.data.map((item) => ({
-          message: item.message,
-          time: new Date(item.time).toISOString(), // Convert to ISO string
-          group: item.group,
-          timenow: new Date().getTime(),
-        }));
-
-        setList2(valuesArr);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-    const interval = setInterval(fetchData, 5000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [groupId]);
+    if (currentPage === "/calendar") {
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(
+            `${apiUrl}/api/notification/latestdata/notifications?groupId=${groupId}`
+          );
+          const valuesArr = response.data.map((item) => ({
+            message: item.message,
+            time: new Date(item.time).toISOString(), // Convert to ISO string
+            group: item.group,
+            timenow: new Date().getTime(),
+          }));
+          setList2(valuesArr);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+      fetchData();
+      const interval = setInterval(fetchData, 5000);
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [groupId, currentPage]);
   const events = [
     {
       title: ": Bereich 1 gießen",

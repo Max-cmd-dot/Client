@@ -7,6 +7,9 @@ import { SidebarData3 } from "./SidebarData3";
 import "./Navbar.css";
 import { IconContext } from "react-icons";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { changeRoute } from "../../reduxStore";
+
 const apiUrl = process.env.REACT_APP_API_URL;
 
 function Navbar() {
@@ -14,6 +17,7 @@ function Navbar() {
   const [rightabo, setRightabo] = useState(false);
   const showSidebar = () => setSidebar(!sidebar);
   const group = localStorage.getItem("groupId");
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,7 +44,7 @@ function Navbar() {
     if (rightabo === "small") {
       return SidebarData.map((item, index) => (
         <li key={index} className={item.cName}>
-          <Link to={item.path}>
+          <Link to={item.path} onClick={() => dispatch(changeRoute(item.path))}>
             {item.icon}
             <span>{item.title}</span>
           </Link>
@@ -50,7 +54,7 @@ function Navbar() {
     if (rightabo === "medium") {
       return SidebarData2.map((item, index) => (
         <li key={index} className={item.cName}>
-          <Link to={item.path}>
+          <Link to={item.path} onClick={() => dispatch(changeRoute(item.path))}>
             {item.icon}
             <span>{item.title}</span>
           </Link>
@@ -60,7 +64,7 @@ function Navbar() {
     if (rightabo === "big") {
       return SidebarData3.map((item, index) => (
         <li key={index} className={item.cName}>
-          <Link to={item.path}>
+          <Link to={item.path} onClick={() => dispatch(changeRoute(item.path))}>
             {item.icon}
             <span>{item.title}</span>
           </Link>
