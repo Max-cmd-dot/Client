@@ -28,7 +28,6 @@ const NavbarLayout = () => (
     <Outlet />
   </>
 );
-
 function App() {
   const user = localStorage.getItem("token");
   const [rightabo, setRightabo] = useState(false);

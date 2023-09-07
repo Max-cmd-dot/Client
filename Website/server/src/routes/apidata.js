@@ -168,6 +168,77 @@ router.get("/All/temperature", async (req, res) => {
     console.log(error);
   }
 });
+router.get("/tem", async (req, res) => {
+  try {
+    const { error } = validate(req.body);
+    const groupId = req.query.groupId;
+    const minValue = parseFloat(req.query.minValue);
+    const maxValue = parseFloat(req.query.maxValue);
+    if (error)
+      return res.status(400).send({ message: error.details[0].message });
+
+    const query = {
+      topic: "esp/air/temperature",
+      group: groupId,
+      time: {
+        $gte: new Date(new Date().setHours(0, 0, 0, 0)),
+        $lte: new Date(new Date().setHours(23, 59, 59, 999)),
+      },
+    };
+
+    if (!isNaN(minValue) && !isNaN(maxValue)) {
+      query.value = {
+        $gte: minValue,
+        $lte: maxValue,
+      };
+    } else if (!isNaN(minValue)) {
+      query.value = {
+        $gte: minValue,
+      };
+    } else if (!isNaN(maxValue)) {
+      query.value = {
+        $lte: maxValue,
+      };
+    }
+
+    let data = await Data.aggregate([
+      { $match: query },
+      {
+        $group: {
+          _id: { $hour: "$time" },
+          data: { $push: "$$ROOT" },
+        },
+      },
+      { $sort: { _id: 1 } },
+      { $limit: 24 },
+      {
+        $project: {
+          data: {
+            $arrayElemAt: [
+              "$data",
+              {
+                $indexOfArray: [
+                  "$data.time",
+                  {
+                    $min: "$data.time",
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ]);
+
+    if (data.length > 0) {
+      return res.json(data);
+    } else {
+      return res.json([]);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 router.get("/All/humidity", async (req, res) => {
   try {
