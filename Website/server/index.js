@@ -12,6 +12,7 @@ const password_resetRoutes = require("./src/routes/passwordReset");
 const notificationRoutes = require("./src/routes/notificationdata");
 const apiuserdataRoutes = require("./src/routes/apiuserdata");
 const groupRoutes = require("./src/routes/groupRoutes");
+const actionsRoutes = require("./src/routes/actions");
 
 // database connection
 connection();
@@ -28,6 +29,7 @@ app.use("/api/password-reset", password_resetRoutes);
 app.use("/api/notification", notificationRoutes);
 app.use("/api/apiuserdata", apiuserdataRoutes);
 app.use("/api/group", groupRoutes);
+app.use("/api/actions", actionsRoutes);
 
 app.get("/", (req, res) => {
   res.send("Running...");

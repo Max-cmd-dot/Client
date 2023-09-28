@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { User } = require("../models/apiuserdata");
+const { User, validate } = require("../models/apiuserdata");
 const bcrypt = require("bcrypt");
 const Joi = require("joi");
 
@@ -19,12 +19,5 @@ router.get("/:id", async (req, res) => {
     console.log("error");
   }
 });
-
-const validate = (params) => {
-  const schema = Joi.object({
-    id: Joi.string().required().label("id"),
-  });
-  return schema.validate(params);
-};
 
 module.exports = router;
