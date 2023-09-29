@@ -9,7 +9,8 @@ const Action = mongoose.model("Action", actionsSchema);
 
 const validate = (action) => {
   const schema = Joi.object({
-    pump: Joi.string().required().label("Pump"),
+    object: Joi.string().required().label("Object"),
+    group: Joi.string().required().label("On/Offs"),
     value: Joi.string().required().label("On/Offs"),
   });
   return schema.validate(action);

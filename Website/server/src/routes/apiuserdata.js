@@ -11,7 +11,7 @@ router.get("/:id", async (req, res) => {
 
     const user = await User.findOne({ _id: req.params.id });
 
-    if (!user) return res.status(401).send({ message: "Invalid login" });
+    if (!user) return res.status(401).send({ message: "Invalid request" });
 
     res.status(200).send(user);
   } catch (error) {

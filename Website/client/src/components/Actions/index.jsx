@@ -8,6 +8,7 @@ const apiUrl = process.env.REACT_APP_API_URL;
 import ButtonGroup from "../ButtonGroup/button-group";
 
 const Actions = () => {
+  const groupId = localStorage.getItem("groupId");
   const currentPage = useSelector((state) => state.currentPage);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -37,7 +38,31 @@ const Actions = () => {
   };
   const start_1 = () => {
     //post request to url with data = "pump 1 on"
-    axios.post(`${apiUrl}/actions`, { pump: 1, status: "on" });
+    axios.get(`${apiUrl}/api/actions/?group=${groupId}&object=pump_1&value=on`);
+  };
+  const start_2 = () => {
+    //post request to url with data = "pump 2 on"
+    axios.get(`${apiUrl}/api/actions/?group=${groupId}&object=pump_2&value=on`);
+  };
+  const start_3 = () => {
+    //post request to url with data = "pump 3 on"
+    axios.get(`${apiUrl}/api/actions/?group=${groupId}&object=pump_3&value=on`);
+  };
+  const start_4 = () => {
+    //post request to url with data = "pump 1 on"
+    axios.get(
+      `${apiUrl}/api/actions/?group=${groupId}&object=ventilator_1&value=on`
+    );
+  };
+  const start_5 = () => {
+    //post request to url with data = "pump 1 on"
+    axios.get(
+      `${apiUrl}/api/actions/?group=${groupId}&object=humidifyer_1&value=on`
+    );
+  };
+  const start_6 = () => {
+    //post request to url with data = "pump 1 on"
+    axios.get(`${apiUrl}/api/actions/?group=${groupId}&object=roof_1&value=on`);
   };
   return (
     <div className={styles.main_container}>
@@ -64,7 +89,7 @@ const Actions = () => {
           <div className={styles.box}>
             <h1>
               Pumpe 2
-              <button className={styles.button} onClick={start_1}>
+              <button className={styles.button} onClick={start_2}>
                 Start
               </button>
             </h1>
@@ -72,15 +97,31 @@ const Actions = () => {
           <div className={styles.box}>
             <h1>
               Pumpe 3
-              <button className={styles.button} onClick={start_1}>
+              <button className={styles.button} onClick={start_3}>
                 Start
               </button>
             </h1>
           </div>
           <div className={styles.box}>
             <h1>
-              Pumpe 4
-              <button className={styles.button} onClick={start_1}>
+              Ventilator
+              <button className={styles.button} onClick={start_4}>
+                Start
+              </button>
+            </h1>
+          </div>
+          <div className={styles.box}>
+            <h1>
+              Humidifyer
+              <button className={styles.button} onClick={start_5}>
+                Start
+              </button>
+            </h1>
+          </div>
+          <div className={styles.box}>
+            <h1>
+              Roof
+              <button className={styles.button} onClick={start_6}>
                 Start
               </button>
             </h1>

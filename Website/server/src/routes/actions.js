@@ -15,7 +15,7 @@ client.on("error", (error) => {
 
 router.get("/", async (req, res) => {
   try {
-    const { pump, value } = req.query;
+    const { group, object, value } = req.query;
     const { error } = validate(req.query);
     console.log(req.query);
     console.log("actions");
@@ -23,7 +23,7 @@ router.get("/", async (req, res) => {
       return res.status(400).send({ message: error.details[0].message });
     if (!error) {
       console.log("actions success");
-      client.publish(`pump/${pump}`, value);
+      client.publish(`actions/${group}/${object}`, value);
       return res.status(200).send({ message: "actions success" });
     }
   } catch (error) {
