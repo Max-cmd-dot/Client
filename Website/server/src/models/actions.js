@@ -2,10 +2,12 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 
 const actionsSchema = new mongoose.Schema({
-  pump: { type: String, required: true },
+  object: { type: String, required: true },
+  group: { type: String, required: true },
+  value: { type: String, required: true },
 });
 
-const Action = mongoose.model("Action", actionsSchema);
+const Action = mongoose.model("actions", actionsSchema);
 
 const validate = (action) => {
   const schema = Joi.object({

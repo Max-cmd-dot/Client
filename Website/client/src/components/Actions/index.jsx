@@ -64,6 +64,42 @@ const Actions = () => {
     //post request to url with data = "pump 1 on"
     axios.get(`${apiUrl}/api/actions/?group=${groupId}&object=roof_1&value=on`);
   };
+  const stop_1 = () => {
+    //post request to url with data = "pump 1 on"
+    axios.get(
+      `${apiUrl}/api/actions/?group=${groupId}&object=pump_1&value=off`
+    );
+  };
+  const stop_2 = () => {
+    //post request to url with data = "pump 2 on"
+    axios.get(
+      `${apiUrl}/api/actions/?group=${groupId}&object=pump_2&value=off`
+    );
+  };
+  const stop_3 = () => {
+    //post request to url with data = "pump 3 on"
+    axios.get(
+      `${apiUrl}/api/actions/?group=${groupId}&object=pump_3&value=off`
+    );
+  };
+  const stop_4 = () => {
+    //post request to url with data = "pump 1 on"
+    axios.get(
+      `${apiUrl}/api/actions/?group=${groupId}&object=ventilator_1&value=off`
+    );
+  };
+  const stop_5 = () => {
+    //post request to url with data = "pump 1 on"
+    axios.get(
+      `${apiUrl}/api/actions/?group=${groupId}&object=humidifyer_1&value=off`
+    );
+  };
+  const stop_6 = () => {
+    //post request to url with data = "pump 1 on"
+    axios.get(
+      `${apiUrl}/api/actions/?group=${groupId}&object=roof_1&value=off`
+    );
+  };
   return (
     <div className={styles.main_container}>
       <h1 className={styles.h1}>Actions</h1>
@@ -84,6 +120,9 @@ const Actions = () => {
               <button className={styles.button} onClick={start_1}>
                 Start
               </button>
+              <button className={styles.button} onClick={stop_1}>
+                Stop
+              </button>
             </h1>
           </div>
           <div className={styles.box}>
@@ -91,6 +130,9 @@ const Actions = () => {
               Pumpe 2
               <button className={styles.button} onClick={start_2}>
                 Start
+              </button>
+              <button className={styles.button} onClick={stop_2}>
+                Stop
               </button>
             </h1>
           </div>
@@ -100,6 +142,9 @@ const Actions = () => {
               <button className={styles.button} onClick={start_3}>
                 Start
               </button>
+              <button className={styles.button} onClick={stop_3}>
+                Stop
+              </button>
             </h1>
           </div>
           <div className={styles.box}>
@@ -107,6 +152,9 @@ const Actions = () => {
               Ventilator
               <button className={styles.button} onClick={start_4}>
                 Start
+              </button>
+              <button className={styles.button} onClick={stop_4}>
+                Stop
               </button>
             </h1>
           </div>
@@ -116,6 +164,9 @@ const Actions = () => {
               <button className={styles.button} onClick={start_5}>
                 Start
               </button>
+              <button className={styles.button} onClick={stop_5}>
+                Stop
+              </button>
             </h1>
           </div>
           <div className={styles.box}>
@@ -123,6 +174,9 @@ const Actions = () => {
               Roof
               <button className={styles.button} onClick={start_6}>
                 Start
+              </button>
+              <button className={styles.button} onClick={stop_6}>
+                Stop
               </button>
             </h1>
           </div>
