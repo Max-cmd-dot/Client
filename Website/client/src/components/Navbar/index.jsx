@@ -71,7 +71,14 @@ function Navbar() {
         </li>
       ));
     } else {
-      return <h1> ERROR</h1>;
+      return (
+        <>
+          <h1>ERROR please log out</h1>
+          <Link to="/logout">
+            <h1 className="button">logout</h1>
+          </Link>
+        </>
+      );
     }
   };
 

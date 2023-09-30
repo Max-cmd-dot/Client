@@ -19,6 +19,7 @@ import Profile from "./components/Profile";
 import Imprint from "./components/Imprint";
 import Privacy from "./components/Privacy";
 import Actions from "./components/Actions";
+import Devices from "./components/Devices";
 import { Outlet } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 const apiUrl = process.env.REACT_APP_API_URL;
@@ -63,6 +64,7 @@ function App() {
             <Route path="/" element={<Navigate replace to="/landing" />} />
             {user && <Route path="/history" element={<History />} />}
             {user && <Route path="/profile" element={<Profile />} />}
+            {user && <Route path="/devices" element={<Devices />} />}
             {rightabo === "medium" && (
               <Route path="/notifications" element={<Notifications />} />
             )}
@@ -78,6 +80,7 @@ function App() {
             {rightabo === "big" && (
               <Route path="/actions" element={<Actions />} />
             )}
+
             <Route path="/imprint" element={<Imprint />}></Route>
             <Route path="/privacy" element={<Privacy />}></Route>
             <Route path="/doc" element={<Doc />} />

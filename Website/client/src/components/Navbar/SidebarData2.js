@@ -23,6 +23,12 @@ export const SidebarData2 = [
     cName: "nav-text",
   },
   {
+    title: "Devices",
+    path: "/devices",
+    icon: <bifrom.BiDevices />,
+    cName: "nav-text",
+  },
+  {
     title: "Landing",
     path: "/landing",
     icon: <bifrom.BiLaptop />,

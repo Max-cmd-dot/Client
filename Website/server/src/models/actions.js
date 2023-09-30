@@ -17,5 +17,11 @@ const validate = (action) => {
   });
   return schema.validate(action);
 };
+const validate_current_state = (action) => {
+  const schema = Joi.object({
+    group: Joi.string().required().label("On/Offs"),
+  });
+  return schema.validate(action);
+};
 
-module.exports = { Action, validate };
+module.exports = { Action, validate, validate_current_state };

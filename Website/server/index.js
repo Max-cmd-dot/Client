@@ -13,6 +13,7 @@ const notificationRoutes = require("./src/routes/notificationdata");
 const apiuserdataRoutes = require("./src/routes/apiuserdata");
 const groupRoutes = require("./src/routes/groupRoutes");
 const actionsRoutes = require("./src/routes/actions");
+const devicesRoutes = require("./src/routes/devices");
 
 // database connection
 connection();
@@ -30,6 +31,7 @@ app.use("/api/notification", notificationRoutes);
 app.use("/api/apiuserdata", apiuserdataRoutes);
 app.use("/api/group", groupRoutes);
 app.use("/api/actions", actionsRoutes);
+app.use("/api/devices", devicesRoutes);
 
 app.get("/", (req, res) => {
   res.send("Running...");
