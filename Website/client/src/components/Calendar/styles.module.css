@@ -19,8 +19,11 @@
   border-radius: 10px;
 }
 :root {
-  --fc-button-bg-color: #0088ff;
-  --fc-button-border-color: #0088ff;
-  --fc-button-active-bg-color: #2c3e50;
-  --fc-toolbar-title-color: #2c3e50;
+  --fc-button-bg-color: #2c3e50;
+  --fc-button-border-color: #2c3e50;
+  --fc-button-active-bg-color: #014682;
+  --fc-toolbar-title-color: #014682;
+  --fc-button-hover-bg-color: #014682;
+  --fc-button-hover-border-color: #014682;
+  --fc-today-bg-color: #0b273e68;
 }

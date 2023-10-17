@@ -1,6 +1,29 @@
 const router = require("express").Router();
-const { Notification, validate } = require("../models/notificationdata");
+const {
+  Notification,
+  validate,
+  validate_alarms,
+} = require("../models/notificationdata");
 router.get("/latestdata/notifications", async (req, res) => {
+  try {
+    const groupId = req.query.groupId;
+    const { error } = validate(req.body);
+    if (error)
+      return res.status(400).send({ message: error.details[0].message });
+
+    const notifications = await Notification.find({
+      ignore: "false",
+      group: groupId,
+    }).sort({
+      _id: -1,
+    });
+    if (notifications) return res.json(notifications);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+});
+router.get("/alarms", async (req, res) => {
   try {
     const groupId = req.query.groupId;
     const { error } = validate(req.body);

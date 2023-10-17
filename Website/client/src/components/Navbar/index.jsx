@@ -9,6 +9,8 @@ import { IconContext } from "react-icons";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { changeRoute } from "../../reduxStore";
+import * as bifrom from "react-icons/bi";
+import * as feathericons from "react-icons/fi";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -86,9 +88,26 @@ function Navbar() {
     <>
       <IconContext.Provider value={{ color: "#fff" }}>
         <div className="navbar">
-          <Link to="#" className="menu-bars">
-            <FaIcons.FaBars onClick={showSidebar} />
-          </Link>
+          <div className="logo">
+            <Link to="#" className="menu-bars">
+              <FaIcons.FaBars onClick={showSidebar} />
+            </Link>
+          </div>
+          <div className="profile_picture">
+            {rightabo === "big" ? (
+              <Link to="/notifications" className="icons">
+                <bifrom.BiBell />
+              </Link>
+            ) : (
+              <></>
+            )}
+            <Link to="/profile" className="icons">
+              <feathericons.FiUser />
+            </Link>
+            <Link to="/logout" className="icons">
+              <feathericons.FiLogOut />
+            </Link>
+          </div>
         </div>
         <nav className={sidebar ? "nav-menu active" : "nav-menu"}>
           <ul className="nav-menu-items" onClick={showSidebar}>
@@ -102,8 +121,12 @@ function Navbar() {
 
             <div className="footer">
               <div className="imprint">
-                <Link to="/Imprint">Imprint </Link>
-                <Link to="/Privacy"> Privacy</Link>
+                <Link className="imprint" to="/Imprint">
+                  Imprint
+                </Link>
+                <Link className="imprint" to="/Privacy">
+                  Privacy
+                </Link>
               </div>
             </div>
           </ul>

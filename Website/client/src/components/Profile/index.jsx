@@ -130,11 +130,9 @@ const Profile = () => {
           <table className={styles.customTable}>
             <thead>
               <tr>
-                <th style={{ width: "20%", padding: "20px" }}>Name</th>
-                <th style={{ width: "20%" }}>Role</th>
-                <th style={{ width: "20%" }}>Joined</th>
-                <th style={{ width: "20%" }}>Last active</th>
-                <th style={{ width: "20%" }}>Actions</th>
+                <th style={{ padding: "20px" }}>Name</th>
+                <th style={{}}>Role</th>
+                <th style={{}}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -143,8 +141,6 @@ const Profile = () => {
                   <tr key={index}>
                     <td>{employee}</td>
                     <td>{employee === "Hans Müller" ? "CEO" : "Worker"}</td>
-                    <td>20.02.2023</td>
-                    <td>20.02.2023</td>
                     <td>
                       <button
                         className={styles.button}

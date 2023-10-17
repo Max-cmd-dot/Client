@@ -8,7 +8,7 @@ const apiUrl = process.env.REACT_APP_API_URL;
 const Notifications = () => {
   const [list, setList] = useState([]);
   const groupId = localStorage.getItem("groupId");
-  const [notificationtype, setnotificationtype] = useState("alerts");
+  const [notificationtype, setnotificationtype] = useState("log");
   const [notificationtype_filter, setnotificationtype_filter] = useState("all");
   const [releaseNotes, setReleaseNotes] = useState("Comming soon");
   const currentPage = useSelector((state) => state.currentPage);
@@ -38,6 +38,33 @@ const Notifications = () => {
 
       fetchData();
       const interval = setInterval(fetchData, 5000);
+
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [groupId, currentPage]);
+  useEffect(() => {
+    if (currentPage === "/forecast") {
+      const fetchData_alarms = async () => {
+        try {
+          const response = await axios.get(
+            `${apiUrl}/api/notification/latestdata/notifications?groupId=${groupId}`
+          );
+          const valuesArr = response.data.map((item) => ({
+            message: item.message,
+            time: new Date(item.time).toISOString(), // Convert to ISO string
+            group: item.group,
+          }));
+
+          setList(valuesArr);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+
+      fetchData_alarms();
+      const interval = setInterval(fetchData_alarms, 5000);
 
       return () => {
         clearInterval(interval);
@@ -86,14 +113,14 @@ const Notifications = () => {
   };
 
   const printButtonLabel = (event) => {
-    if (event.target.name === "alerts") {
-      setnotificationtype("alerts");
+    if (event.target.name === "log") {
+      setnotificationtype("log");
     }
     if (event.target.name === "release notes") {
       setnotificationtype("release_notes");
     }
-    if (event.target.name === "messages") {
-      setnotificationtype("messages");
+    if (event.target.name === "alarms") {
+      setnotificationtype("alarms");
     }
   };
   const handleFilter = (filter) => {
@@ -121,11 +148,11 @@ const Notifications = () => {
           style={{ display: "flex", flexDirection: "column", gap: "20px" }}
         >
           <ButtonGroup
-            buttons={["alerts", "release notes", "messages"]}
+            buttons={["alarms", "log", "release notes"]}
             doSomethingAfterClick={printButtonLabel}
             defaultActiveButton={0}
           />
-          {notificationtype === "alerts" && list.length != 0 ? (
+          {notificationtype === "log" && list.length != 0 ? (
             <div
               style={{
                 display: "flex",
@@ -138,6 +165,9 @@ const Notifications = () => {
                 buttons={["all", "system", "water"]}
                 doSomethingAfterClick={handleFilter}
                 defaultActiveButton={0}
+                buttonSize={"15px"}
+                buttonWidth={100}
+                buttonHeight={40}
               />
             </div>
           ) : (
@@ -146,7 +176,7 @@ const Notifications = () => {
             ></div>
           )}
 
-          {notificationtype === "alerts" && list.length > 2 ? (
+          {notificationtype === "log" && list.length > 2 ? (
             <button
               className={styles.delete_all}
               onClick={handleDeleteAll}
@@ -155,113 +185,115 @@ const Notifications = () => {
               Delete All
             </button>
           ) : null}
-          {list.length === 0 && notificationtype === "alerts" ? (
-            <div className={styles.no_alerts}>No alerts!</div>
+          {list.length === 0 && notificationtype === "log" ? (
+            <div className={styles.no_log}>No log data!</div>
           ) : null}
         </div>
-        {notificationtype === "alerts" ? (
-          <div>
-            {notificationtype_filter === "all" ? (
-              <div>
-                {list.map((item, index) => (
-                  <div>
-                    <div className={styles.box} key={index}>
-                      <button
-                        className={styles.deleteButton}
-                        onClick={() => handleDelete(index)}
-                      >
-                        x
-                      </button>
+        <div>
+          {notificationtype === "log" ? (
+            <div>
+              {notificationtype_filter === "all" ? (
+                <div>
+                  {list.map((item, index) => (
+                    <div>
+                      <div className={styles.box} key={index}>
+                        <button
+                          className={styles.deleteButton}
+                          onClick={() => handleDelete(index)}
+                        >
+                          ignore
+                        </button>
 
-                      <h2>{item.message}</h2>
-                      <p>
-                        {new Date(item.time).toLocaleString("en-US", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          second: "2-digit",
-                        })}
-                      </p>
-                      <p>{item.group}</p>
+                        <h2>{item.message}</h2>
+                        <p>
+                          {new Date(item.time).toLocaleString("en-US", {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                          })}
+                        </p>
+                        <p>{item.group}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : notificationtype_filter === "system" ? (
-              <div>
-                {list.map((item, index) => (
-                  <div>
-                    {item.message ===
-                    "No data received in the last 15 minutes." ? (
-                      <div className={styles.box} key={index}>
-                        <button
-                          className={styles.deleteButton}
-                          onClick={() => handleDelete(index)}
-                        >
-                          x
-                        </button>
+                  ))}
+                </div>
+              ) : notificationtype_filter === "system" ? (
+                <div>
+                  {list.map((item, index) => (
+                    <div>
+                      {item.message ===
+                      "No data received in the last 15 minutes." ? (
+                        <div className={styles.box} key={index}>
+                          <button
+                            className={styles.deleteButton}
+                            onClick={() => handleDelete(index)}
+                          >
+                            x
+                          </button>
 
-                        <h2>{item.message}</h2>
-                        <p>
-                          {new Date(item.time).toLocaleString("en-US", {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            second: "2-digit",
-                          })}
-                        </p>
-                        <p>{item.group}</p>
-                      </div>
-                    ) : (
-                      <div></div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : notificationtype_filter === "water" ? (
-              <div>
-                {list.map((item, index) => (
-                  <div>
-                    {item.message === "Soil moisture 1 to less!" ||
-                    item.message === "Soil moisture 2 to less!" ? (
-                      <div className={styles.box} key={index}>
-                        <button
-                          className={styles.deleteButton}
-                          onClick={() => handleDelete(index)}
-                        >
-                          x
-                        </button>
+                          <h2>{item.message}</h2>
+                          <p>
+                            {new Date(item.time).toLocaleString("en-US", {
+                              year: "numeric",
+                              month: "2-digit",
+                              day: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            })}
+                          </p>
+                          <p>{item.group}</p>
+                        </div>
+                      ) : (
+                        <div></div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : notificationtype_filter === "water" ? (
+                <div>
+                  {list.map((item, index) => (
+                    <div>
+                      {item.message === "Soil moisture 1 to less!" ||
+                      item.message === "Soil moisture 2 to less!" ? (
+                        <div className={styles.box} key={index}>
+                          <button
+                            className={styles.deleteButton}
+                            onClick={() => handleDelete(index)}
+                          >
+                            x
+                          </button>
 
-                        <h2>{item.message}</h2>
-                        <p>
-                          {new Date(item.time).toLocaleString("en-US", {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            second: "2-digit",
-                          })}
-                        </p>
-                        <p>{item.group}</p>
-                      </div>
-                    ) : (
-                      <div></div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div></div>
-            )}
-          </div>
-        ) : (
-          <div></div>
-        )}
+                          <h2>{item.message}</h2>
+                          <p>
+                            {new Date(item.time).toLocaleString("en-US", {
+                              year: "numeric",
+                              month: "2-digit",
+                              day: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            })}
+                          </p>
+                          <p>{item.group}</p>
+                        </div>
+                      ) : (
+                        <div></div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div></div>
+              )}
+            </div>
+          ) : (
+            <div></div>
+          )}
+        </div>
         {notificationtype === "release_notes" ? (
           <div>
             {releaseNotes.map((note, index) => (
@@ -276,8 +308,8 @@ const Notifications = () => {
         ) : (
           <div></div>
         )}
-        {notificationtype === "messages" ? (
-          <div className={styles.messages}> No messages from support!</div>
+        {notificationtype === "alarms" ? (
+          <div className={styles.alarms}> No active alarms!</div>
         ) : (
           <div></div>
         )}

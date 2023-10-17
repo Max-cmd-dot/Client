@@ -7,6 +7,9 @@ const ButtonGroup = ({
   defaultActiveButton,
   overrideBoxColor,
   overrideButtonColor,
+  buttonSize,
+  buttonWidth,
+  buttonHeight,
 }) => {
   const [clickedId, setClickedId] = useState(defaultActiveButton);
 
@@ -30,6 +33,11 @@ const ButtonGroup = ({
             className={`${
               i === clickedId ? "customButton activeButton" : "customButton"
             } ${overrideButtonColor ? "override_button_color" : ""}`}
+            style={{
+              fontSize: buttonSize,
+              width: buttonWidth,
+              height: buttonHeight,
+            }}
           >
             {buttonLabel}
           </button>

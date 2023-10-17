@@ -1,7 +1,7 @@
 .heading {
   text-align: center;
 }
-.alerts {
+.log {
   padding-top: 10px;
   text-align: center;
   margin-top: 5%;
@@ -14,8 +14,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 2%;
-  padding-top: 10px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.buttonGroup2 {
+  padding-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .release_note {
   display: flex;
@@ -24,7 +30,7 @@
 .release_note_date {
   width: 100px;
 }
-.messages {
+.alarms {
   text-align: center;
   margin-top: 30px;
 }
@@ -32,6 +38,14 @@
   padding-bottom: 30px;
   margin-left: 15%;
   margin-right: 15%;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  margin-bottom: 3%;
+}
+.box_container2 {
+  padding-bottom: 30px;
+  margin-left: 5%;
+  margin-right: 5%;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   margin-bottom: 3%;
@@ -48,15 +62,27 @@
   color: #ffffff;
   text-align: center;
 }
+.notificationButtonGroup {
+  padding: 5px 10px;
+}
+.h1 {
+  text-align: center;
+  font-family: "Open Sans", sans-serif; /* Changed font for headings */
+  color: #2c3e50; /* Changed color for headings */
+  font-weight: bold; /* Made headings bold */
+  text-shadow: 1px 1px #ffffff; /* Added text shadow for headings */
+  font-size: 24px; /* Increased font size for headings */
+  margin: 10px;
+}
 .deleteButton {
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 20px;
+  width: 60px;
   height: 20px;
   background-color: rgb(248, 94, 94);
   border: none;
-  border-radius: 50%;
+  border-radius: 10px; /* half of the button's height */
 }
 .delete_all {
   border: none;

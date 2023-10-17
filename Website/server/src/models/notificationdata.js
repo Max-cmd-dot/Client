@@ -22,5 +22,16 @@ const validate = (notification) => {
 
   return schema.validate(notification);
 };
+const validate_alarms = (notification) => {
+  const schema = Joi.object({
+    time: Joi.string(),
+    message: Joi.string(),
+    treshhold: Joi.string(),
+    ignore: Joi.string(),
+    groupe: Joi.string(),
+  });
 
-module.exports = { Notification, validate };
+  return schema.validate_alarms(notification);
+};
+
+module.exports = { Notification, validate, validate_alarms };
