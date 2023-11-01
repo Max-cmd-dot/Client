@@ -36,6 +36,7 @@ const Profile = () => {
   };
 
   useEffect(() => {
+    //daten für oben
     const fetchData = async () => {
       try {
         //console.log(userId);
@@ -46,7 +47,6 @@ const Profile = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-
         const { firstName, lastName, email, group } = response.data;
 
         setUserData({ firstName, lastName, email });
@@ -63,13 +63,15 @@ const Profile = () => {
     fetchData();
   }, []);
   useEffect(() => {
+    //daten für unten
     const fetchGroupEmployeesData = async () => {
       try {
         const response = await axios.get(
           `${apiUrl}/api/group/abo?group=${groupId}`
         );
-        const employeesString = response.data.employee;
-        const employeesArray = JSON.parse(employeesString); // Parse the string into an array
+        console.log(response.data);
+        const employeesArray = response.data.employee;
+        //const employeesArray = JSON.parse(employeesString); // Parse the string into an array
         setGroupEmployees(employeesArray);
       } catch (error) {
         // Handle any error that occurred during the API request
@@ -132,7 +134,7 @@ const Profile = () => {
               <tr>
                 <th style={{ padding: "20px" }}>Name</th>
                 <th style={{}}>Role</th>
-                <th style={{}}>Actions</th>
+                {/* comning soon <th style={{}}>Actions</th> */}
               </tr>
             </thead>
             <tbody>
@@ -141,7 +143,7 @@ const Profile = () => {
                   <tr key={index}>
                     <td>{employee}</td>
                     <td>{employee === "Hans Müller" ? "CEO" : "Worker"}</td>
-                    <td>
+                    {/* coming soon <td>
                       <button
                         className={styles.button}
                         onClick={() => handleDeleteClick(employee)}
@@ -154,7 +156,7 @@ const Profile = () => {
                       >
                         Edit Role
                       </button>
-                    </td>
+                    </td> */}
                   </tr>
                 ))
               ) : (
@@ -166,6 +168,8 @@ const Profile = () => {
           </table>
         </div>
       </div>
+      {/* coming soon */}
+      {/* 
       {isDeletePopupOpen && (
         <div className={styles.popup}>
           <div className={styles.popupContent}>
@@ -179,7 +183,7 @@ const Profile = () => {
             </button>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

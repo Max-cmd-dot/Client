@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./button-group.css";
 
 const ButtonGroup = ({
@@ -10,11 +10,9 @@ const ButtonGroup = ({
   buttonSize,
   buttonWidth,
   buttonHeight,
+  activeButton, // Add activeButton as a prop
 }) => {
-  const [clickedId, setClickedId] = useState(defaultActiveButton);
-
   const handleClick = (event, id) => {
-    setClickedId(id);
     doSomethingAfterClick(event);
   };
 
@@ -31,7 +29,10 @@ const ButtonGroup = ({
             name={buttonLabel}
             onClick={(event) => handleClick(event, i)}
             className={`${
-              i === clickedId ? "customButton activeButton" : "customButton"
+              (typeof activeButton === "string" ? buttonLabel : i) ===
+              activeButton
+                ? "customButton activeButton"
+                : "customButton"
             } ${overrideButtonColor ? "override_button_color" : ""}`}
             style={{
               fontSize: buttonSize,

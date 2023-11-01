@@ -8,7 +8,7 @@ const apiUrl = process.env.REACT_APP_API_URL;
 const Notifications = () => {
   const [list, setList] = useState([]);
   const groupId = localStorage.getItem("groupId");
-  const [notificationtype, setnotificationtype] = useState("log");
+  const [notificationtype, setnotificationtype] = useState("alarms");
   const [notificationtype_filter, setnotificationtype_filter] = useState("all");
   const [releaseNotes, setReleaseNotes] = useState("Comming soon");
   const currentPage = useSelector((state) => state.currentPage);
@@ -150,6 +150,7 @@ const Notifications = () => {
           <ButtonGroup
             buttons={["alarms", "log", "release notes"]}
             doSomethingAfterClick={printButtonLabel}
+            activeButton={notificationtype}
             defaultActiveButton={0}
           />
           {notificationtype === "log" && list.length != 0 ? (
@@ -165,6 +166,7 @@ const Notifications = () => {
                 buttons={["all", "system", "water"]}
                 doSomethingAfterClick={handleFilter}
                 defaultActiveButton={0}
+                activeButton={notificationtype_filter}
                 buttonSize={"15px"}
                 buttonWidth={100}
                 buttonHeight={40}

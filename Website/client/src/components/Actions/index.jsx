@@ -226,6 +226,7 @@ const Actions = () => {
             buttons={["Water", "Air", "Sunshine"]}
             doSomethingAfterClick={printButtonLabel}
             defaultActiveButton={0}
+            activeButton={buttongroupstate}
             overrideBoxColor={true}
             overrideButtonColor={false}
           />
