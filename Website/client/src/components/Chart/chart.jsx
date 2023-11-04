@@ -86,9 +86,7 @@ const ChartComponent = ({ chartName }) => {
         const response = await fetch(
           `${apiUrl}/api/historyChart/settings/${userId}/${chartName}`
         );
-        console.log(response);
         const data = await response.json();
-        console.log(data);
         settype_chart_1(data.type);
         setupdate_interval(data.update_interval);
         setUpdate_data_interval(data.data_interval);
@@ -169,9 +167,6 @@ const ChartComponent = ({ chartName }) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-
-      const data = await response.json();
-      console.log("Update interval updated:", data);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -199,9 +194,6 @@ const ChartComponent = ({ chartName }) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-
-      const data = await response.json();
-      console.log("Data interval updated:", data);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -228,9 +220,6 @@ const ChartComponent = ({ chartName }) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-
-      const data = await response.json();
-      console.log("Max count updated:", data);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -238,7 +227,6 @@ const ChartComponent = ({ chartName }) => {
   const handleTypeChange_chart_1 = async (event) => {
     //gets value of drop down
     const selectedType_chart_1 = event.target.value;
-    console.log(selectedType_chart_1);
     //updates the value of the interval
     settype_chart_1(selectedType_chart_1);
 
@@ -470,8 +458,6 @@ const ChartComponent = ({ chartName }) => {
           body: JSON.stringify({ checked }),
         }
       );
-      const data = await response.json();
-      console.log(data);
     } catch (err) {
       console.error(`Error updating chart state: ${err}`);
     }
@@ -492,8 +478,6 @@ const ChartComponent = ({ chartName }) => {
           body: JSON.stringify({ checked }),
         }
       );
-      const data = await response.json();
-      console.log(data);
     } catch (err) {
       console.error(`Error updating chart state: ${err}`);
     }
@@ -515,8 +499,6 @@ const ChartComponent = ({ chartName }) => {
           body: JSON.stringify({ checked }),
         }
       );
-      const data = await response.json();
-      console.log(data);
     } catch (err) {
       console.error(`Error updating chart state: ${err}`);
     }
@@ -538,8 +520,6 @@ const ChartComponent = ({ chartName }) => {
           body: JSON.stringify({ checked }),
         }
       );
-      const data = await response.json();
-      console.log(data);
     } catch (err) {
       console.error(`Error updating chart state: ${err}`);
     }
@@ -594,6 +574,12 @@ const ChartComponent = ({ chartName }) => {
                     interaction: {
                       intersect: false,
                       mode: "index",
+                    },
+                    plugins: {
+                      legend: {
+                        display: true,
+                        onClick: null,
+                      },
                     },
 
                     scales: {

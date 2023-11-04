@@ -60,28 +60,28 @@ const Calendar = () => {
     {
       title: ": Bereich 1 gießen",
       category: "time",
-      start: "2023-08-26T12:00:00",
-      end: "2023-08-26T13:30:00",
+      start: "2023-011-26T12:00:00",
+      end: "2023-11-26T13:30:00",
     },
     {
       title: ": Bereich 2 Pflanzen",
       category: "time",
-      start: "2023-08-24T15:00:00",
-      end: "2023-08-27T15:30:00",
+      start: "2023-11-24T15:00:00",
+      end: "2023-11-27T15:30:00",
       backgroundColor: "darkblue",
     },
     {
       title: ": Bereich 1 Pflanzen",
       category: "time",
-      start: "2023-08-07T15:00:00",
-      end: "2023-08-13T15:30:00",
+      start: "2023-11-07T15:00:00",
+      end: "2023-11-13T15:30:00",
       backgroundColor: "orange",
     },
     {
       title: ": Bereich 1 ernten",
       category: "time",
-      start: "2023-08-04T15:00:00",
-      end: "2023-08-06T15:30:00",
+      start: "2023-11-04T15:00:00",
+      end: "2023-11-06T15:30:00",
     },
     ...list2
       .filter((item) => item.ignore !== "true")
@@ -132,6 +132,7 @@ const Calendar = () => {
       <h1 className={styles.h1}>Calendar</h1>
       <div className={styles.box}>
         <div className={styles.calendar}>
+          <div className={styles.space}></div>
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             headerToolbar={{
@@ -150,6 +151,7 @@ const Calendar = () => {
             select={handleDateSelect}
             eventClick={handleEventClick}
           />
+          <div className={styles.space}></div>
         </div>
       </div>
     </div>

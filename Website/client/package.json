@@ -11,6 +11,7 @@
     "@fullcalendar/react": "^6.1.8",
     "@fullcalendar/timegrid": "^6.1.8",
     "@heroicons/react": "^2.0.10",
+    "@reduxjs/toolkit": "^1.9.7",
     "@syncfusion/ej2-splitbuttons": "^22.2.8",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",

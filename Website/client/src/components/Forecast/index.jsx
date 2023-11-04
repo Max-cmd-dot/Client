@@ -14,6 +14,8 @@ import {
   LinearScale,
   PointElement,
   TimeScale,
+  Tooltip,
+  Legend,
 } from "chart.js";
 import DatePicker from "../DatePicker/DatePicker";
 Chart.register(
@@ -22,16 +24,26 @@ Chart.register(
   LineElement,
   LinearScale,
   PointElement,
-  TimeScale
+  TimeScale,
+  Tooltip,
+  Legend
 );
 import { useSelector, useDispatch } from "react-redux";
+//generell
+const groupId = localStorage.getItem("groupId");
 const apiUrl = process.env.REACT_APP_API_URL;
 const Forecast = () => {
+  // Define state variables for the chart data and also the checks if they are empty
   let [tempchardata, settempchardata] = useState([]);
+  const [IsDataTempDBEmpty, setIsDataTempDBEmpty] = useState(true);
   let [humchardata, sethumchardata] = useState([]);
+  const [IsDataHumDBEmpty, setIsDataHumDBEmpty] = useState(true);
   let [brightchardata, setbrightchardata] = useState([]);
+  const [IsDataBrightDBEmpty, setIsDataBrightDBEmpty] = useState(true);
+  //forcast
   let [tempcharforecast, settempcharforecast] = useState([]);
-  const groupId = localStorage.getItem("groupId");
+  const [IsDataTempForecastEmpty, setIsDataTempForecastEmpty] = useState(false);
+  //loading and time
   const [isLoading_chart_1, setIsLoading_chart_1] = useState(false);
   const [isLoading_chart_2, setIsLoading_chart_2] = useState(false);
   const [isLoading_chart_3, setIsLoading_chart_3] = useState(false);
@@ -45,18 +57,18 @@ const Forecast = () => {
   const [update_interval_value_chart_3, setupdate_interval_value_chart_3] =
     useState(15000);
   const [count_chart_1, setcount_chart_1] = useState(20000);
-  const [charttype, setcharttype] = useState("temperature");
+  const [charttype, setcharttype] = useState("Temperature");
   const currentPage = useSelector((state) => state.currentPage);
   const dispatch = useDispatch();
 
   const handleButtonTemperature = () => {
-    setcharttype("temperature");
+    setcharttype("Temperature");
   };
   const handleHumidity = () => {
-    setcharttype("humidity");
+    setcharttype("Humidity");
   };
   const handleLux = () => {
-    setcharttype("lux");
+    setcharttype("Brightness");
   };
   const printButtonLabel = (event) => {
     if (event.target.name === "Temperature") {
@@ -107,6 +119,7 @@ const Forecast = () => {
               `${apiUrl}/api/data/tem?groupId=${groupId}&count=${count_chart_1}`
             )
           );
+
           const response_Temperature = await Promise.all(
             checkboxPromise_Temperature
           );
@@ -127,9 +140,8 @@ const Forecast = () => {
               countertemperature++;
             }
           }
-          console.log(temperatureDataArr);
           const reversedtemperatureDataArr = temperatureDataArr.reverse();
-          console.log(reversedtemperatureDataArr);
+
           // Convert times to weather API format
           const convertedTimes = reversedtemperatureDataArr.map((data) => {
             const date = new Date(data.time);
@@ -148,11 +160,11 @@ const Forecast = () => {
               new Date(convertedTimes[index]).toDateString() ===
               now.toDateString()
           );
-
           // Filter past data for current day
           const pastCurrentDayData = currentDayData.filter(
             (data, index) => new Date(convertedTimes[index]) < now
           );
+          // Subtract 1 hour from the time of the past data for current day
           const updatedpastCurrentDayData = pastCurrentDayData.map((data) => {
             const date = new Date(data.time);
             date.setHours(date.getHours() - 0);
@@ -161,6 +173,10 @@ const Forecast = () => {
               time: date.toISOString(),
             };
           });
+          if (updatedpastCurrentDayData.length === 0) {
+            setIsDataTempDBEmpty(true);
+          }
+
           // Use past data for current day as labels for the chart
           // Create an array with all hours of the current day
           const allHours = Array.from({ length: 24 }, (_, i) => {
@@ -180,7 +196,6 @@ const Forecast = () => {
           });
 
           // Map over all hours and replace the ones that exist in your data
-          // Map over all hours and replace the ones that exist in your data
           const filledData = allHours.map((hour) => {
             const dataAtHour = updatedpastCurrentDayData.find((data) => {
               const date = new Date(hour);
@@ -198,20 +213,24 @@ const Forecast = () => {
                 .padStart(2, "0")}:00:00.000Z`;
               return formattedTime === data.time;
             });
-            return dataAtHour ? dataAtHour : { time: hour, value: NaN };
+            return dataAtHour ? dataAtHour : { time: hour, temp_c: NaN };
           });
 
           settempchardata(filledData);
-
-          console.log("updatedpastCurrentDayData");
-          console.log(filledData);
 
           // Fetch data from weather API
           const weatherResponse = await axios.get(
             "http://api.weatherapi.com/v1/forecast.json?key=d50cfcc0887343f39cf193820230409&q=Hamburg&days=3&aqi=no&alerts=no"
           );
           const weatherData = weatherResponse.data;
-
+          if (!weatherResponse || Object.keys(weatherData).length === 0) {
+            throw new Error("The response from the weather API is empty");
+          }
+          // Check for errors and empty data
+          if (weatherData.error) {
+            setIsDataTempForecastEmpty(true);
+            throw new Error(weatherData.error.message);
+          }
           // Put weather data into an array
           const weatherDataArray = [];
           for (let day of weatherData.forecast.forecastday) {
@@ -232,9 +251,30 @@ const Forecast = () => {
           const futureCurrentDayWeatherData = currentDayWeatherData.filter(
             (data) => new Date(data.time) > now
           );
-          console.log(futureCurrentDayWeatherData);
-          // Update tempcharforecast state
-          settempcharforecast(futureCurrentDayWeatherData);
+
+          // Generate all hours of the current day
+          const allHours2 = Array.from({ length: 24 }, (_, i) => {
+            const date = new Date();
+            date.setHours(i, 0, 0, 0);
+            return date.toISOString().split(":")[0] + ":00";
+          });
+
+          // Map over all hours to create filledFutureData
+          const filledFutureData = allHours2.map((hour) => {
+            const hourDate = new Date(hour);
+            const dataAtHour = futureCurrentDayWeatherData.find((data) => {
+              const dataDate = new Date(data.time);
+              return (
+                dataDate.getUTCFullYear() === hourDate.getUTCFullYear() &&
+                dataDate.getUTCMonth() === hourDate.getUTCMonth() &&
+                dataDate.getUTCDate() === hourDate.getUTCDate() &&
+                dataDate.getUTCHours() === hourDate.getUTCHours()
+              );
+            });
+            return dataAtHour ? dataAtHour : { time: hour, temp_c: NaN };
+          });
+
+          settempcharforecast(filledFutureData);
         } catch (error) {
           console.error("Error fetching data:", error);
         } finally {
@@ -323,13 +363,13 @@ const Forecast = () => {
 
       // Check the value of charttype and assign the corresponding function to fetchFunction
       switch (charttype) {
-        case "temperature":
+        case "Temperature":
           fetchFunction = fetchdata_chart_1;
           break;
-        case "humidity":
+        case "Humidity":
           fetchFunction = fetchdata_chart_2;
           break;
-        case "lux":
+        case "Brightness":
           fetchFunction = fetchdata_chart_3;
           break;
         default:
@@ -344,7 +384,7 @@ const Forecast = () => {
       // Return a cleanup function that clears the interval
       return () => clearInterval(interval);
     }
-  }, [currentPage, charttype]); // Re-run the effect if currentPage or fetchdata_chart_3 changes
+  }, [currentPage, charttype, IsDataTempDBEmpty]); // Re-run the effect if currentPage or fetchdata_chart_3 changes
   return (
     <div>
       <div className={styles.container}>
@@ -354,80 +394,116 @@ const Forecast = () => {
         </div>
         <div className={styles.buttonGroup}>
           <ButtonGroup
-            buttons={["Temperature", "Brightness", "Humidity"]}
+            buttons={["Temperature", "Humidity", "Brightness"]}
             doSomethingAfterClick={printButtonLabel}
             defaultActiveButton={0}
+            activeButton={charttype}
           />
         </div>
         <div className={styles.diagramm}>
-          {charttype === "temperature" ? (
+          {charttype === "Temperature" ? (
             <div>
               {isLoading_chart_1 ? (
                 <div className={styles.chart_container}>
                   <div style={{ margin: "2%" }}>
-                    <Line
-                      data={{
-                        labels: tempchardata.map((data) => data.time),
-                        datasets: [
-                          {
-                            label: "tempchardata",
-                            data: tempchardata.map((data) => data.value),
-                            borderColor: ["rgba(0, 0, 237, 1)"],
-                          },
-                          {
-                            label: "tempchardata",
-                            data: tempchardata.map((data) => data.value),
-                            borderColor: ["rgba(0, 0, 237, 1)"],
-                          },
-                        ].filter(Boolean),
-                      }}
-                      options={{
-                        spanGaps: false,
-                        animation: false,
-                        pointRadius: 1,
-                        spanGaps: false,
-                        interaction: {
-                          intersect: false,
-                          mode: "index",
-                        },
-                        tooltips: {
-                          enabled: true, // enable tooltips
-                          callbacks: {
-                            // customize tooltip content
-                            label: (context) => {
-                              const datasetLabel = context.dataset.label || "";
-                              const value = context.parsed.y;
-                              return `${datasetLabel}: ${value}`;
+                    {IsDataTempDBEmpty === true && IsDataTempForecastEmpty ? (
+                      <div className={styles.banner}>
+                        No Data for Temperature. If it is not expected, please
+                        contact the support!
+                      </div>
+                    ) : (
+                      <Line
+                        data={{
+                          labels: tempchardata.map((data) => data.time),
+                          datasets: [
+                            {
+                              label: "Past Data",
+                              data: tempchardata.map((data) => data.temp_c),
+                              borderColor: ["rgba(0, 0, 237, 1)"],
                             },
+                            {
+                              label: "Forecast Data",
+                              data: tempcharforecast.map((data) => data.temp_c),
+                              borderColor: ["rgba(0, 237, 0, 1)"],
+                            },
+                          ],
+                        }}
+                        options={{
+                          spanGaps: false,
+                          animation: false,
+                          pointRadius: 1,
+                          spanGaps: false,
+                          interaction: {
+                            intersect: false,
+                            mode: "index",
                           },
-                        },
-                        scales: {
-                          x: {
-                            type: "time",
-                            time: {
-                              displayFormats: {
-                                hour: "HH",
+                          plugins: {
+                            legend: {
+                              display: true,
+                              position: "bottom",
+                              labels: {
+                                boxWidth: 20,
+                                padding: 20,
                               },
+                              onClick: null,
                             },
-                            ticks: {
-                              source: "auto",
-                              // Disabled rotation for performance
-                              maxRotation: 0,
-                            },
-                            min: startOfDayInMilliseconds,
-                            max: endOfDayInMilliseconds,
                           },
-                          y: {
-                            ticks: {
-                              callback: function (value, index, ticks) {
-                                return round(value) + " °C";
+                          tooltips: {
+                            enabled: true, // enable tooltips
+                            callbacks: {
+                              // customize tooltip content
+                              label: (context) => {
+                                const datasetLabel =
+                                  context.dataset.label || "";
+                                const value = context.parsed.y;
+                                return `${datasetLabel}: ${value}`;
                               },
                             },
                           },
-                        },
-                      }}
-                    />
+                          scales: {
+                            x: {
+                              type: "time",
+                              time: {
+                                displayFormats: {
+                                  hour: "HH",
+                                },
+                              },
+                              ticks: {
+                                source: "auto",
+                                // Disabled rotation for performance
+                                maxRotation: 0,
+                              },
+                              min: startOfDayInMilliseconds,
+                              max: endOfDayInMilliseconds,
+                            },
+                            y: {
+                              ticks: {
+                                callback: function (value, index, ticks) {
+                                  return round(value) + " °C";
+                                },
+                              },
+                            },
+                          },
+                        }}
+                      />
+                    )}
                   </div>
+                  {IsDataTempDBEmpty === true ? (
+                    <div className={styles.hint}>
+                      No Temperature data for the past. If it is not expected,
+                      please contact the support!
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+                  {IsDataTempForecastEmpty === true ? (
+                    <div className={styles.hint}>
+                      No Temperature data for forecast. If it is not expected,
+                      please contact the support!
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
                 </div>
               ) : (
                 <div className={styles.loading}>
@@ -438,72 +514,80 @@ const Forecast = () => {
           ) : (
             <div></div>
           )}
-          {charttype === "humidity" ? (
+          {charttype === "Humidity" ? (
             <div>
               {isLoading_chart_2 ? (
                 <div className={styles.chart_container}>
                   <div style={{ margin: "2%" }}>
-                    <Line
-                      data={{
-                        labels: humchardata.map(
-                          (humchardata) => humchardata.time
-                        ),
-                        datasets: [
-                          {
-                            label: "humchardata",
-                            data: humchardata.map(
-                              (humchardata) => humchardata.value
-                            ),
-                            borderColor: ["rgba(0, 0, 237, 1)"],
-                          },
-                        ].filter(Boolean),
-                      }}
-                      options={{
-                        animation: false,
-                        pointRadius: 1,
-                        interaction: {
-                          intersect: false,
-                          mode: "index",
-                        },
-                        tooltips: {
-                          enabled: true, // enable tooltips
-                          callbacks: {
-                            // customize tooltip content
-                            label: (context) => {
-                              const datasetLabel = context.dataset.label || "";
-                              const value = context.parsed.y;
-                              return `${datasetLabel}: ${value}`;
+                    {IsDataTempDBEmpty === true ? (
+                      <div className={styles.banner}>
+                        No Data for Humidity. If it is not expected, please
+                        contact the support!
+                      </div>
+                    ) : (
+                      <Line
+                        data={{
+                          labels: humchardata.map(
+                            (humchardata) => humchardata.time
+                          ),
+                          datasets: [
+                            {
+                              label: "humchardata",
+                              data: humchardata.map(
+                                (humchardata) => humchardata.value
+                              ),
+                              borderColor: ["rgba(0, 0, 237, 1)"],
                             },
+                          ].filter(Boolean),
+                        }}
+                        options={{
+                          animation: false,
+                          pointRadius: 1,
+                          interaction: {
+                            intersect: false,
+                            mode: "index",
                           },
-                        },
-                        scales: {
-                          x: {
-                            type: "time",
-                            time: {
-                              displayFormats: {
-                                hour: "HH",
-                              },
-                            },
-                            ticks: {
-                              source: "auto",
-                              // Disabled rotation for performance
-                              maxRotation: 0,
-                              autoSkip: true,
-                              reverse: true,
-                            },
-                            min: startOfDayInMilliseconds,
-                            max: endOfDayInMilliseconds,
-                          },
-                          y: {
-                            ticks: {
-                              callback: function (value, index, ticks) {
-                                return round(value) + " %";
+                          tooltips: {
+                            enabled: true, // enable tooltips
+                            callbacks: {
+                              // customize tooltip content
+                              label: (context) => {
+                                const datasetLabel =
+                                  context.dataset.label || "";
+                                const value = context.parsed.y;
+                                return `${datasetLabel}: ${value}`;
                               },
                             },
                           },
-                        },
-                      }}
-                    />
+                          scales: {
+                            x: {
+                              type: "time",
+                              time: {
+                                displayFormats: {
+                                  hour: "HH",
+                                },
+                              },
+                              ticks: {
+                                source: "auto",
+                                // Disabled rotation for performance
+                                maxRotation: 0,
+                                autoSkip: true,
+                                reverse: true,
+                              },
+                              min: startOfDayInMilliseconds,
+                              max: endOfDayInMilliseconds,
+                            },
+                            y: {
+                              ticks: {
+                                callback: function (value, index, ticks) {
+                                  return round(value) + " %";
+                                },
+                              },
+                            },
+                          },
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               ) : (
@@ -515,72 +599,80 @@ const Forecast = () => {
           ) : (
             <div></div>
           )}
-          {charttype === "lux" ? (
+          {charttype === "Brightness" ? (
             <div>
               {isLoading_chart_3 ? (
                 <div className={styles.chart_container}>
                   <div style={{ margin: "2%" }}>
-                    <Line
-                      data={{
-                        labels: brightchardata.map(
-                          (brightchardata) => brightchardata.time
-                        ),
-                        datasets: [
-                          {
-                            label: "brightchardata",
-                            data: brightchardata.map(
-                              (brightchardata) => brightchardata.value
-                            ),
-                            borderColor: ["rgba(0, 0, 237, 1)"],
-                          },
-                        ].filter(Boolean),
-                      }}
-                      options={{
-                        animation: false,
-                        pointRadius: 1,
-                        interaction: {
-                          intersect: false,
-                          mode: "index",
-                        },
-                        tooltips: {
-                          enabled: true, // enable tooltips
-                          callbacks: {
-                            // customize tooltip content
-                            label: (context) => {
-                              const datasetLabel = context.dataset.label || "";
-                              const value = context.parsed.y;
-                              return `${datasetLabel}: ${value}`;
+                    {IsDataTempDBEmpty === true ? (
+                      <div className={styles.banner}>
+                        No Data for Brightness. If it is not expected, please
+                        contact the support!
+                      </div>
+                    ) : (
+                      <Line
+                        data={{
+                          labels: brightchardata.map(
+                            (brightchardata) => brightchardata.time
+                          ),
+                          datasets: [
+                            {
+                              label: "brightchardata",
+                              data: brightchardata.map(
+                                (brightchardata) => brightchardata.value
+                              ),
+                              borderColor: ["rgba(0, 0, 237, 1)"],
                             },
+                          ].filter(Boolean),
+                        }}
+                        options={{
+                          animation: false,
+                          pointRadius: 1,
+                          interaction: {
+                            intersect: false,
+                            mode: "index",
                           },
-                        },
-                        scales: {
-                          x: {
-                            type: "time",
-                            time: {
-                              displayFormats: {
-                                hour: "HH",
-                              },
-                            },
-                            ticks: {
-                              source: "auto",
-                              // Disabled rotation for performance
-                              maxRotation: 0,
-                              autoSkip: true,
-                              reverse: true,
-                            },
-                            min: startOfDayInMilliseconds,
-                            max: endOfDayInMilliseconds,
-                          },
-                          y: {
-                            ticks: {
-                              callback: function (value, index, ticks) {
-                                return round(value) + " lux";
+                          tooltips: {
+                            enabled: true, // enable tooltips
+                            callbacks: {
+                              // customize tooltip content
+                              label: (context) => {
+                                const datasetLabel =
+                                  context.dataset.label || "";
+                                const value = context.parsed.y;
+                                return `${datasetLabel}: ${value}`;
                               },
                             },
                           },
-                        },
-                      }}
-                    />
+                          scales: {
+                            x: {
+                              type: "time",
+                              time: {
+                                displayFormats: {
+                                  hour: "HH",
+                                },
+                              },
+                              ticks: {
+                                source: "auto",
+                                // Disabled rotation for performance
+                                maxRotation: 0,
+                                autoSkip: true,
+                                reverse: true,
+                              },
+                              min: startOfDayInMilliseconds,
+                              max: endOfDayInMilliseconds,
+                            },
+                            y: {
+                              ticks: {
+                                callback: function (value, index, ticks) {
+                                  return round(value) + " lux";
+                                },
+                              },
+                            },
+                          },
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               ) : (

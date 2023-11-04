@@ -1,5 +1,4 @@
-// store/reduxStore.js
-import { createStore } from "redux";
+import { configureStore } from "@reduxjs/toolkit";
 
 // Define an action
 const CHANGE_ROUTE = "CHANGE_ROUTE";
@@ -24,5 +23,7 @@ function appReducer(state = initialState, action) {
   }
 }
 
-// Create a Redux store
-export const store = createStore(appReducer);
+// Create a Redux store using configureStore
+export const store = configureStore({
+  reducer: appReducer,
+});
