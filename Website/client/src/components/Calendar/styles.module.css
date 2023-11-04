@@ -1,7 +1,7 @@
 .h1 {
   text-align: center;
   font-family: "Open Sans", sans-serif; /* Changed font for headings */
-  color: #2c3e50; /* Changed color for headings */
+  color: #13395a; /* Changed color for headings */
 }
 .calendar {
   margin-left: 7.5%;
@@ -14,8 +14,8 @@
   border-radius: 10px;
 }
 :root {
-  --fc-button-bg-color: #2c3e50;
-  --fc-button-border-color: #2c3e50;
+  --fc-button-bg-color: #13395a;
+  --fc-button-border-color: #13395a;
   --fc-button-active-bg-color: #014682;
   --fc-toolbar-title-color: #014682;
   --fc-button-hover-bg-color: #014682;
