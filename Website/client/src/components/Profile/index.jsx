@@ -142,11 +142,7 @@ const Profile = () => {
                 groupEmployees.map((employee, index) => (
                   <tr key={index}>
                     <td>{employee}</td>
-<<<<<<< Updated upstream
-                    <td>{employee === "Hans Müller" ? "CEO" : "Worker"}</td>
-=======
                     <td>{employee === "Hans Müller" ? "Admin" : "Worker"}</td>
->>>>>>> Stashed changes
                     {/* coming soon <td>
                       <button
                         className={styles.button}

@@ -1,10 +1,6 @@
 ///////////imports///////////
 import styles from "./chart.css";
-<<<<<<< Updated upstream
-import { Line, Scatter, Tooltip } from "react-chartjs-2";
-=======
 import { Line, Scatter } from "react-chartjs-2";
->>>>>>> Stashed changes
 import "chartjs-adapter-moment";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -18,10 +14,7 @@ import {
   LinearScale,
   PointElement,
   TimeScale,
-<<<<<<< Updated upstream
-=======
   Tooltip,
->>>>>>> Stashed changes
 } from "chart.js";
 Chart.register(
   ArcElement,
@@ -29,36 +22,22 @@ Chart.register(
   LineElement,
   LinearScale,
   PointElement,
-<<<<<<< Updated upstream
-  TimeScale
-);
-import { useSelector, useDispatch } from "react-redux";
-const apiUrl = process.env.REACT_APP_API_URL;
-
-=======
   TimeScale,
   Tooltip
 );
 import { useSelector, useDispatch } from "react-redux";
 const apiUrl = process.env.REACT_APP_API_URL;
 const userId = localStorage.getItem("id");
->>>>>>> Stashed changes
 ///////////MAIN FUNCTION///////////
 const ChartComponent = ({ chartName }) => {
   //generelll
   const groupId = localStorage.getItem("groupId");
-<<<<<<< Updated upstream
-  const [count_chart_1, setcount_chart_1] = useState(100);
-=======
   const [max_count, setmax_count] = useState(100);
->>>>>>> Stashed changes
   const currentPage = useSelector((state) => state.currentPage);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(changeRoute("/history"));
   }, [dispatch]); // Re-run the effect if dispatch changes
-<<<<<<< Updated upstream
-=======
   //to get the window size for the settingsgroup
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -70,39 +49,12 @@ const ChartComponent = ({ chartName }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []); // Empty dependency array means this effect runs once on mount and cleanup on unmount
   //data arrays
->>>>>>> Stashed changes
   let [tempchardata, settempchardata] = useState([]);
   let [humchardata, sethumchardata] = useState([]);
   let [luxchardata, setluxchardata] = useState([]);
   let [moi1chardata, setmoi1chardata] = useState([]);
   let [moi2chardata, setmoi2chardata] = useState([]);
   let [moi3chardata, setmoi3chardata] = useState([]);
-<<<<<<< Updated upstream
-  //first chart
-  const [isLoading_chart_1, setIsLoading_chart_1] = useState(false);
-  //secound chart
-  const [loadingTime_1, setLoadingTime_1] = useState(false);
-  const [chart1Checked, setChart1Checked] = useState(true);
-  const [type_chart_1, settype_chart_1] = useState(1);
-  const [update_interval_value_chart_1, setupdate_interval_value_chart_1] =
-    useState(15000);
-  const [
-    update_data_interval_value_chart_1,
-    setupdate_data_interval_value_chart_1,
-  ] = useState(15000);
-  const [settings_state_chart_1, setsettings_state_chart_1] = useState(true);
-  //chart 1 datasets checks
-  const [
-    dataset_temperature_Chart1Checked,
-    setDataset_temperature_Chart1Checked,
-  ] = useState(true);
-  const [dataset_humidity_Chart1Checked, setDataset_humidity_Chart1Checked] =
-    useState(false);
-  const [dataset_moisture_Chart1Checked, setdataset_moisture_Chart1Checked] =
-    useState(false);
-  const [dataset_lux_Chart1Checked, setdataset_lux_Chart1Checked] =
-    useState(false);
-=======
   //generell
   const [isLoading_chart_1, setIsLoading_chart_1] = useState(false);
   //settings
@@ -121,16 +73,11 @@ const ChartComponent = ({ chartName }) => {
   // prettier-ignore
   const [dataset_lux_Chart1Checked, setdataset_lux_Chart1Checked] = useState(false);
   //stats of Popups
->>>>>>> Stashed changes
   const [IsEditPopupOpen_1, setIsEditPopupOpen_1] = useState(false);
   const [IsDataPopupOpen_1, setIsDataPopupOpen_1] = useState(false);
   const [IsCountPopupOpen_1, setIsCountPopupOpen_1] = useState(false);
   const [IsTypePopupOpen_1, setIsTypePopupOpen_1] = useState(false);
   const [IsIntervalPopupOpen_1, setIsIntervalPopupOpen_1] = useState(false);
-<<<<<<< Updated upstream
-
-  //general settings
-=======
   //general settings
   //fetch the data and initilize it from the server
   useEffect(() => {
@@ -159,7 +106,6 @@ const ChartComponent = ({ chartName }) => {
 
     fetchData();
   }, []);
->>>>>>> Stashed changes
 
   const openEditPopup_1 = () => {
     setIsEditPopupOpen_1(true);
@@ -200,31 +146,6 @@ const ChartComponent = ({ chartName }) => {
   const live_data_1 = () => {
     console.log("live data_1");
   };
-<<<<<<< Updated upstream
-  const handleIntervalChange_chart_1 = (event) => {
-    //gets value of drop down
-    const selectedInterval_chart_1 = parseInt(event.target.value);
-    //updates the value of the interval
-    setupdate_interval_value_chart_1(selectedInterval_chart_1);
-  };
-  const handleDataIntervalChange_chart_1 = (event) => {
-    //gets value of drop down
-    const selectedDataInterval_chart_1 = parseInt(event.target.value);
-    //updates the value of the interval
-    setupdate_data_interval_value_chart_1(selectedDataInterval_chart_1);
-  };
-  const handleCountChange_chart_1 = (event) => {
-    //gets value of drop down
-    const selectedCount_chart_1 = parseInt(event.target.value);
-    //updates the value of the interval
-    setcount_chart_1(selectedCount_chart_1);
-  };
-  const handleTypeChange_chart_1 = (event) => {
-    //gets value of drop down
-    const selectedType_chart_1 = parseInt(event.target.value);
-    //updates the value of the interval
-    settype_chart_1(selectedType_chart_1);
-=======
   const handleUpdateIntervalChange = async (event) => {
     //gets value of drop down
     const selectedInterval = parseInt(event.target.value);
@@ -342,7 +263,6 @@ const ChartComponent = ({ chartName }) => {
     } catch (error) {
       console.error("Error:", error);
     }
->>>>>>> Stashed changes
   };
   const settings_chart_1 = () => {
     setsettings_state_chart_1(!settings_state_chart_1);
@@ -363,11 +283,7 @@ const ChartComponent = ({ chartName }) => {
           if (dataset_temperature_Chart1Checked) {
             checkboxPromise_Temperature.push(
               axios.get(
-<<<<<<< Updated upstream
-                `${apiUrl}/api/data/all/temperature?groupId=${groupId}&count=${count_chart_1}`
-=======
                 `${apiUrl}/api/data/all/temperature?groupId=${groupId}&count=${max_count}`
->>>>>>> Stashed changes
               )
             );
           }
@@ -401,111 +317,6 @@ const ChartComponent = ({ chartName }) => {
           );
           const response_Lux = await Promise.all(checkboxPromise_Lux);
 
-<<<<<<< Updated upstream
-          if (chart1Checked) {
-            if (dataset_temperature_Chart1Checked) {
-              const temperatureDataArr = [];
-              let countertemperature = 0;
-              for (let thing in response_Temperature[0].data) {
-                if (countertemperature < 10000) {
-                  temperatureDataArr.push({
-                    time: response_Temperature[0].data[thing].time,
-                    value: response_Temperature[0].data[thing].value,
-                  });
-                  countertemperature++;
-                }
-              }
-              const reversedtemperatureDataArr = temperatureDataArr.reverse();
-
-              if (isMounted) {
-                settempchardata(reversedtemperatureDataArr);
-              }
-            }
-            //humidity data
-            if (dataset_humidity_Chart1Checked) {
-              const humidityDataArr = [];
-              let counterhumidity = 0;
-              for (let thing in response_Humdidity[0].data) {
-                if (counterhumidity < 100) {
-                  humidityDataArr.push({
-                    time: response_Humdidity[0].data[thing].time,
-                    value: response_Humdidity[0].data[thing].value,
-                  });
-                  counterhumidity++;
-                }
-              }
-              const reversedhumidityDataArr = humidityDataArr.reverse();
-
-              if (isMounted) {
-                sethumchardata(reversedhumidityDataArr);
-              }
-            }
-            //moisture data
-            if (dataset_moisture_Chart1Checked) {
-              const moisture1DataArr = [];
-              let countermoisture1 = 0;
-              for (let thing in response_Moisture[0].data) {
-                if (countermoisture1 < 100) {
-                  moisture1DataArr.push({
-                    time: response_Moisture[0].data[thing].time,
-                    value: response_Moisture[0].data[thing].value,
-                  });
-                  countermoisture1++;
-                }
-              }
-              const reversedmoisture1DataArr = moisture1DataArr.reverse();
-
-              const moisture2DataArr = [];
-              let countermoisture2 = 0;
-              for (let thing in response_Moisture[0].data) {
-                if (countermoisture2 < 100) {
-                  moisture2DataArr.push({
-                    time: response_Moisture[0].data[thing].time,
-                    value: response_Moisture[0].data[thing].value,
-                  });
-                  countermoisture2++;
-                }
-              }
-              const reversedmoisture2DataArr = moisture2DataArr.reverse();
-
-              const moisture3DataArr = [];
-              let countermoisture3 = 0;
-              for (let thing in response_Moisture[0].data) {
-                if (countermoisture3 < 100) {
-                  moisture3DataArr.push({
-                    time: response_Moisture[0].data[thing].time,
-                    value: response_Moisture[0].data[thing].value,
-                  });
-                  countermoisture3++;
-                }
-              }
-              const reversedmoisture3DataArr = moisture3DataArr.reverse();
-
-              if (isMounted) {
-                setmoi1chardata(reversedmoisture1DataArr);
-                setmoi2chardata(reversedmoisture2DataArr);
-                setmoi3chardata(reversedmoisture3DataArr);
-              }
-            }
-            if (dataset_lux_Chart1Checked) {
-              const luxDataArr = [];
-              let counterlux = 0;
-              for (let thing in response_Lux[0].data) {
-                if (counterlux < 100) {
-                  luxDataArr.push({
-                    time: response_Lux[0].data[thing].time,
-                    value: response_Lux[0].data[thing].value,
-                  });
-                  counterlux++;
-                }
-              }
-              const reversedluxDataArr = luxDataArr.reverse();
-
-              if (isMounted) {
-                setluxchardata(reversedluxDataArr);
-              }
-            }
-=======
           if (dataset_temperature_Chart1Checked) {
             const temperatureDataArr = [];
             let countertemperature = 0;
@@ -607,7 +418,6 @@ const ChartComponent = ({ chartName }) => {
             if (isMounted) {
               setluxchardata(reversedluxDataArr);
             }
->>>>>>> Stashed changes
           }
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -621,19 +431,9 @@ const ChartComponent = ({ chartName }) => {
         }
       };
 
-<<<<<<< Updated upstream
-      if (chart1Checked) {
-        fetchdata_chart_1();
-      }
-      const interval_chart_1 = setInterval(
-        fetchdata_chart_1,
-        update_interval_value_chart_1
-      );
-=======
       fetchdata_chart_1();
 
       const interval_chart_1 = setInterval(fetchdata_chart_1, update_interval);
->>>>>>> Stashed changes
 
       return () => {
         isMounted = false;
@@ -642,203 +442,12 @@ const ChartComponent = ({ chartName }) => {
     }
   }, [
     currentPage,
-<<<<<<< Updated upstream
-    chart1Checked,
-=======
->>>>>>> Stashed changes
 
     dataset_temperature_Chart1Checked,
     dataset_humidity_Chart1Checked,
     dataset_moisture_Chart1Checked,
     dataset_lux_Chart1Checked,
 
-<<<<<<< Updated upstream
-    update_interval_value_chart_1,
-    update_data_interval_value_chart_1,
-    count_chart_1,
-  ]);
-
-  //chart 1
-  const handleChange_dataset_temperature_Chart1 = (event) => {
-    setDataset_temperature_Chart1Checked(event.target.checked);
-  };
-  const handleChange_dataset_humidity_Chart1 = (event) => {
-    setDataset_humidity_Chart1Checked(event.target.checked);
-  };
-  const handleChange_dataset_moisture_Chart1 = (event) => {
-    setdataset_moisture_Chart1Checked(event.target.checked);
-  };
-  const handleChange_dataset_lux_Chart1 = (event) => {
-    setdataset_lux_Chart1Checked(event.target.checked);
-  };
-
-  const Chart_1 = () => {
-    if (chart1Checked === true) {
-      return (
-        <div>
-          <h2 className="heading">{chartName}</h2>
-          <div className="graph">
-            {isLoading_chart_1 ? (
-              <div>
-                {type_chart_1 === 1 ? (
-                  <Line
-                    data={{
-                      labels: tempchardata.map(
-                        (tempchardata) => tempchardata.time
-                      ),
-                      datasets: [
-                        dataset_temperature_Chart1Checked && {
-                          label: "tempchardata",
-                          data: tempchardata.map(
-                            (tempchardata) => tempchardata.value
-                          ),
-                          borderColor: ["rgba(0, 0, 237, 1)"],
-                        },
-                        dataset_humidity_Chart1Checked && {
-                          label: "humchardata",
-                          data: humchardata.map(
-                            (humchardata) => humchardata.value
-                          ),
-                          borderColor: ["rgba(0, 0, 237, 1)"],
-                        },
-                        dataset_moisture_Chart1Checked && {
-                          label: "moisturedata",
-                          data: moi1chardata.map(
-                            (moi1chardata) => moi1chardata.value
-                          ),
-                          borderColor: ["rgba(0, 0, 237, 1)"],
-                        },
-                        dataset_lux_Chart1Checked && {
-                          label: "luxchardata",
-                          data: luxchardata.map(
-                            (luxchardata) => luxchardata.value
-                          ),
-                          borderColor: ["rgba(0, 0, 237, 1)"],
-                        },
-                      ].filter(Boolean),
-                    }}
-                    options={{
-                      animation: false,
-                      pointRadius: 0,
-                      interaction: {
-                        intersect: false,
-                        mode: "index",
-                      },
-                      tooltips: {
-                        enabled: true, // enable tooltips
-                        callbacks: {
-                          // customize tooltip content
-                          label: (context) => {
-                            const datasetLabel = context.dataset.label || "";
-                            const value = context.parsed.y;
-                            return `${datasetLabel}: ${value}`;
-                          },
-                        },
-                      },
-                      scales: {
-                        x: {
-                          type: "time",
-                          time: {
-                            displayFormats: {
-                              hour: "HH:MM",
-                            },
-                          },
-                          ticks: {
-                            source: "auto",
-                            // Disabled rotation for performance
-                            maxRotation: 0,
-                            autoSkip: true,
-                            reverse: true,
-                          },
-                        },
-                      },
-                    }}
-                    className="chart"
-                  />
-                ) : type_chart_1 === 2 ? (
-                  <Scatter
-                    data={{
-                      labels: tempchardata.map(
-                        (tempchardata) => tempchardata.time
-                      ),
-                      datasets: [
-                        dataset_temperature_Chart1Checked && {
-                          label: "tempchardata",
-                          data: tempchardata.map(
-                            (tempchardata) => tempchardata.value
-                          ),
-                          borderColor: ["rgba(0, 0, 237, 1)"],
-                        },
-                        dataset_humidity_Chart1Checked && {
-                          label: "humchardata",
-                          data: humchardata.map(
-                            (humchardata) => humchardata.value
-                          ),
-                          borderColor: ["rgba(0, 0, 237, 1)"],
-                        },
-                        dataset_moisture_Chart1Checked && {
-                          label: "moisturedata",
-                          data: moi1chardata.map(
-                            (moi1chardata) => moi1chardata.value
-                          ),
-                          borderColor: ["rgba(0, 0, 237, 1)"],
-                        },
-                        dataset_lux_Chart1Checked && {
-                          label: "luxchardata",
-                          data: luxchardata.map(
-                            (luxchardata) => luxchardata.value
-                          ),
-                          borderColor: ["rgba(0, 0, 237, 1)"],
-                        },
-                      ].filter(Boolean),
-                    }}
-                    options={{
-                      animation: false,
-                      pointRadius: 5,
-                      interaction: {
-                        intersect: false,
-                        mode: "index",
-                      },
-                      tooltips: {
-                        enabled: true, // enable tooltips
-                        callbacks: {
-                          // customize tooltip content
-                          label: (context) => {
-                            const datasetLabel = context.dataset.label || "";
-                            const value = context.parsed.y;
-                            return `${datasetLabel}: ${value}`;
-                          },
-                        },
-                      },
-                      scales: {
-                        x: {
-                          type: "time",
-                          time: {
-                            displayFormats: {
-                              hour: "HH:MM",
-                            },
-                          },
-                          ticks: {
-                            source: "auto",
-                            // Disabled rotation for performance
-                            maxRotation: 0,
-                            autoSkip: true,
-                            reverse: true,
-                          },
-                        },
-                      },
-                    }}
-                    className="chart"
-                  />
-                ) : (
-                  <div>
-                    <h1>error</h1>
-                  </div>
-                )}
-
-                <div
-                  style={{
-=======
     update_interval,
     update_data_interval,
     max_count,
@@ -1098,7 +707,6 @@ const ChartComponent = ({ chartName }) => {
                   style={{
                     marginTop: "1%",
                     marginBottom: "1%",
->>>>>>> Stashed changes
                     transition: "width 200s",
                     position: "relative",
                     display: "flex",
@@ -1111,13 +719,8 @@ const ChartComponent = ({ chartName }) => {
                       ? "0px 0px 20px rgba(0, 0, 0, 0.25)"
                       : "none",
                     alignItems: "center",
-<<<<<<< Updated upstream
-                    width: "fit-content",
-                    marginLeft: "2%",
-=======
                     marginLeft: "2%",
                     width: "100%",
->>>>>>> Stashed changes
                   }}
                 >
                   <button
@@ -1166,19 +769,6 @@ const ChartComponent = ({ chartName }) => {
                   </div>
                 </div>
               </div>
-<<<<<<< Updated upstream
-            ) : (
-              <div className="loading">
-                <ClipLoader size={50} className="heading" />
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    } else {
-      return null;
-    }
-=======
             </div>
           ) : (
             <div className="loading">
@@ -1188,7 +778,6 @@ const ChartComponent = ({ chartName }) => {
         </div>
       </div>
     );
->>>>>>> Stashed changes
   };
   return (
     <>
@@ -1252,17 +841,10 @@ const ChartComponent = ({ chartName }) => {
             <div className="popup">
               <div className="popupContent">
                 <h3>Select your data Interval</h3>
-<<<<<<< Updated upstream
-                <label htmlFor="updateInterval_chart_1">Data Interval: </label>
-                <select
-                  id="updateInterval_chart_1"
-                  value={update_interval_value_chart_1}
-=======
                 <label htmlFor="updateInterval">Data Interval: </label>
                 <select
                   id="updateInterval_chart_1"
                   value={setUpdate_data_interval}
->>>>>>> Stashed changes
                   onChange={handleDataIntervalChange_chart_1}
                 >
                   <option value={100}>Live</option>
@@ -1284,19 +866,11 @@ const ChartComponent = ({ chartName }) => {
             <div className="popup">
               <div className="popupContent">
                 <h3>Select your max count of data points</h3>
-<<<<<<< Updated upstream
-                <label htmlFor="updateInterval_chart_1">Data Interval: </label>
-                <select
-                  id="updateInterval_chart_1"
-                  value={count_chart_1}
-                  onChange={handleCountChange_chart_1}
-=======
                 <label htmlFor="max_count">Data Interval: </label>
                 <select
                   id="max count"
                   value={max_count}
                   onChange={handleMaxCountChange}
->>>>>>> Stashed changes
                 >
                   <option value={100}>100</option>
                   <option value={500}>500</option>
@@ -1315,17 +889,6 @@ const ChartComponent = ({ chartName }) => {
           {IsTypePopupOpen_1 && (
             <div className="popup">
               <div className="popupContent">
-<<<<<<< Updated upstream
-                <h3>Select yourtype of chart</h3>
-                <label htmlFor="updateInterval_chart_1">Type </label>
-                <select
-                  id="updateInterval_chart_1"
-                  value={count_chart_1}
-                  onChange={handleTypeChange_chart_1}
-                >
-                  <option value={1}>line</option>
-                  <option value={2}>scatter</option>
-=======
                 <h3>Select your type of chart</h3>
                 <label htmlFor="chart_type">Type </label>
                 <select
@@ -1335,7 +898,6 @@ const ChartComponent = ({ chartName }) => {
                 >
                   <option>line</option>
                   <option>scatter</option>
->>>>>>> Stashed changes
                 </select>
                 <div className="checkbox"></div>
                 <button onClick={closeTypePopup_1} className="edit_popup">
@@ -1348,21 +910,11 @@ const ChartComponent = ({ chartName }) => {
             <div className="popup">
               <div className="popupContent">
                 <h3>Choose your Datasets for Chart 4</h3>
-<<<<<<< Updated upstream
-                <label htmlFor="updateInterval_chart_1">
-                  Update Interval:{" "}
-                </label>
-                <select
-                  id="updateInterval_chart_1"
-                  value={update_interval_value_chart_1}
-                  onChange={handleIntervalChange_chart_1}
-=======
                 <label htmlFor="updateInterval_">Update Interval: </label>
                 <select
                   id="updateInterval"
                   value={update_interval}
                   onChange={handleUpdateIntervalChange}
->>>>>>> Stashed changes
                 >
                   <option value={100}>Live</option>
                   <option value={5000}>5 seconds</option>

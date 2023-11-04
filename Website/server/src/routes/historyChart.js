@@ -19,14 +19,12 @@ router.get("/all/:userId", async (req, res) => {
 });
 router.get("/settings/:userId/:chartName", async (req, res) => {
   try {
-    console.log(req.params);
     const historyChart = await HistoryChart.findOne({
       userId: req.params.userId,
     });
     const chart1 = historyChart.charts.find(
       (chart) => chart.chartName === req.params.chartName
     );
-    console.log(chart1.chartData);
     if (!historyChart) {
       return res.status(404).json({ error: "No history chart found." });
     }
@@ -70,7 +68,6 @@ router.put("/change_datasets/:userId/:chartName/:dataTyp", async (req, res) => {
     const { checked } = req.body;
     const { userId, chartName, dataTyp } = req.params;
     const checkedField = `charts.$.chartData.datasets.0.checked_${dataTyp}`;
-    console.log(checkedField);
 
     const historyChart = await HistoryChart.findOneAndUpdate(
       { userId: userId, "charts.chartName": chartName },
