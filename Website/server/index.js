@@ -14,6 +14,7 @@ const apiuserdataRoutes = require("./src/routes/apiuserdata");
 const groupRoutes = require("./src/routes/groupRoutes");
 const actionsRoutes = require("./src/routes/actions");
 const devicesRoutes = require("./src/routes/devices");
+const historyChart = require("./src/routes/historyChart");
 
 // database connection
 connection();
@@ -32,6 +33,7 @@ app.use("/api/apiuserdata", apiuserdataRoutes);
 app.use("/api/group", groupRoutes);
 app.use("/api/actions", actionsRoutes);
 app.use("/api/devices", devicesRoutes);
+app.use("/api/historyChart", historyChart);
 
 app.get("/", (req, res) => {
   res.send("Running...");
