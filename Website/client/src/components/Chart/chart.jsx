@@ -684,7 +684,7 @@ const ChartComponent = ({ chartName }) => {
 
               <div
                 style={
-                  windowWidth > 1400
+                  windowWidth > 1100
                     ? { width: "fit-content" }
                     : { width: "100%" }
                 }
@@ -743,9 +743,10 @@ const ChartComponent = ({ chartName }) => {
                     <button onClick={openDataPopup_1} className="edit_popup">
                       data interval
                     </button>
+                    {/* 
                     <button onClick={live_data_1} className="edit_popup">
                       .live data.
-                    </button>
+                    </button> */}
                     <button
                       onClick={openIntervalPopup_1}
                       className="edit_popup"

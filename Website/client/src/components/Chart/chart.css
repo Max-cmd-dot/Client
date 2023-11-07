@@ -10,7 +10,8 @@
 }
 .graph {
   color: #111;
-  width: 100%; /* Adjust the height as desired */
+  width: 100%;
+  height: calc(100% + 20px); /* Adjust the height as desired */
   padding-bottom: 10px;
 }
 
@@ -44,6 +45,7 @@
   width: 120px;
   font-weight: bold;
   font-size: 14px;
+  font-size: calc(0.4em + 1vw);
   cursor: pointer;
   background-color: #0088ff;
   color: white;
@@ -53,11 +55,7 @@
   transition: 0.3s;
   background-color: #13395a;
 }
-@media (max-width: 768px) {
-  .graph {
-    height: 300px;
-  }
-}
+
 h1 {
   text-align: center;
   font-family: "Open Sans", sans-serif; /* Changed font for headings */
@@ -76,12 +74,6 @@ h1 {
   justify-content: center;
   align-items: center;
   padding: 10px;
-}
-
-@media (max-width: 480px) {
-  .graph {
-    height: 200px;
-  }
 }
 
 .blue {
