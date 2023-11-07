@@ -538,6 +538,7 @@ const Main = () => {
             height={500}
           />
         </div>
+        <div className={styles.space}></div>
       </>
 
       {/*   
