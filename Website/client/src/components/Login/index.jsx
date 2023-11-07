@@ -26,7 +26,9 @@ const Login = () => {
       //console.log(res.data.userId);
       //console.log(res.data.group);
       // Redirect the user to the desired page after successful login
-      window.location = "/"; // Replace "/" with the appropriate route for your application
+      setTimeout(() => {
+        window.location.href = "/"; // Redirect to the landing page after a delay
+      }, 100); // Delay of 1000 milliseconds (1 second)
     } catch (error) {
       if (
         error.response &&

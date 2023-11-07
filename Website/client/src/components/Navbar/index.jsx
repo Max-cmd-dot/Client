@@ -93,10 +93,10 @@ function Navbar() {
     } else {
       return (
         <>
-          <h1>ERROR please log out</h1>
-          <Link to="/logout">
-            <h1 className="button">logout</h1>
-          </Link>
+          <h1>
+            Error. Please try to relogin. If the error persists, please contact
+            the support
+          </h1>
         </>
       );
     }
