@@ -206,7 +206,7 @@ const Notifications = () => {
                           ignore
                         </button>
 
-                        <h2>{item.message}</h2>
+                        <h2 className={styles.h2}>{item.message}</h2>
                         <p>
                           {new Date(item.time).toLocaleString("en-US", {
                             year: "numeric",

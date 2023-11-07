@@ -68,6 +68,14 @@
   display: flex;
   justify-content: space-evenly;
 }
+@media (max-width: 1200px) {
+  .data {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    /* Boxen sind untereinander, wenn der Viewport 1250px oder weniger breit ist */
+  }
+}
 .sensordata {
   width: 100%;
   max-width: 150px;

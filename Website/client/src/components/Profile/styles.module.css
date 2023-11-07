@@ -1,17 +1,10 @@
 /* das sind die kästchen */
 .data {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-evenly;
 }
-@media (max-width: 1200px) {
-  .data {
-    flex-direction: column;
-    align-items: center;
-    padding-left: 30%;
-    padding-right: 30%;
-    /* Boxen sind untereinander, wenn der Viewport 1250px oder weniger breit ist */
-  }
-}
+
 .input {
   outline: none;
   border: none;
@@ -26,6 +19,8 @@
 
 .box {
   width: 100%;
+  max-width: 300px;
+  min-width: 50px; /* Added minimum width */
   height: 180px;
   border-radius: 10px;
   margin: 20px;
@@ -34,8 +29,6 @@
   background-color: #13395a;
   color: #ffffff;
   text-align: center;
-  min-height: auto;
-  overflow: auto;
 }
 .boxbig {
   padding-top: 1px;
