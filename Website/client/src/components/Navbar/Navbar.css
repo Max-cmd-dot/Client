@@ -130,3 +130,7 @@ span {
 .placeholder {
   color: #13395a;
 }
+.line {
+  border-bottom: 1px solid #fff;
+  margin: 0 40px; /* Adjust margin as needed */
+}

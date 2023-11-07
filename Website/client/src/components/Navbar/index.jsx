@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import * as FaIcons from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { StandardSidebarData } from "./StandardSidebarData";
 import { SidebarData } from "./SidebarData";
 import { SidebarData2 } from "./SidebarData2";
 import { SidebarData3 } from "./SidebarData3";
@@ -43,8 +44,27 @@ function Navbar() {
   }, []);
 
   const renderSidebarData = () => {
+    let additionalSidebar;
     if (rightabo === "small") {
-      return SidebarData.map((item, index) => (
+      additionalSidebar = SidebarData.map((item, index) => (
+        <li key={index} className={item.cName}>
+          <Link to={item.path} onClick={() => dispatch(changeRoute(item.path))}>
+            {item.icon}
+            <span>{item.title}</span>
+          </Link>
+        </li>
+      ));
+    } else if (rightabo === "medium") {
+      additionalSidebar = SidebarData2.map((item, index) => (
+        <li key={index} className={item.cName}>
+          <Link to={item.path} onClick={() => dispatch(changeRoute(item.path))}>
+            {item.icon}
+            <span>{item.title}</span>
+          </Link>
+        </li>
+      ));
+    } else if (rightabo === "big") {
+      additionalSidebar = SidebarData3.map((item, index) => (
         <li key={index} className={item.cName}>
           <Link to={item.path} onClick={() => dispatch(changeRoute(item.path))}>
             {item.icon}
@@ -53,25 +73,23 @@ function Navbar() {
         </li>
       ));
     }
-    if (rightabo === "medium") {
-      return SidebarData2.map((item, index) => (
-        <li key={index} className={item.cName}>
-          <Link to={item.path} onClick={() => dispatch(changeRoute(item.path))}>
-            {item.icon}
-            <span>{item.title}</span>
-          </Link>
-        </li>
-      ));
-    }
-    if (rightabo === "big") {
-      return SidebarData3.map((item, index) => (
-        <li key={index} className={item.cName}>
-          <Link to={item.path} onClick={() => dispatch(changeRoute(item.path))}>
-            {item.icon}
-            <span>{item.title}</span>
-          </Link>
-        </li>
-      ));
+    const standardSidebar = StandardSidebarData.map((item, index) => (
+      <li key={index} className={item.cName}>
+        <Link to={item.path} onClick={() => dispatch(changeRoute(item.path))}>
+          {item.icon}
+          <span>{item.title}</span>
+        </Link>
+      </li>
+    ));
+
+    if (rightabo === "small" || rightabo === "medium" || rightabo === "big") {
+      return (
+        <>
+          {additionalSidebar}
+          <hr className="line" />
+          {standardSidebar}
+        </>
+      );
     } else {
       return (
         <>
@@ -114,7 +132,7 @@ function Navbar() {
             </li>
 
             {renderSidebarData()}
-
+            <hr className="line" />
             <div className="footer">
               <div className="imprint">
                 <Link className="imprint" to="/Imprint">

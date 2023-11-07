@@ -28,28 +28,4 @@ export const SidebarData = [
     icon: <bifrom.BiBell />,
     cName: "nav-text",
   },
-  {
-    title: "Landing",
-    path: "/landing",
-    icon: <bifrom.BiLaptop />,
-    cName: "nav-text",
-  },
-  {
-    title: "Documentation",
-    path: "/doc",
-    icon: <bifrom.BiFile />,
-    cName: "nav-text",
-  },
-  {
-    title: "Profile",
-    path: "/profile",
-    icon: <feathericons.FiUser />,
-    cName: "nav-text",
-  },
-  {
-    title: "Logout",
-    path: "/logout",
-    icon: <feathericons.FiLogOut />,
-    cName: "nav-text",
-  },
 ];
