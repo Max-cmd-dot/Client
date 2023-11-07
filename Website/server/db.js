@@ -20,7 +20,7 @@ module.exports = async () => {
       const collections = await mongoose.connection.db
         .listCollections()
         .toArray();
-      console.log("Collections in database:", collections);
+      //console.log("Collections in database:", collections);
       console.log("Database connected!");
     } catch (error) {
       console.log(error);

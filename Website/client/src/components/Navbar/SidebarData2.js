@@ -17,15 +17,15 @@ export const SidebarData2 = [
     cName: "nav-text",
   },
   {
-    title: "Notifications",
-    path: "/notifications",
-    icon: <bifrom.BiBell />,
+    title: "Actions",
+    path: "/actions",
+    icon: <bifrom.BiDumbbell />,
     cName: "nav-text",
   },
   {
-    title: "Devices",
-    path: "/devices",
-    icon: <bifrom.BiDevices />,
+    title: "Notifications",
+    path: "/notifications",
+    icon: <bifrom.BiBell />,
     cName: "nav-text",
   },
   {

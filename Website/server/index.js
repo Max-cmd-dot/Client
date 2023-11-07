@@ -15,6 +15,7 @@ const groupRoutes = require("./src/routes/groupRoutes");
 const actionsRoutes = require("./src/routes/actions");
 const devicesRoutes = require("./src/routes/devices");
 const historyChart = require("./src/routes/historyChart");
+const emailchangeRoutes = require("./src/routes/changeEmail");
 
 // database connection
 connection();
@@ -34,6 +35,7 @@ app.use("/api/group", groupRoutes);
 app.use("/api/actions", actionsRoutes);
 app.use("/api/devices", devicesRoutes);
 app.use("/api/historyChart", historyChart);
+app.use("/api/changeEmail", emailchangeRoutes);
 
 app.get("/", (req, res) => {
   res.send("Running...");

@@ -7,6 +7,11 @@ const Landing = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const handlegoback = () => {
     changeRoute("/");
+    //redirecting to "/" page
+    //fixes the issue of not loadingt the main page data
+    setTimeout(() => {
+      window.location.href = "/"; // Redirect to the landing page after a delay
+    }, 100); // Delay of 1000 milliseconds (1 second)
   };
   useEffect(() => {
     // Check if user is logged in based on userId in local storage
@@ -19,15 +24,13 @@ const Landing = () => {
   const renderButton = () => {
     if (isLoggedIn) {
       return (
-        <Link to="/">
-          <button
-            type="button"
-            className={styles.white_btn}
-            onClick={handlegoback}
-          >
-            Go Back
-          </button>
-        </Link>
+        <button
+          type="button"
+          className={styles.white_btn}
+          onClick={handlegoback}
+        >
+          Go Back
+        </button>
       );
     } else {
       return (

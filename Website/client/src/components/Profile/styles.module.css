@@ -1,11 +1,32 @@
+/* das sind die kästchen */
 .data {
   display: flex;
   justify-content: space-evenly;
 }
+@media (max-width: 1200px) {
+  .data {
+    flex-direction: column;
+    align-items: center;
+    padding-left: 30%;
+    padding-right: 30%;
+    /* Boxen sind untereinander, wenn der Viewport 1250px oder weniger breit ist */
+  }
+}
+.input {
+  outline: none;
+  border: none;
+  width: 100%;
+  max-width: 400px; /* Add a maximum width for the input fields */
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #edf5f3;
+  margin: 5px 0;
+  font-size: 14px;
+}
 
 .box {
   width: 100%;
-  height: 130px;
+  height: 180px;
   border-radius: 10px;
   margin: 20px;
   box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 40%),
@@ -34,6 +55,7 @@
 }
 p {
   padding-left: 1%;
+  padding-right: 1%;
 }
 .sensordata:hover {
   color: #111;
@@ -99,7 +121,26 @@ p {
   justify-content: center;
   align-items: center;
 }
-
+.error_msg {
+  width: 400px;
+  padding: 15px;
+  margin: 5px 0;
+  font-size: 14px;
+  background-color: #f34646;
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+}
+.success_msg {
+  width: 400px;
+  padding: 15px;
+  margin: 5px 0;
+  font-size: 14px;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+}
 .popupContent {
   background-color: #fff;
   padding: 20px;
@@ -118,7 +159,8 @@ p {
   cursor: pointer;
   background-color: #0088ff;
   color: white;
-  margin: 10px;
+  margin: 20px;
+  margin-top: 15px;
 }
 .button:hover {
   color: #2c3e50;

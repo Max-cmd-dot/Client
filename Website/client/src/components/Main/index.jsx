@@ -528,7 +528,21 @@ const Main = () => {
           })}
         </div>
       </div>
-      {isMediumOrBig ? (
+      <>
+        <h1 className={styles.heading}>Calendar</h1>
+        <div className={styles.CalendarBox}>
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            events={events}
+            initialView="timeGridWeek"
+            height={500}
+          />
+        </div>
+      </>
+
+      {/*   
+      //special for Enterprise clients
+      {isMediumorBig? (
         <>
           <h1 className={styles.heading}>Calendar</h1>
           <div className={styles.CalendarBox}>
@@ -542,7 +556,7 @@ const Main = () => {
         </>
       ) : (
         <h1 className={styles.heading}>Temperature Diagramm</h1>
-      )}
+      )} */}
     </div>
   );
 };

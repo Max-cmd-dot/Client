@@ -17,9 +17,15 @@ export const SidebarData = [
     cName: "nav-text",
   },
   {
-    title: "Devices",
-    path: "/devices",
-    icon: <bifrom.BiDevices />,
+    title: "Actions",
+    path: "/actions",
+    icon: <bifrom.BiDumbbell />,
+    cName: "nav-text",
+  },
+  {
+    title: "Notifications",
+    path: "/notifications",
+    icon: <bifrom.BiBell />,
     cName: "nav-text",
   },
   {

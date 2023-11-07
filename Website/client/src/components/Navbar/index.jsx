@@ -94,13 +94,9 @@ function Navbar() {
             </Link>
           </div>
           <div className="profile_picture">
-            {rightabo === "big" ? (
-              <Link to="/notifications" className="icons">
-                <bifrom.BiBell />
-              </Link>
-            ) : (
-              <></>
-            )}
+            <Link to="/notifications" className="icons">
+              <bifrom.BiBell />
+            </Link>
             <Link to="/profile" className="icons">
               <feathericons.FiUser />
             </Link>

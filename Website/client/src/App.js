@@ -64,9 +64,14 @@ function App() {
             <Route path="/" element={<Navigate replace to="/landing" />} />
             {user && <Route path="/history" element={<History />} />}
             {user && <Route path="/profile" element={<Profile />} />}
-            {user && <Route path="/devices" element={<Devices />} />}
-            {rightabo === "medium" && (
+            {rightabo === "small" && (
+              <Route path="/devices" element={<Devices />} />
+            )}
+            {rightabo === "small" && (
               <Route path="/notifications" element={<Notifications />} />
+            )}
+            {rightabo === "small" && (
+              <Route path="/actions" element={<Actions />} />
             )}
             {rightabo === "big" && (
               <Route path="/notifications" element={<Notifications />} />
@@ -77,10 +82,6 @@ function App() {
             {rightabo === "big" && (
               <Route path="/calendar" element={<Calendar />} />
             )}
-            {rightabo === "big" && (
-              <Route path="/actions" element={<Actions />} />
-            )}
-
             <Route path="/imprint" element={<Imprint />}></Route>
             <Route path="/privacy" element={<Privacy />}></Route>
             <Route path="/doc" element={<Doc />} />
