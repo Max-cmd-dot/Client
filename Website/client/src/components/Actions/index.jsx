@@ -41,82 +41,13 @@ const Actions = () => {
       handleSunshine();
     }
   };
-  const start_1 = () => {
-    //post request to url with data = "pump 1 on"
-    axios.get(`${apiUrl}/api/actions/?group=${groupId}&object=pump_1&value=on`);
-    fetchData_current_state();
-  };
-  const start_2 = () => {
-    //post request to url with data = "pump 2 on"
-    axios.get(`${apiUrl}/api/actions/?group=${groupId}&object=pump_2&value=on`);
-    fetchData_current_state();
-  };
-  const start_3 = () => {
-    //post request to url with data = "pump 3 on"
-    axios.get(`${apiUrl}/api/actions/?group=${groupId}&object=pump_3&value=on`);
-    fetchData_current_state();
-  };
-  const start_4 = () => {
-    //post request to url with data = "pump 1 on"
+  const toggleDevice = (device, value) => {
     axios.get(
-      `${apiUrl}/api/actions/?group=${groupId}&object=ventilator_1&value=on`
+      `${apiUrl}/api/actions/?group=${groupId}&object=${device}&value=${value}`
     );
     fetchData_current_state();
   };
-  const start_5 = () => {
-    //post request to url with data = "pump 1 on"
-    axios.get(
-      `${apiUrl}/api/actions/?group=${groupId}&object=humidifyer_1&value=on`
-    );
-    fetchData_current_state();
-  };
-  const start_6 = () => {
-    //post request to url with data = "pump 1 on"
-    axios.get(`${apiUrl}/api/actions/?group=${groupId}&object=roof_1&value=on`);
-    fetchData_current_state();
-  };
-  const stop_1 = () => {
-    //post request to url with data = "pump 1 on"
-    axios.get(
-      `${apiUrl}/api/actions/?group=${groupId}&object=pump_1&value=off`
-    );
-    fetchData_current_state();
-  };
-  const stop_2 = () => {
-    //post request to url with data = "pump 2 on"
-    axios.get(
-      `${apiUrl}/api/actions/?group=${groupId}&object=pump_2&value=off`
-    );
-    fetchData_current_state();
-  };
-  const stop_3 = () => {
-    //post request to url with data = "pump 3 on"
-    axios.get(
-      `${apiUrl}/api/actions/?group=${groupId}&object=pump_3&value=off`
-    );
-    fetchData_current_state();
-  };
-  const stop_4 = () => {
-    //post request to url with data = "pump 1 on"
-    axios.get(
-      `${apiUrl}/api/actions/?group=${groupId}&object=ventilator_1&value=off`
-    );
-    fetchData_current_state();
-  };
-  const stop_5 = () => {
-    //post request to url with data = "pump 1 on"
-    axios.get(
-      `${apiUrl}/api/actions/?group=${groupId}&object=humidifyer_1&value=off`
-    );
-    fetchData_current_state();
-  };
-  const stop_6 = () => {
-    //post request to url with data = "pump 1 on"
-    axios.get(
-      `${apiUrl}/api/actions/?group=${groupId}&object=roof_1&value=off`
-    );
-    fetchData_current_state();
-  };
+  //calling it after changing with start and stop
   const fetchData_current_state = async () => {
     setTimeout(async () => {
       try {
@@ -135,25 +66,11 @@ const Actions = () => {
       fetchData_current_state();
     }, 500);
   };
+  //GETTING IT TO BE SURE IT IS THE CURRENT STATE EVERY 10 SECONDS
   useEffect(() => {
     if (currentPage === "/actions") {
-      const fetchData = async () => {
-        try {
-          const response = await axios.get(
-            `${apiUrl}/api/actions/current_state?group=${groupId}`
-          );
-          const valuesArr = response.data.message.map((item) => ({
-            object: item.object,
-            group: item.group,
-            value: item.value,
-          }));
-          setList2(valuesArr);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
-      fetchData();
-      const interval = setInterval(fetchData, 10000);
+      fetchData_current_state();
+      const interval = setInterval(fetchData_current_state, 10000);
       return () => {
         clearInterval(interval);
       };
@@ -164,12 +81,38 @@ const Actions = () => {
     "pump_2",
     "pump_3",
     "ventilator_1",
-    "humidifyer_1",
-    "roof_1",
+    "humidifyer_1" /* 
+    "roof_1", */,
   ];
   const sortedList = list2.sort(
     (a, b) => objectOrder.indexOf(a.object) - objectOrder.indexOf(b.object)
   );
+  const Device = ({ type, number }) => (
+    <div className={styles.box}>
+      <h1>
+        {type} {number && number}
+        <button
+          className={styles.button}
+          onClick={() => toggleDevice(`${type}_${number || ""}`, "on")}
+        >
+          Start
+        </button>
+        <button
+          className={styles.button}
+          onClick={() => toggleDevice(`${type}_${number || ""}`, "off")}
+        >
+          Stop
+        </button>
+      </h1>
+    </div>
+  );
+  const objectMap = {
+    pump_1: { objectName: "Pump 1", sensorHeading: "Status" },
+    pump_2: { objectName: "Pump 2", sensorHeading: "Status" },
+    pump_3: { objectName: "Pump 3", sensorHeading: "Status" },
+    ventilator_1: { objectName: "Fan 1", sensorHeading: "Speed" },
+    humidifyer_1: { objectName: "Humidifyer 1", sensorHeading: "Humidity" },
+  };
 
   return (
     <div className={styles.main_container}>
@@ -177,27 +120,7 @@ const Actions = () => {
       <div className={styles.current_state}>
         <div className={styles.data}>
           {sortedList.map((item) => {
-            let objectName = "";
-            let sensorHeading = "";
-            if (item.object === "pump_1") {
-              objectName = "Pump 1";
-              sensorHeading = "Status";
-            } else if (item.object === "pump_2") {
-              objectName = "Pump 2";
-              sensorHeading = "Status";
-            } else if (item.object === "pump_3") {
-              objectName = "Pump 3";
-              sensorHeading = "Status";
-            } else if (item.object === "ventilator_1") {
-              objectName = "Ventilator 1";
-              sensorHeading = "Speed";
-            } else if (item.object === "humidifyer_1") {
-              objectName = "Humidifyer 1";
-              sensorHeading = "Humidity";
-            } else if (item.object === "roof_1") {
-              objectName = "Roof 1";
-              sensorHeading = "Position";
-            }
+            const { objectName, sensorHeading } = objectMap[item.object] || {};
             let sensor = {
               heading: sensorHeading,
               value: item.value,
@@ -234,80 +157,13 @@ const Actions = () => {
         <div>
           {buttongroupstate === 0 && (
             <div>
-              <div className={styles.box}>
-                <h1>
-                  Pumpe 1
-                  <button className={styles.button} onClick={start_1}>
-                    Start
-                  </button>
-                  <button className={styles.button} onClick={stop_1}>
-                    Stop
-                  </button>
-                </h1>
-              </div>
-              <div className={styles.box}>
-                <h1>
-                  Pumpe 2
-                  <button className={styles.button} onClick={start_2}>
-                    Start
-                  </button>
-                  <button className={styles.button} onClick={stop_2}>
-                    Stop
-                  </button>
-                </h1>
-              </div>
-              <div className={styles.box}>
-                <h1>
-                  Pumpe 3
-                  <button className={styles.button} onClick={start_3}>
-                    Start
-                  </button>
-                  <button className={styles.button} onClick={stop_3}>
-                    Stop
-                  </button>
-                </h1>
-              </div>
+              <Device type="pump" number="1" />
+              <Device type="pump" number="2" />
+              <Device type="pump" number="3" />
             </div>
           )}
-          {buttongroupstate === 1 && (
-            <div className={styles.box}>
-              <h1>
-                Ventilator
-                <button className={styles.button} onClick={start_4}>
-                  Start
-                </button>
-                <button className={styles.button} onClick={stop_4}>
-                  Stop
-                </button>
-              </h1>
-            </div>
-          )}
-          {buttongroupstate === 2 && (
-            <div className={styles.box}>
-              <h1>
-                Humidifyer
-                <button className={styles.button} onClick={start_5}>
-                  Start
-                </button>
-                <button className={styles.button} onClick={stop_5}>
-                  Stop
-                </button>
-              </h1>
-            </div>
-          )}
-          {buttongroupstate === 3 && (
-            <div className={styles.box}>
-              <h1>
-                Roof
-                <button className={styles.button} onClick={start_6}>
-                  Start
-                </button>
-                <button className={styles.button} onClick={stop_6}>
-                  Stop
-                </button>
-              </h1>
-            </div>
-          )}
+          {buttongroupstate === 1 && <Device type="ventilator" />}
+          {buttongroupstate === 2 && <Device type="humidifyer" />}
         </div>
       </div>
     </div>

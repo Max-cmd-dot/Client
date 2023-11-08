@@ -72,18 +72,18 @@ const Notifications = () => {
     }
   }, [groupId, currentPage]);
 
-  const handleDelete = async (index) => {
-    const deletedItem = list[index];
+  const handleIgnore = async (index) => {
+    const ignoredItem = list[index];
 
     try {
-      const formattedTime = new Date(deletedItem.time);
-      // Perform the delete request to your backend API with the formatted time
+      const formattedTime = new Date(ignoredItem.time);
+      // Perform the ignore request to your backend API with the formatted time
       await axios.post(
         `${apiUrl}/api/notification/notifications/ignore?groupId=${groupId}`,
         { time: formattedTime.toISOString() }
       );
 
-      // Remove the deleted item from the list
+      // Remove the ignored item from the list
       const updatedList = [...list];
       updatedList.splice(index, 1);
       setList(updatedList);
@@ -92,9 +92,9 @@ const Notifications = () => {
     }
   };
 
-  const handleDeleteAll = async () => {
+  const handleIgnoreAll = async () => {
     try {
-      // Perform the delete request to your backend API with the formatted time for each item in the list
+      // Perform the ignore request to your backend API with the formatted time for each item in the list
       await Promise.all(
         list.map(async (item) => {
           const formattedTime = new Date(item.time);
@@ -180,11 +180,11 @@ const Notifications = () => {
 
           {notificationtype === "log" && list.length > 2 ? (
             <button
-              className={styles.delete_all}
-              onClick={handleDeleteAll}
+              className={styles.ignore_all}
+              onClick={handleIgnoreAll}
               style={{ marginLeft: "auto" }}
             >
-              Delete All
+              Ignore all
             </button>
           ) : null}
           {list.length === 0 && notificationtype === "log" ? (
@@ -200,8 +200,8 @@ const Notifications = () => {
                     <div>
                       <div className={styles.box} key={index}>
                         <button
-                          className={styles.deleteButton}
-                          onClick={() => handleDelete(index)}
+                          className={styles.ignoreButton}
+                          onClick={() => handleIgnore(index)}
                         >
                           ignore
                         </button>
@@ -230,8 +230,8 @@ const Notifications = () => {
                       "No data received in the last 15 minutes." ? (
                         <div className={styles.box} key={index}>
                           <button
-                            className={styles.deleteButton}
-                            onClick={() => handleDelete(index)}
+                            className={styles.ignoreButton}
+                            onClick={() => handleIgnore(index)}
                           >
                             x
                           </button>
@@ -263,8 +263,8 @@ const Notifications = () => {
                       item.message === "Soil moisture 2 to less!" ? (
                         <div className={styles.box} key={index}>
                           <button
-                            className={styles.deleteButton}
-                            onClick={() => handleDelete(index)}
+                            className={styles.ignoreButton}
+                            onClick={() => handleIgnore(index)}
                           >
                             x
                           </button>
