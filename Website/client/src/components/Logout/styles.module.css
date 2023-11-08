@@ -34,7 +34,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #0088ff;
+  background-color: #13395a;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
 }
@@ -109,7 +109,7 @@
 }
 
 .green_btn {
-  background-color: #0088ff;
+  background-color: #13395a;
   color: white;
   margin: 10px;
 }
