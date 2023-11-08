@@ -23,7 +23,7 @@ def get_all_groups():
     mongoClient_groups_get.close()
 
     return group_names
-groups = get_all_groups()
+
 def check_last_message(group):
     # Connect to MongoDB
     mongoClient2 = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
@@ -307,11 +307,13 @@ def check_water_area(sensor_number, group):
 
     # Close the MongoDB connection
     mongoClient3.close() 
-print(groups)
+
 while True:
+   
     now = datetime.now()
     wait_time = (60 - now.minute) * 60 - now.second
     #time.sleep(wait_time)
+    groups = get_all_groups()
     for group in groups:
         if check_last_message(group) == True:
             check_temperature(group)

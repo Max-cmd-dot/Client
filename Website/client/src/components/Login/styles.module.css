@@ -88,7 +88,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Adjust alignment to the top */
+  justify-content: center; /* Adjust alignment to the center */
   background-color: #0088ff;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
