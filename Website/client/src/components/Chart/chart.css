@@ -54,13 +54,13 @@
   font-size: 14px;
   font-size: calc(0.4em + 1vw);
   cursor: pointer;
-  background-color: #0088ff;
+  background-color: #13395a;
   color: white;
   margin: 10px;
 }
 .edit_popup:hover {
   transition: 0.3s;
-  background-color: #13395a;
+  background-color: #0088ff;
 }
 @media (max-width: 768px) {
   .edit_popup {
@@ -115,5 +115,5 @@ h1 {
   text-align: center;
 }
 .button-on {
-  background-color: #13395a;
+  background-color: #0088ff;
 }

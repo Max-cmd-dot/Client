@@ -714,8 +714,8 @@ const ChartComponent = ({ chartName }) => {
                     className="edit_popup"
                     style={{
                       backgroundColor: settings_state_chart_1
-                        ? "#2c3e50"
-                        : "#0088ff",
+                        ? "#0088ff"
+                        : "#2c3e50",
                       color: "white",
                     }}
                   >

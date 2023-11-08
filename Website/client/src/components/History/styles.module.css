@@ -16,7 +16,7 @@
   font-weight: bold;
   font-size: 14px;
   cursor: pointer;
-  background-color: #0088ff;
+  background-color: #13395a;
   color: white;
   margin: 10px;
   position: fixed;
@@ -25,5 +25,5 @@
 }
 .delete_button:hover {
   transition: 0.3s;
-  background-color: #13395a;
+  background-color: #0088ff;
 }
