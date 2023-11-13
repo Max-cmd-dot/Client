@@ -22,8 +22,8 @@ import Actions from "./components/Actions";
 import Devices from "./components/Devices";
 import { Outlet } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
+import ClipLoader from "react-spinners/ClipLoader";
 const apiUrl = process.env.REACT_APP_API_URL;
-
 const NavbarLayout = () => (
   <>
     <Navbar />
@@ -34,6 +34,15 @@ function App() {
   const user = localStorage.getItem("token");
   const [rightabo, setRightabo] = useState(false);
   const group = localStorage.getItem("groupId");
+  const [showServerError, setShowServerError] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowServerError(true);
+    }, 20000); // 20 seconds
+
+    return () => clearTimeout(timer); // cleanup on unmount
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -94,54 +103,112 @@ function App() {
             <Route
               path="*"
               element={
-                <div
-                  className="App"
-                  style={{
-                    position: "fixed",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor:
-                      "rgba(0, 0, 0, 0.5)" /* semi-transparent background */,
-                    zIndex: 9999 /* ensure the modal is on top of other elements */,
-                  }}
-                >
-                  <div
-                    style={{
-                      alignItems: "center",
-                      display: "flex",
-                      justifyContent: "center",
-                      backgroundColor: "#fff",
-                      padding: "20px",
-                      borderRadius: "10px",
-                      marginLeft: "5%",
-                      marginRight: "5%",
-                    }}
-                  >
-                    <h1>
-                      Server Error. Please try to relogin. If the error
-                      persists, contact the Support!
-                    </h1>
-                    <Link to="/logout">
-                      <h1
+                <div>
+                  {showServerError ? (
+                    <div
+                      className="App"
+                      style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor:
+                          "rgba(0, 0, 0, 0.5)" /* semi-transparent background */,
+                        zIndex: 9999 /* ensure the modal is on top of other elements */,
+                      }}
+                    >
+                      <div
                         style={{
-                          padding: "12px 0",
-                          borderRadius: "20px",
-                          width: "120px",
-                          fontSize: "14px",
-                          cursor: "pointer",
-                          backgroundColor: "#0088ff",
-                          margin: "10px",
+                          alignItems: "center",
+                          display: "flex",
+                          justifyContent: "center",
+                          backgroundColor: "#fff",
+                          padding: "20px",
+                          borderRadius: "10px",
+                          marginLeft: "5%",
+                          marginRight: "5%",
                         }}
                       >
-                        logout
-                      </h1>
-                    </Link>
-                  </div>
+                        <h1>
+                          Server Error. Please try to re-login. If the error
+                          persists, contact Support!
+                        </h1>
+                        <Link to="/logout">
+                          <h1
+                            style={{
+                              color: "#fff",
+                              padding: "12px 0",
+                              borderRadius: "20px",
+                              width: "120px",
+                              fontSize: "14px",
+                              cursor: "pointer",
+                              backgroundColor: "#13395a",
+                              margin: "10px",
+                            }}
+                          >
+                            logout
+                          </h1>
+                        </Link>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      className="App"
+                      style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor:
+                          "rgba(0, 0, 0, 0.5)" /* semi-transparent background */,
+                        zIndex: 9999 /* ensure the modal is on top of other elements */,
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          backgroundColor: "#fff",
+                          padding: "20px",
+                          borderRadius: "10px",
+                        }}
+                      >
+                        <div
+                          sytle={{
+                            display: "flex",
+                            justifyContent: "center", // Add this to center horizontally
+                            alignItems: "center", // Add this to center vertically
+                            height: "100vh",
+                          }}
+                        >
+                          <h1>loading</h1>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              margin: "100px",
+                            }}
+                          >
+                            <ClipLoader
+                              size={100}
+                              cssOverride={{
+                                margin: "0px",
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               }
             />
