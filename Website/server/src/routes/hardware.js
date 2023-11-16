@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Device } = require("../models/devices");
 
-router.get("/hardware", async (req, res) => {
+router.get("/", async (req, res) => {
   const { deviceId } = req.body;
 
   try {
