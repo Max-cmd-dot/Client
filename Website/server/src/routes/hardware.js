@@ -13,7 +13,7 @@ router.get("/hardware", async (req, res) => {
         .status(400)
         .json({ message: "Invalid device ID or device not found" });
     }
-
+    console.log(device);
     res.json({
       host: "eu-central-1.aws.data.mongodb-api.com",
       url: "/app/data-vycfd/endpoint/data/v1",

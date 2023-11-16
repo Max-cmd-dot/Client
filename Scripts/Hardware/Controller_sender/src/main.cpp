@@ -14,8 +14,12 @@ const char *password = "a16c41b0f19cd116c4f1672ebe";
 // getting the current time
 const char *ntpServer = "pool.ntp.org";
 
+// define the timeout for the http request
+const int timeout = 5000; // 5 seconds
+const int maxRetries = 50;
+
 // backend server //for mongodb credentials
-const char *host = "your-server-url";
+const char *host = "https://bll-backend.vercel.app/api/hardware";
 const char *endpoint = "/hardware";
 const int deviceId = 1;
 
@@ -85,7 +89,6 @@ void setup_wifi()
       }
     }
   }
-
   if (WiFi.status() == WL_CONNECTED)
   {
     Serial.println("");
@@ -103,35 +106,48 @@ void initializeNTP()
 
 void makeRequest()
 {
+  Serial.println("Making request...");
+
   HTTPClient http;
+  http.setTimeout(timeout);
 
-  http.begin(String(host) + endpoint); // Specify the URL
-  http.addHeader("Content-Type", "application/json");
-  http.addHeader("deviceId", String(deviceId));
+  int retries = 0;
+  int httpCode = 0;
 
-  int httpCode = http.GET(); // Make the request
-
-  if (httpCode > 0)
-  { // Check for the returning code
-    String payload = http.getString();
-    Serial.println(httpCode);
-    Serial.println(payload);
-
-    // Parse JSON
-    StaticJsonDocument<200> doc;
-    deserializeJson(doc, payload);
-    hostMongo = doc["host"].as<String>();
-    url = doc["url"].as<String>();
-    apiKey = doc["apiKey"].as<String>();
-  }
-  else
+  do
   {
-    Serial.println("Error on HTTP request");
-  }
+    Serial.println("Trying to connect to the server...");
+    http.begin(String(host) + endpoint); // Specify the URL
+    http.addHeader("Content-Type", "application/json");
+    http.addHeader("deviceId", String(deviceId));
 
-  http.end(); // Free the resources
+    int httpCode = http.GET(); // Make the request
+    String response = http.getString();
+
+    if (httpCode = 200 && response != "{\"message\":\"Invalid device ID or device not found\"}")
+    { // Check for the returning code
+      String payload = http.getString();
+      Serial.println(httpCode);
+      Serial.println(payload);
+
+      // Parse JSON
+      StaticJsonDocument<200> doc;
+      deserializeJson(doc, payload);
+      hostMongo = doc["host"].as<String>();
+      url = doc["url"].as<String>();
+      apiKey = doc["apiKey"].as<String>();
+    }
+    else
+    {
+      Serial.println("Error on HTTP request: " + String(http.errorToString(httpCode)));
+      retries++;
+      digitalWrite(ledStatus, HIGH);
+      delay(1000); // wait for a second before retrying
+    }
+
+    http.end(); // Free the resources
+  } while (!httpCode == 200 && retries < maxRetries);
 }
-
 void setup()
 {
   // Start the serial connection
@@ -166,12 +182,16 @@ void setup()
       ; // Halt the program if the sensor connection fails
   }
   setup_wifi();
+  Serial.println("Connected to WiFi going further...");
 
   // init and get the time
   initializeNTP();
+  Serial.println("Getting the time...");
 
   // get the mongodb credentials
   makeRequest();
+  Serial.println("Getting the mongodb credentials...");
+  Serial.println("apiKey: " + apiKey);
 }
 
 void sendToServer(String topic, String group, String value)
@@ -192,10 +212,12 @@ void sendToServer(String topic, String group, String value)
   http.begin("https://eu-central-1.aws.data.mongodb-api.com/app/data-vycfd/endpoint/data/v1/action/insertOne");
   http.addHeader("Content-Type", "application/ejson");
   http.addHeader("Accept", "application/json");
+  Serial.println(apiKey);
   http.addHeader("api-key", apiKey); // Specify content-type header
   String requestData = "{\"collection\":\"datas\",\"database\":\"Website\",\"dataSource\":\"Cluster0\",\"document\":" + json + "}";
   int httpResponseCode = http.POST(requestData);
-  if (httpResponseCode > 0)
+
+  if (httpResponseCode == 200)
   {
     String response = http.getString(); // Get the response to the request
     Serial.println(httpResponseCode);   // Print return code
@@ -205,7 +227,8 @@ void sendToServer(String topic, String group, String value)
   {
     Serial.print("Error on sending POST: ");
     digitalWrite(ledStatus, HIGH);
-    Serial.println(httpResponseCode);
+    String response = http.getString();
+    Serial.println(response);
   }
 
   http.end(); // Free resources
@@ -220,8 +243,9 @@ void processHttpResponse()
 
   String requestData = "{\"collection\":\"actions\",\"database\":\"Website\",\"dataSource\":\"Cluster0\"}";
   int httpResponseCode = http.POST(requestData);
+  Serial.println(httpResponseCode);
 
-  if (httpResponseCode > 0)
+  if (httpResponseCode == 200)
   {
     String response = http.getString();
     Serial.println(response);
@@ -253,7 +277,8 @@ void processHttpResponse()
   {
     Serial.print("Error on sending POST: ");
     digitalWrite(ledStatus, HIGH);
-    Serial.println(httpResponseCode);
+    String response = http.getString();
+    Serial.println(response);
   }
 
   http.end();
@@ -358,6 +383,7 @@ void sendSensorData()
 
 void loop()
 {
+  Serial.println("Checking WiFi connection...");
   if (WiFi.status() == WL_CONNECTED)
   {
 
