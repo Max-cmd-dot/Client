@@ -6,7 +6,12 @@
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 #include <time.h>
+#include <esp32fota.h>
 
+// esp32fota esp32fota("<Type of Firme for this device>", <this version>, <validate signature>);
+esp32FOTA esp32FOTAmy("esp32-fota-http", "1.0.1", false);
+
+const char *manifest_url = "http://192.168.178.121:8080/api/hardware/update";
 // Replace the next variables with your SSID/Password combination
 const char *ssid = "5551 2771";
 const char *password = "a16c41b0f19cd116c4f1672ebe";
@@ -19,7 +24,8 @@ const int timeout = 5000; // 5 seconds
 const int maxRetries = 50;
 
 // backend server //for mongodb credentials
-const char *host = "https://bll-backend.vercel.app/api/hardware";
+// const char *host = "https://bll-backend.vercel.app/api/hardware";
+const char *host = "http://192.168.178.121:8080/api/hardware";
 const char *endpoint = "/hardware";
 const int deviceId = 1;
 
@@ -51,12 +57,13 @@ const int ledStatus = 18;
 const int ledHumidifyer1 = 17;
 
 // Define the API key
-String apiKey, hostMongo, url;
+String apiKey, hostMongo, url, group;
 
 void setup_wifi()
 {
-  delay(10);
   Serial.println();
+  esp32FOTAmy.setManifestURL(manifest_url);
+  esp32FOTAmy.printConfig();
   Serial.print("Connecting to ");
   Serial.println(ssid);
 
@@ -103,11 +110,8 @@ void initializeNTP()
   setenv("TZ", "CET-1CEST,M3.5.0,M10.5.0/3", 1);
   tzset();
 }
-
 void makeRequest()
 {
-  Serial.println("Making request...");
-
   HTTPClient http;
   http.setTimeout(timeout);
 
@@ -116,26 +120,34 @@ void makeRequest()
 
   do
   {
-    Serial.println("Trying to connect to the server...");
-    http.begin(String(host) + endpoint); // Specify the URL
+    http.begin(String(host)); // Specify the URL
     http.addHeader("Content-Type", "application/json");
     http.addHeader("deviceId", String(deviceId));
 
-    int httpCode = http.GET(); // Make the request
+    httpCode = http.GET(); // Make the request
     String response = http.getString();
 
-    if (httpCode = 200 && response != "{\"message\":\"Invalid device ID or device not found\"}")
+    if (httpCode == 200 && response != "{\"message\":\"Invalid device ID or device not found\"}")
     { // Check for the returning code
-      String payload = http.getString();
-      Serial.println(httpCode);
-      Serial.println(payload);
-
+      Serial.println("Data received successfully from backend server");
       // Parse JSON
-      StaticJsonDocument<200> doc;
-      deserializeJson(doc, payload);
+      DynamicJsonDocument doc(1024);
+      // Deserialize the JSON document
+      DeserializationError error = deserializeJson(doc, response);
+
+      // Test if parsing succeeds.
+      if (error)
+      {
+        Serial.print("deserializeJson() failed: ");
+        Serial.println(error.f_str());
+        digitalWrite(ledStatus, HIGH);
+        return;
+      }
+
       hostMongo = doc["host"].as<String>();
       url = doc["url"].as<String>();
       apiKey = doc["apiKey"].as<String>();
+      group = doc["group"].as<String>();
     }
     else
     {
@@ -146,7 +158,7 @@ void makeRequest()
     }
 
     http.end(); // Free the resources
-  } while (!httpCode == 200 && retries < maxRetries);
+  } while (httpCode != 200 && retries < maxRetries);
 }
 void setup()
 {
@@ -182,16 +194,12 @@ void setup()
       ; // Halt the program if the sensor connection fails
   }
   setup_wifi();
-  Serial.println("Connected to WiFi going further...");
 
   // init and get the time
   initializeNTP();
-  Serial.println("Getting the time...");
 
   // get the mongodb credentials
   makeRequest();
-  Serial.println("Getting the mongodb credentials...");
-  Serial.println("apiKey: " + apiKey);
 }
 
 void sendToServer(String topic, String group, String value)
@@ -200,6 +208,7 @@ void sendToServer(String topic, String group, String value)
   if (!getLocalTime(&timeinfo))
   {
     Serial.println("Failed to obtain time");
+    digitalWrite(ledStatus, HIGH);
     return;
   }
   char timeStringBuff[50]; // 50 chars should be enough
@@ -209,23 +218,21 @@ void sendToServer(String topic, String group, String value)
   // Create a JSON object
   String json = "{\"topic\":\"" + topic + "\",\"group\":\"" + group + "\",\"value\":\"" + value + "\",\"time\":{\"$date\":\"" + timeStr + "\"}}";
   HTTPClient http;
-  http.begin("https://eu-central-1.aws.data.mongodb-api.com/app/data-vycfd/endpoint/data/v1/action/insertOne");
+  http.begin("https://" + hostMongo + url + "/action/insertOne");
   http.addHeader("Content-Type", "application/ejson");
   http.addHeader("Accept", "application/json");
-  Serial.println(apiKey);
   http.addHeader("api-key", apiKey); // Specify content-type header
   String requestData = "{\"collection\":\"datas\",\"database\":\"Website\",\"dataSource\":\"Cluster0\",\"document\":" + json + "}";
   int httpResponseCode = http.POST(requestData);
 
-  if (httpResponseCode == 200)
+  if (httpResponseCode == 200 || httpResponseCode == 201)
   {
-    String response = http.getString(); // Get the response to the request
-    Serial.println(httpResponseCode);   // Print return code
-    Serial.println(response);           // Print request answer
+    Serial.println("Data sent successfully");
+    String response = http.getString();
   }
   else
   {
-    Serial.print("Error on sending POST: ");
+    Serial.print("Error on sending POST (error nor clear): ");
     digitalWrite(ledStatus, HIGH);
     String response = http.getString();
     Serial.println(response);
@@ -236,19 +243,19 @@ void sendToServer(String topic, String group, String value)
 void processHttpResponse()
 {
   HTTPClient http;
-  http.begin("https://eu-central-1.aws.data.mongodb-api.com/app/data-vycfd/endpoint/data/v1/action/find");
+  http.begin("https://" + hostMongo + url + "/action/find");
   http.addHeader("Content-Type", "application/json");
   http.addHeader("Access-Control-Request-Headers", "*");
   http.addHeader("api-key", apiKey);
 
   String requestData = "{\"collection\":\"actions\",\"database\":\"Website\",\"dataSource\":\"Cluster0\"}";
   int httpResponseCode = http.POST(requestData);
-  Serial.println(httpResponseCode);
 
   if (httpResponseCode == 200)
   {
+    Serial.println("Data received successfully");
+    httpResponseCode = http.GET();
     String response = http.getString();
-    Serial.println(response);
 
     // Parse the JSON response
     DynamicJsonDocument doc(1024);
@@ -283,110 +290,72 @@ void processHttpResponse()
 
   http.end();
 }
+void sendSensorData(float value, const char *topic)
+{
+  char valueString[8];
+  dtostrf(value, 1, 2, valueString);
+  String payload = String(valueString);
+  sendToServer(topic, group, payload);
+}
 void sendSensorData()
 {
+
   // temperature
   temperature = bme.readTemperature();
-  char tempString[8];
-  dtostrf(temperature, 1, 2, tempString);
-  String temperatureTopic = "esp/air/temperature";
-  String temperaturePayload = String(tempString);
-  sendToServer(temperatureTopic, "Group A", temperaturePayload);
+  sendSensorData(temperature, "esp/air/temperature");
 
   // humidity
   humidity = bme.readHumidity();
-  char humString[8];
-  dtostrf(humidity, 1, 2, humString);
-  String humidityTopic = "esp/air/humidity";
-  String humidityPayload = String(humString);
-  sendToServer(humidityTopic, "Group A", humidityPayload);
+  sendSensorData(humidity, "esp/air/humidity");
 
   // pressure
   pressure = (bme.readPressure() / 100.0F);
-  char preString[8];
-  dtostrf(pressure, 1, 2, preString);
-  String pressureTopic = "esp/air/pressure";
-  String pressurePayload = String(preString);
-  sendToServer(pressureTopic, "Group A", pressurePayload);
+  sendSensorData(pressure, "esp/air/pressure");
 
   // moisture/1
   moisture = analogRead(AOUT_PIN);
-  char moiString[8];
-  dtostrf(moisture, 1, 2, moiString);
-  String moistureTopic = "esp/ground/moisture/1";
-  String moisturePayload = String(moiString);
-  sendToServer(moistureTopic, "Group A", moisturePayload);
+  sendSensorData(moisture, "esp/ground/moisture/1");
 
   // moisture/2
   moisture_2 = analogRead(AOUT_PIN);
-  char moiString_2[8];
-  dtostrf(moisture_2, 1, 2, moiString_2);
-  String moistureTopic_2 = "esp/ground/moisture/2";
-  String moisturePayload_2 = String(moiString);
-  sendToServer(moistureTopic_2, "Group A", moisturePayload_2);
+  sendSensorData(moisture_2, "esp/ground/moisture/2");
 
   // moisture/3
   moisture_3 = analogRead(AOUT_PIN);
-  char moiString_3[8];
-  dtostrf(moisture, 1, 2, moiString);
-  String moistureTopic_3 = "esp/ground/moisture/3";
-  String moisturePayload_3 = String(moiString);
-  sendToServer(moistureTopic, "Group A", moisturePayload);
+  sendSensorData(moisture_3, "esp/ground/moisture/3");
 
   // light/colorTemp
   uint16_t r, g, b, c, colorTemp, lux;
   tcs.getRawData(&r, &g, &b, &c);
   colorTemp = tcs.calculateColorTemperature_dn40(r, g, b, c);
   lux = tcs.calculateLux(r, g, b);
-
-  char colorTempString[8];
-  dtostrf(colorTemp, 1, 2, colorTempString);
-  String colorTempTopic = "esp/ground/light/colorTemp";
-  String colorTempPayload = String(colorTempString);
-  sendToServer(colorTempTopic, "Group A", colorTempPayload);
+  sendSensorData(colorTemp, "esp/ground/light/colorTemp");
 
   // light/lux
-  char luxString[8];
-  dtostrf(lux, 1, 2, luxString);
-  String luxTopic = "esp/ground/light/lux";
-  String luxPayload = String(luxString);
-  sendToServer(luxTopic, "Group A", luxPayload);
+  sendSensorData(lux, "esp/ground/light/lux");
 
   // light/red
-  char rString[8];
-  dtostrf(r, 1, 2, rString);
-  String rTopic = "esp/ground/light/red";
-  String rPayload = String(rString);
-  sendToServer(rTopic, "Group A", rPayload);
+  sendSensorData(r, "esp/ground/light/red");
 
   // light/green
-  char gString[8];
-  dtostrf(g, 1, 2, gString);
-  String gTopic = "esp/ground/light/green";
-  String gPayload = String(gString);
-  sendToServer(gTopic, "Group A", gPayload);
+  sendSensorData(g, "esp/ground/light/green");
 
   // light/blue
-  char bString[8];
-  dtostrf(b, 1, 2, bString);
-  String bTopic = "esp/ground/light/blue";
-  String bPayload = String(bString);
-  sendToServer(bTopic, "Group A", bPayload);
+  sendSensorData(b, "esp/ground/light/blue");
 
   // light/clear
-  char cString[8];
-  dtostrf(c, 1, 2, cString);
-  String cTopic = "esp/ground/light/clear";
-  String cPayload = String(cString);
-  sendToServer(cTopic, "Group A", cPayload);
+  sendSensorData(c, "esp/ground/light/clear");
 }
 
 void loop()
 {
-  Serial.println("Checking WiFi connection...");
+  bool updatedNeeded = esp32FOTAmy.execHTTPcheck();
+  if (updatedNeeded)
+  {
+    esp32FOTAmy.execOTA();
+  }
   if (WiFi.status() == WL_CONNECTED)
   {
-
     printf("Processing http response...\n");
     processHttpResponse();
     printf("Sending data to server...\n");
