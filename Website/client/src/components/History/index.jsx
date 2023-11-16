@@ -3,10 +3,17 @@ import ChartComponent from "../Chart/chart.jsx"; // Import the chart component
 import styles from "./styles.module.css";
 import ButtonGroup from "../ButtonGroup/button-group.jsx"; // Import the ButtonGroup component
 const apiUrl = process.env.REACT_APP_API_URL;
+import { changeRoute } from "../../reduxStore";
+import { useSelector, useDispatch } from "react-redux";
 
 const History = () => {
   const [buttons, setButtons] = useState(["+"]);
   const [which_chart, setWhichChart] = useState(null);
+  const dispatch = useDispatch();
+  // Use another effect hook to dispatch changeRoute when the component mounts
+  useEffect(() => {
+    dispatch(changeRoute("/"));
+  }, [dispatch]); // Re-run the effect if dispatch changes
 
   const getAllCharts = async (userId) => {
     const response = await fetch(`${apiUrl}/api/historyChart/all/${userId}`);
@@ -69,7 +76,6 @@ const History = () => {
       setWhichChart(event.target.name); // Save the clicked button's label to which_chart
     }
   };
-
   useEffect(() => {
     const userId = localStorage.getItem("id");
     getAllCharts(userId).then((charts) => {

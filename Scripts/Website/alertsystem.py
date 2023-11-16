@@ -26,33 +26,32 @@ def get_all_groups():
 
 def check_last_message(group):
     # Connect to MongoDB
-    mongoClient2 = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
-    db2 = mongoClient2.Website
-    collection2 = db2.datas
+    mongoClient = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
+    db = mongoClient.Website
+    collection_data = db.datas
+    collection_notifications = db.notifications
+    collection_alarms = db.alarms
 
-    # Calculate the timestamp 15 minutes ago
-    fifteen_minutes_ago2 = datetime.now() - timedelta(hours=1)
+    # Calculate the timestamp 1 hour ago
+    fifteen_minutes_ago = datetime.now() - timedelta(hours=1)
 
     # Query the database for temperature values within the last 15 minutes
-    query2 = {
-        'time': {'$gte': fifteen_minutes_ago2},
+    query = {
+        'time': {'$gte': fifteen_minutes_ago},
         'group': group
     }
-    projection2 = {
+    projection = {
         'value': 1,
         '_id': 0
     }
 
-    result2 = collection2.find(query2, projection2).sort('time', pymongo.DESCENDING).limit(1)
-    result_list2 = list(result2)
-    mongoClient2.close()
-    mongoClient3 = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
-    db3 = mongoClient3.Website
-    collection3 = db3.notifications
-    collection4 = db3.alarms
+    result = collection_data.find(query, projection).sort('time', pymongo.DESCENDING).limit(1)
+    print(result)
+    result_list = list(result)
+    print(result_list)
 
     # Check if there is any temperature data within the last 15 minutes
-    if len(result_list2) == 0:
+    if len(result_list) == 0:
         print("----------data_check--------")
         print("[",datetime.now(),"] ","No data received for 1 hour.")
         # Perform your alert action here
@@ -67,38 +66,40 @@ def check_last_message(group):
             'group': group
         }
         
-        collection3.insert_one(post)
+        collection_notifications.insert_one(post)
         
         # Update the document in the alarms collection
-        query3 = {
+        query_alarm = {
             'topic': 'No data received'
         }
-        update3 = {
+        update_alarm = {
             '$set': {
                 'time': receiveTime,
                 'state': 'active',
                 'message': 'No data received for 1 hour.'
             }
         }
-        collection4.find_one_and_update(query3, update3)
+        collection_alarms.find_one_and_update(query_alarm, update_alarm, upsert=True)
         
     else:
         print("----------data_check--------")
         print("Received data in the the last hour.")
         # Update the document in the alarms collection
-        query3 = {
+        query_alarm = {
             'topic': 'No data received'
         }
-        update3 = {
+        update_alarm = {
             '$set': {
                 'time': datetime.now(),
                 'state': 'passive',
                 'message': 'Received data in the last hour.'
             }
         }
-        collection4.find_one_and_update(query3, update3)
+        collection_alarms.find_one_and_update(query_alarm, update_alarm, upsert=True)
         return True
-    mongoClient3.close()
+
+    mongoClient.close()
+    
     def check_temperature(group):
         # Connect to MongoDB
         mongoClient = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")

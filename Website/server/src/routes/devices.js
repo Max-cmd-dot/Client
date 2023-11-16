@@ -16,8 +16,9 @@ router.get("/", async (req, res) => {
       const data = await Device.find({ group: group });
       if (data) {
         return res.status(200).send({ message: data });
+      } else {
+        return res.status(400).send({ message: "no data found" });
       }
-      if (!data) console.log("no data found");
     }
   } catch (error) {
     res.status(500).send({ message: "Internal Server Error" });
@@ -27,7 +28,6 @@ router.get("/", async (req, res) => {
 router.get("/create", async (req, res) => {
   try {
     const { deviceId, group, type } = req.query;
-    console.log(req.query);
     const { error } = validate_new_device_request(req.query);
     if (error)
       return res.status(400).send({ message: error.details[0].message });

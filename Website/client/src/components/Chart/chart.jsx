@@ -48,6 +48,7 @@ const ChartComponent = ({ chartName }) => {
     // Cleanup function to remove the event listener when the component unmounts
     return () => window.removeEventListener("resize", handleResize);
   }, []); // Empty dependency array means this effect runs once on mount and cleanup on unmount
+
   //data arrays
   let [tempchardata, settempchardata] = useState([]);
   let [humchardata, sethumchardata] = useState([]);
@@ -55,420 +56,222 @@ const ChartComponent = ({ chartName }) => {
   let [moi1chardata, setmoi1chardata] = useState([]);
   let [moi2chardata, setmoi2chardata] = useState([]);
   let [moi3chardata, setmoi3chardata] = useState([]);
+
   //generell
-  const [isLoading_chart_1, setIsLoading_chart_1] = useState(false);
+  const [isLoadingChart, setisLoadingChart] = useState(true);
+
   //settings
-  const [loadingTime_1, setLoadingTime_1] = useState(false);
-  const [type_chart_1, settype_chart_1] = useState("line");
+  const [loadingTime, setloadingTime] = useState(false);
+  const [chartTyp, setchartTyp] = useState("line");
   const [update_interval, setupdate_interval] = useState(15000);
-  const [update_data_interval, setUpdate_data_interval] = useState(15000);
-  const [settings_state_chart_1, setsettings_state_chart_1] = useState(true);
+  const [updateDataInterval, setUpdateDataInterval] = useState(15000);
+  const [SettingsState, setSettingsState] = useState(true);
+
   //chart 1 datasets checks
   // prettier-ignore
-  const [dataset_temperature_Chart1Checked, setDataset_temperature_Chart1Checked] = useState(true);
+  const [datasetTemperatureChecked, setDatasetTemperatureChecked] = useState(true);
   // prettier-ignore
-  const [dataset_humidity_Chart1Checked, setDataset_humidity_Chart1Checked] = useState(false);
+  const [datasetHumidityChecked, setDatasetHumidityChecked] = useState(false);
   // prettier-ignore
-  const [dataset_moisture_Chart1Checked, setdataset_moisture_Chart1Checked] = useState(false);
+  const [datasetMoistureOneChecked, setdatasetMoistureOneChecked] = useState(false);
   // prettier-ignore
-  const [dataset_lux_Chart1Checked, setdataset_lux_Chart1Checked] = useState(false);
+  const [datasetMoistureTwoChecked, setdatasetMoistureTwoChecked] = useState(false);
+  // prettier-ignore
+  const [datasetMoistureThreeChecked, setdatasetMoistureThreeChecked] = useState(false);
+  // prettier-ignore
+  const [datasetLuxChecked, setDatasetLuxChecked] = useState(false);
+
   //stats of Popups
-  const [IsEditPopupOpen_1, setIsEditPopupOpen_1] = useState(false);
-  const [IsDataPopupOpen_1, setIsDataPopupOpen_1] = useState(false);
-  const [IsCountPopupOpen_1, setIsCountPopupOpen_1] = useState(false);
-  const [IsTypePopupOpen_1, setIsTypePopupOpen_1] = useState(false);
-  const [IsIntervalPopupOpen_1, setIsIntervalPopupOpen_1] = useState(false);
-  //general settings
+  const [IsEditPopupOpen, setIsEditPopupOpen] = useState(false);
+  const [IsDataPopupOpen, setIsDataPopupOpen] = useState(false);
+  const [IsCountPopupOpen, setIsCountPopupOpen] = useState(false);
+  const [IsTypePopupOpen, setIsTypePopupOpen] = useState(false);
+  const [IsIntervalPopupOpen, setIsIntervalPopupOpen] = useState(false);
+
   //fetch the data and initilize it from the server
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDataPreset = async () => {
       try {
         const response = await fetch(
           `${apiUrl}/api/historyChart/settings/${userId}/${chartName}`
         );
         const data = await response.json();
-        settype_chart_1(data.type);
+        setchartTyp(data.type);
         setupdate_interval(data.update_interval);
-        setUpdate_data_interval(data.data_interval);
+        setUpdateDataInterval(data.data_interval);
         setmax_count(data.max_count);
-        setDataset_temperature_Chart1Checked(
-          data.datasets[0].checked_temperature
-        );
-        setDataset_humidity_Chart1Checked(data.datasets[0].checked_humidity);
-        setdataset_moisture_Chart1Checked(data.datasets[0].checked_moisture_1);
-        setdataset_lux_Chart1Checked(data.datasets[0].checked_lux);
+        setDatasetTemperatureChecked(data.datasets[0].checked_temperature);
+        setDatasetHumidityChecked(data.datasets[0].checked_humidity);
+        setdatasetMoistureOneChecked(data.datasets[0].checked_moisture_1);
+        setDatasetLuxChecked(data.datasets[0].checked_lux);
       } catch (error) {
         console.error("Error:", error);
       }
     };
 
-    fetchData();
+    fetchDataPreset();
   }, []);
 
-  const openEditPopup_1 = () => {
-    setIsEditPopupOpen_1(true);
+  const handleServerUpdate = async (endpoint, method, data) => {
+    try {
+      const response = await fetch(
+        `${apiUrl}/api/historyChart/${endpoint}/${userId}/${chartName}`,
+        {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
-  const closeEditPopup_1 = () => {
-    setIsEditPopupOpen_1(false);
-  };
-  const openIntervalPopup_1 = () => {
-    setIsIntervalPopupOpen_1(true);
-  };
-
-  const closeIntervalPopup_1 = () => {
-    setIsIntervalPopupOpen_1(false);
-  };
-  const openDataPopup_1 = () => {
-    setIsDataPopupOpen_1(true);
-  };
-
-  const closeDataPopup_1 = () => {
-    setIsDataPopupOpen_1(false);
-  };
-  const openCountPopup_1 = () => {
-    setIsCountPopupOpen_1(true);
-  };
-
-  const closeCountPopup_1 = () => {
-    setIsCountPopupOpen_1(false);
-  };
-  const openTypePopup_1 = () => {
-    setIsTypePopupOpen_1(true);
-  };
-
-  const closeTypePopup_1 = () => {
-    setIsTypePopupOpen_1(false);
-  };
-
-  const live_data_1 = () => {
-    console.log("live data_1");
-  };
   const handleUpdateIntervalChange = async (event) => {
-    //gets value of drop down
     const selectedInterval = parseInt(event.target.value);
-    //updates the value of the interval
     setupdate_interval(selectedInterval);
-    // Make a request to the server to update the update interval
-    try {
-      const response = await fetch(
-        `${apiUrl}/api/historyChart/change_update_interval/${userId}/${chartName}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            update_interval: selectedInterval,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
+    handleServerUpdate("change_update_interval", "PUT", {
+      update_interval: selectedInterval,
+    });
   };
-  const handleDataIntervalChange_chart_1 = async (event) => {
-    //gets value of drop down
+
+  const handleDataIntervalChange = async (event) => {
     const selectedDataInterval = parseInt(event.target.value);
-    //updates the value of the interval
-    setUpdate_data_interval(selectedDataInterval);
-    // Make a request to the server to update the update interval
-
-    // Make a request to the server to update the data interval
-    try {
-      const response = await fetch(
-        `${apiUrl}/api/historyChart/change_data_interval/${userId}/${chartName}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ data_interval: selectedDataInterval }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
+    setUpdateDataInterval(selectedDataInterval);
+    handleServerUpdate("change_data_interval", "PUT", {
+      data_interval: selectedDataInterval,
+    });
   };
+
   const handleMaxCountChange = async (event) => {
-    //gets value of drop down
-    const selectedMaxCount_chart_1 = parseInt(event.target.value);
-    //updates the value of the interval
-    setmax_count(selectedMaxCount_chart_1);
-
-    // Make a request to the server to update the max count
-    try {
-      const response = await fetch(
-        `${apiUrl}/api/historyChart/change_max_count/${userId}/${chartName}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ max_count: selectedMaxCount_chart_1 }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
+    const selectedMaxCount = parseInt(event.target.value);
+    setmax_count(selectedMaxCount);
+    handleServerUpdate("change_max_count", "PUT", {
+      max_count: selectedMaxCount,
+    });
   };
-  const handleTypeChange_chart_1 = async (event) => {
-    //gets value of drop down
-    const selectedType_chart_1 = event.target.value;
-    //updates the value of the interval
-    settype_chart_1(selectedType_chart_1);
 
-    // Make a request to the server to update the chart type
-    try {
-      const response = await fetch(
-        `${apiUrl}/api/historyChart//change_type/${userId}/${chartName}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ type: selectedType_chart_1 }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const data = await response.json();
-    } catch (error) {
-      console.error("Error:", error);
-    }
+  const handleTypeChange = async (event) => {
+    const selectedchartTyp = event.target.value;
+    setchartTyp(selectedchartTyp);
+    handleServerUpdate("change_type", "PUT", { type: selectedchartTyp });
   };
-  const settings_chart_1 = () => {
-    setsettings_state_chart_1(!settings_state_chart_1);
+  const settings = () => {
+    setSettingsState(!SettingsState);
   };
+
   ////////getting the data///////////
   useEffect(() => {
     if (currentPage === "/history") {
       let isMounted = true;
-      const fetchdata_chart_1 = async () => {
+      const fetchChartData = async () => {
         try {
-          setLoadingTime_1(Date.now());
+          setloadingTime(Date.now());
 
-          const checkboxPromise_Lux = [];
-          const checkboxPromise_Humidity = [];
-          const checkboxPromise_Temperature = [];
-          const checkboxPromise_Moisture = [];
+          const dataTypes = [
+            {
+              type: "temperature",
+              checked: datasetTemperatureChecked,
+              setData: settempchardata,
+            },
+            {
+              type: "humidity",
+              checked: datasetHumidityChecked,
+              setData: sethumchardata,
+            },
+            {
+              type: "moisture/1",
+              checked: datasetMoistureOneChecked,
+              setData: setmoi1chardata,
+            },
+            {
+              type: "moisture/2",
+              checked: datasetMoistureTwoChecked,
+              setData: setmoi2chardata,
+            },
+            {
+              type: "moisture/3",
+              checked: datasetMoistureThreeChecked,
+              setData: setmoi3chardata,
+            },
+            {
+              type: "lux",
+              checked: datasetLuxChecked,
+              setData: setluxchardata,
+            },
+          ];
 
-          if (dataset_temperature_Chart1Checked) {
-            checkboxPromise_Temperature.push(
-              axios.get(
-                `${apiUrl}/api/data/all/temperature?groupId=${groupId}&count=${max_count}`
-              )
-            );
-          }
-          if (dataset_humidity_Chart1Checked) {
-            checkboxPromise_Humidity.push(
-              axios.get(`${apiUrl}/api/data/all/humidity?groupId=${groupId}`)
-            );
-          }
-          if (dataset_moisture_Chart1Checked) {
-            checkboxPromise_Moisture.push(
-              axios.get(`${apiUrl}/api/data/all/moisture/1?groupId=${groupId}`)
-            );
-            checkboxPromise_Moisture.push(
-              axios.get(`${apiUrl}/api/data/all/moisture/2?groupId=${groupId}`)
-            );
-            checkboxPromise_Moisture.push(
-              axios.get(`${apiUrl}/api/data/all/moisture/3?groupId=${groupId}`)
-            );
-          }
-          if (dataset_lux_Chart1Checked) {
-            checkboxPromise_Lux.push(
-              axios.get(`${apiUrl}/api/data/all/lux?groupId=${groupId}`)
-            );
-          }
-          const response_Moisture = await Promise.all(checkboxPromise_Moisture);
-          const response_Humdidity = await Promise.all(
-            checkboxPromise_Humidity
-          );
-          const response_Temperature = await Promise.all(
-            checkboxPromise_Temperature
-          );
-          const response_Lux = await Promise.all(checkboxPromise_Lux);
+          for (let i = 0; i < dataTypes.length; i++) {
+            const { type, checked, setData } = dataTypes[i];
 
-          if (dataset_temperature_Chart1Checked) {
-            const temperatureDataArr = [];
-            let countertemperature = 0;
-            for (let thing in response_Temperature[0].data) {
-              if (countertemperature < 10000) {
-                temperatureDataArr.push({
-                  time: response_Temperature[0].data[thing].time,
-                  value: response_Temperature[0].data[thing].value,
-                });
-                countertemperature++;
+            if (checked) {
+              const response = await axios.get(
+                `${apiUrl}/api/data/all/${type}?groupId=${groupId}&count=${max_count}`
+              );
+              const dataArr = [];
+              for (let thing in response.data) {
+                if (dataArr.length < 100) {
+                  dataArr.push({
+                    time: response.data[thing].time,
+                    value: response.data[thing].value,
+                  });
+                }
               }
-            }
-            const reversedtemperatureDataArr = temperatureDataArr.reverse();
 
-            if (isMounted) {
-              settempchardata(reversedtemperatureDataArr);
-            }
-          }
-          //humidity data
-          if (dataset_humidity_Chart1Checked) {
-            const humidityDataArr = [];
-            let counterhumidity = 0;
-            for (let thing in response_Humdidity[0].data) {
-              if (counterhumidity < 100) {
-                humidityDataArr.push({
-                  time: response_Humdidity[0].data[thing].time,
-                  value: response_Humdidity[0].data[thing].value,
-                });
-                counterhumidity++;
+              const reversedDataArr = dataArr.reverse();
+              if (isMounted) {
+                setData(reversedDataArr);
               }
-            }
-            const reversedhumidityDataArr = humidityDataArr.reverse();
-
-            if (isMounted) {
-              sethumchardata(reversedhumidityDataArr);
-            }
-          }
-          //moisture data
-          if (dataset_moisture_Chart1Checked) {
-            const moisture1DataArr = [];
-            let countermoisture1 = 0;
-            for (let thing in response_Moisture[0].data) {
-              if (countermoisture1 < 100) {
-                moisture1DataArr.push({
-                  time: response_Moisture[0].data[thing].time,
-                  value: response_Moisture[0].data[thing].value,
-                });
-                countermoisture1++;
-              }
-            }
-            const reversedmoisture1DataArr = moisture1DataArr.reverse();
-
-            const moisture2DataArr = [];
-            let countermoisture2 = 0;
-            for (let thing in response_Moisture[0].data) {
-              if (countermoisture2 < 100) {
-                moisture2DataArr.push({
-                  time: response_Moisture[0].data[thing].time,
-                  value: response_Moisture[0].data[thing].value,
-                });
-                countermoisture2++;
-              }
-            }
-            const reversedmoisture2DataArr = moisture2DataArr.reverse();
-
-            const moisture3DataArr = [];
-            let countermoisture3 = 0;
-            for (let thing in response_Moisture[0].data) {
-              if (countermoisture3 < 100) {
-                moisture3DataArr.push({
-                  time: response_Moisture[0].data[thing].time,
-                  value: response_Moisture[0].data[thing].value,
-                });
-                countermoisture3++;
-              }
-            }
-            const reversedmoisture3DataArr = moisture3DataArr.reverse();
-
-            if (isMounted) {
-              setmoi1chardata(reversedmoisture1DataArr);
-              setmoi2chardata(reversedmoisture2DataArr);
-              setmoi3chardata(reversedmoisture3DataArr);
-            }
-          }
-          if (dataset_lux_Chart1Checked) {
-            const luxDataArr = [];
-            let counterlux = 0;
-            for (let thing in response_Lux[0].data) {
-              if (counterlux < 100) {
-                luxDataArr.push({
-                  time: response_Lux[0].data[thing].time,
-                  value: response_Lux[0].data[thing].value,
-                });
-                counterlux++;
-              }
-            }
-            const reversedluxDataArr = luxDataArr.reverse();
-
-            if (isMounted) {
-              setluxchardata(reversedluxDataArr);
             }
           }
         } catch (error) {
           console.error("Error fetching data:", error);
         } finally {
           if (isMounted) {
-            const elapsedTime = Date.now() - loadingTime_1;
+            const elapsedTime = Date.now() - loadingTime;
             if (elapsedTime > 100) {
-              setIsLoading_chart_1(true);
+              setisLoadingChart(true);
             }
           }
         }
       };
 
-      fetchdata_chart_1();
+      fetchChartData();
 
-      const interval_chart_1 = setInterval(fetchdata_chart_1, update_interval);
+      const interval = setInterval(fetchChartData, update_interval);
 
       return () => {
         isMounted = false;
-        clearInterval(interval_chart_1);
+        clearInterval(interval);
       };
     }
   }, [
     currentPage,
 
-    dataset_temperature_Chart1Checked,
-    dataset_humidity_Chart1Checked,
-    dataset_moisture_Chart1Checked,
-    dataset_lux_Chart1Checked,
+    datasetTemperatureChecked,
+    datasetHumidityChecked,
+    datasetMoistureOneChecked,
+    datasetMoistureTwoChecked,
+    datasetMoistureThreeChecked,
+    datasetLuxChecked,
 
     update_interval,
-    update_data_interval,
+    updateDataInterval,
     max_count,
   ]);
 
-  //chart 1
-  const handleChange_dataset_temperature_Chart1 = async (event) => {
-    setDataset_temperature_Chart1Checked(event.target.checked);
+  const handleChangeDataset = async (event, dataType, setChecked) => {
+    setChecked(event.target.checked);
     const checked = event.target.checked;
-    const dataType = "temperature";
 
     try {
-      const response = await fetch(
-        `${apiUrl}/api/historyChart/change_datasets/${userId}/${chartName}/${dataType}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ checked }),
-        }
-      );
-    } catch (err) {
-      console.error(`Error updating chart state: ${err}`);
-    }
-  };
-  const handleChange_dataset_humidity_Chart1 = async (event) => {
-    setDataset_humidity_Chart1Checked(event.target.checked);
-    const checked = event.target.checked;
-    const dataType = "humidity";
-
-    try {
-      const response = await fetch(
+      await fetch(
         `${apiUrl}/api/historyChart/change_datasets/${userId}/${chartName}/${dataType}`,
         {
           method: "PUT",
@@ -483,83 +286,42 @@ const ChartComponent = ({ chartName }) => {
     }
   };
 
-  const handleChange_dataset_moisture_Chart1 = async (event) => {
-    setdataset_moisture_Chart1Checked(event.target.checked);
-    const checked = event.target.checked;
-    const dataType = "moisture_1";
-
-    try {
-      const response = await fetch(
-        `${apiUrl}/api/historyChart/change_datasets/${userId}/${chartName}/${dataType}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ checked }),
-        }
-      );
-    } catch (err) {
-      console.error(`Error updating chart state: ${err}`);
-    }
-  };
-
-  const handleChange_dataset_lux_Chart1 = async (event) => {
-    setdataset_lux_Chart1Checked(event.target.checked);
-    const checked = event.target.checked;
-    const dataType = "lux";
-
-    try {
-      const response = await fetch(
-        `${apiUrl}/api/historyChart/change_datasets/${userId}/${chartName}/${dataType}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ checked }),
-        }
-      );
-    } catch (err) {
-      console.error(`Error updating chart state: ${err}`);
-    }
-  };
-  const Chart_1 = () => {
+  const Chart = () => {
     return (
       <div>
         <h2 className="heading">{chartName}</h2>
         <div className="graph">
-          {isLoading_chart_1 ? (
+          {isLoadingChart ? (
             <div>
-              {type_chart_1 === "line" ? (
+              {chartTyp === "line" ? (
                 <Line
                   data={{
                     labels: tempchardata.map(
                       (tempchardata) => tempchardata.time
                     ),
                     datasets: [
-                      dataset_temperature_Chart1Checked && {
+                      datasetTemperatureChecked && {
                         label: "Temperature",
                         data: tempchardata.map(
                           (tempchardata) => tempchardata.value
                         ),
                         borderColor: ["rgba(150, 0, 237, 1)"],
                       },
-                      dataset_humidity_Chart1Checked && {
+                      datasetHumidityChecked && {
                         label: "Humidity",
                         data: humchardata.map(
                           (humchardata) => humchardata.value
                         ),
                         borderColor: ["rgba(0, 100, 137, 1)"],
                       },
-                      dataset_moisture_Chart1Checked && {
+                      datasetMoistureOneChecked && {
                         label: "Moisture 1",
                         data: moi1chardata.map(
                           (moi1chardata) => moi1chardata.value
                         ),
                         borderColor: ["rgba(100, 100, 137, 1)"],
                       },
-                      dataset_lux_Chart1Checked && {
+                      datasetLuxChecked && {
                         label: "Lux",
                         data: luxchardata.map(
                           (luxchardata) => luxchardata.value
@@ -601,35 +363,35 @@ const ChartComponent = ({ chartName }) => {
                   }}
                   className="chart"
                 />
-              ) : type_chart_1 === "scatter" ? (
+              ) : chartTyp === "scatter" ? (
                 <Scatter
                   data={{
                     labels: tempchardata.map(
                       (tempchardata) => tempchardata.time
                     ),
                     datasets: [
-                      dataset_temperature_Chart1Checked && {
+                      datasetTemperatureChecked && {
                         label: "Temperature",
                         data: tempchardata.map(
                           (tempchardata) => tempchardata.value
                         ),
                         borderColor: ["rgba(0, 0, 237, 1)"],
                       },
-                      dataset_humidity_Chart1Checked && {
+                      datasetHumidityChecked && {
                         label: "Humidity",
                         data: humchardata.map(
                           (humchardata) => humchardata.value
                         ),
                         borderColor: ["rgba(0, 0, 237, 1)"],
                       },
-                      dataset_moisture_Chart1Checked && {
+                      datasetMoistureOneChecked && {
                         label: "Moisture 1",
                         data: moi1chardata.map(
                           (moi1chardata) => moi1chardata.value
                         ),
                         borderColor: ["rgba(0, 0, 237, 1)"],
                       },
-                      dataset_lux_Chart1Checked && {
+                      datasetLuxChecked && {
                         label: "Lux",
                         data: luxchardata.map(
                           (luxchardata) => luxchardata.value
@@ -697,11 +459,9 @@ const ChartComponent = ({ chartName }) => {
                     position: "relative",
                     display: "flex",
                     flexDirection: "row",
-                    backgroundColor: settings_state_chart_1
-                      ? "#f1f1f1"
-                      : "transparent",
+                    backgroundColor: SettingsState ? "#f1f1f1" : "transparent",
                     borderRadius: "50px",
-                    boxShadow: settings_state_chart_1
+                    boxShadow: SettingsState
                       ? "0px 0px 20px rgba(0, 0, 0, 0.25)"
                       : "none",
                     alignItems: "center",
@@ -710,12 +470,10 @@ const ChartComponent = ({ chartName }) => {
                   }}
                 >
                   <button
-                    onClick={settings_chart_1}
+                    onClick={settings}
                     className="edit_popup"
                     style={{
-                      backgroundColor: settings_state_chart_1
-                        ? "#0088ff"
-                        : "#2c3e50",
+                      backgroundColor: SettingsState ? "#0088ff" : "#2c3e50",
                       color: "white",
                     }}
                   >
@@ -723,7 +481,7 @@ const ChartComponent = ({ chartName }) => {
                   </button>
                   <div
                     style={{
-                      visibility: settings_state_chart_1 ? "visible" : "hidden",
+                      visibility: SettingsState ? "visible" : "hidden",
                       overflow: "hidden",
                       transition: "width 10s",
                       display: "flex",
@@ -731,24 +489,32 @@ const ChartComponent = ({ chartName }) => {
                       alignItems: "center",
                     }}
                   >
-                    <button onClick={openEditPopup_1} className="edit_popup">
-                      Edit Dataset
+                    <button
+                      onClick={() => setIsEditPopupOpen(true)}
+                      className="edit_popup"
+                    >
+                      edit dataset
                     </button>
-                    <button onClick={openTypePopup_1} className="edit_popup">
-                      change type
+                    <button
+                      onClick={() => setIsTypePopupOpen(true)}
+                      className="edit_popup"
+                    >
+                      chart type
                     </button>
-                    <button onClick={openCountPopup_1} className="edit_popup">
+                    <button
+                      onClick={() => setIsCountPopupOpen(true)}
+                      className="edit_popup"
+                    >
                       max count
                     </button>
-                    <button onClick={openDataPopup_1} className="edit_popup">
+                    <button
+                      onClick={() => setIsDataPopupOpen(true)}
+                      className="edit_popup"
+                    >
                       data interval
                     </button>
-                    {/* 
-                    <button onClick={live_data_1} className="edit_popup">
-                      .live data.
-                    </button> */}
                     <button
-                      onClick={openIntervalPopup_1}
+                      onClick={() => setIsIntervalPopupOpen(true)}
                       className="edit_popup"
                     >
                       update interval
@@ -772,11 +538,11 @@ const ChartComponent = ({ chartName }) => {
         <div>
           <div className="diagramm">
             <div className="chart_container">
-              <div style={{ margin: "3%" }}>{Chart_1()}</div>
+              <div style={{ margin: "3%" }}>{Chart()}</div>
             </div>
           </div>
 
-          {IsEditPopupOpen_1 && (
+          {IsEditPopupOpen && (
             <div className="popup">
               <div className="popupContent">
                 <h3>Choose your Datasets for this Chart</h3>
@@ -785,54 +551,77 @@ const ChartComponent = ({ chartName }) => {
                     <input
                       type="checkbox"
                       name="Temperature"
-                      checked={dataset_temperature_Chart1Checked}
-                      onChange={handleChange_dataset_temperature_Chart1}
+                      checked={datasetTemperatureChecked}
+                      onChange={(event) =>
+                        handleChangeDataset(
+                          event,
+                          "temperature",
+                          setDatasetTemperatureChecked
+                        )
+                      }
                     />
                     <label htmlFor="Temperature">Temperature</label>
 
                     <input
                       type="checkbox"
                       name="Humidity"
-                      checked={dataset_humidity_Chart1Checked}
-                      onChange={handleChange_dataset_humidity_Chart1}
+                      checked={datasetHumidityChecked}
+                      onChange={(event) =>
+                        handleChangeDataset(
+                          event,
+                          "humidity",
+                          setDatasetHumidityChecked
+                        )
+                      }
                     />
                     <label htmlFor="Humidity">Humidity</label>
 
                     <input
                       type="checkbox"
-                      name="Moisture"
-                      checked={dataset_moisture_Chart1Checked}
-                      onChange={handleChange_dataset_moisture_Chart1}
+                      name="Moisture 1"
+                      checked={datasetMoistureOneChecked}
+                      onChange={(event) =>
+                        handleChangeDataset(
+                          event,
+                          "moisture",
+                          setdatasetMoistureOneChecked
+                        )
+                      }
                     />
                     <label htmlFor="Moisture">Moisture</label>
 
                     <input
                       type="checkbox"
                       name="lux"
-                      checked={dataset_lux_Chart1Checked}
-                      onChange={handleChange_dataset_lux_Chart1}
+                      checked={datasetLuxChecked}
+                      onChange={(event) =>
+                        handleChangeDataset(event, "lux", setDatasetLuxChecked)
+                      }
                     />
-                    <label htmlFor="Lux_1">lux</label>
+                    <label htmlFor="Lux">lux</label>
 
                     <br></br>
                   </form>
                 </div>
-                <button onClick={closeEditPopup_1} className="edit_popup">
+                <button
+                  onClick={() => setIsEditPopupOpen(false)}
+                  className="edit_popup"
+                >
                   Close
                 </button>
               </div>
             </div>
           )}
 
-          {IsDataPopupOpen_1 && (
+          {IsDataPopupOpen && (
             <div className="popup">
               <div className="popupContent">
                 <h3>Select your data Interval</h3>
                 <label htmlFor="updateInterval">Data Interval: </label>
                 <select
-                  id="updateInterval_chart_1"
-                  value={setUpdate_data_interval}
-                  onChange={handleDataIntervalChange_chart_1}
+                  id="updateInterval"
+                  value={updateDataInterval}
+                  onChange={handleDataIntervalChange}
                 >
                   <option value={100}>Live</option>
                   <option value={60000}>1 minutes</option>
@@ -843,13 +632,16 @@ const ChartComponent = ({ chartName }) => {
                   <option value={3600000}>1 hour</option>
                 </select>
                 <div className="checkbox"></div>
-                <button onClick={closeDataPopup_1} className="edit_popup">
+                <button
+                  onClick={() => setIsDataPopupOpen(false)}
+                  className="edit_popup"
+                >
                   Close
                 </button>
               </div>
             </div>
           )}
-          {IsCountPopupOpen_1 && (
+          {IsCountPopupOpen && (
             <div className="popup">
               <div className="popupContent">
                 <h3>Select your max count of data points</h3>
@@ -867,36 +659,42 @@ const ChartComponent = ({ chartName }) => {
                   <option value={4000}>4000</option>
                 </select>
                 <div className="checkbox"></div>
-                <button onClick={closeCountPopup_1} className="edit_popup">
+                <button
+                  onClick={() => setIsCountPopupOpen(false)}
+                  className="edit_popup"
+                >
                   Close
                 </button>
               </div>
             </div>
           )}
-          {IsTypePopupOpen_1 && (
+          {IsTypePopupOpen && (
             <div className="popup">
               <div className="popupContent">
                 <h3>Select your type of chart</h3>
                 <label htmlFor="chart_type">Type </label>
                 <select
-                  value={type_chart_1}
-                  id="updateInterval_chart_1"
-                  onChange={handleTypeChange_chart_1}
+                  value={chartTyp}
+                  id="Chart Type"
+                  onChange={handleTypeChange}
                 >
                   <option>line</option>
                   <option>scatter</option>
                 </select>
                 <div className="checkbox"></div>
-                <button onClick={closeTypePopup_1} className="edit_popup">
+                <button
+                  onClick={() => setIsTypePopupOpen(false)}
+                  className="edit_popup"
+                >
                   Close
                 </button>
               </div>
             </div>
           )}
-          {IsIntervalPopupOpen_1 && (
+          {IsIntervalPopupOpen && (
             <div className="popup">
               <div className="popupContent">
-                <h3>Choose your Datasets for Chart 4</h3>
+                <h3>Select the interval the Chart should update</h3>
                 <label htmlFor="updateInterval_">Update Interval: </label>
                 <select
                   id="updateInterval"
@@ -909,7 +707,10 @@ const ChartComponent = ({ chartName }) => {
                   <option value={15000}>15 seconds</option>
                 </select>
                 <div className="checkbox"></div>
-                <button onClick={closeIntervalPopup_1} className="edit_popup">
+                <button
+                  onClick={() => setIsIntervalPopupOpen(false)}
+                  className="edit_popup"
+                >
                   Close
                 </button>
               </div>

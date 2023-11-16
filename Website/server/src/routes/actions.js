@@ -19,8 +19,10 @@ router.get("/", async (req, res) => {
         data.value = value; // set the value property to "off"
         await data.save(); // save the updated data object to the database
         return res.status(200).send({ message: "actions success" });
+      } else {
+        console.log("no data found");
+        return res.status(400).send({ message: "no data found" });
       }
-      if (!data) console.log("no data found");
     }
   } catch (error) {
     res.status(500).send({ message: "Internal Server Error" });

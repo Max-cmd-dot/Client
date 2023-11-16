@@ -37,7 +37,8 @@ def on_message(client, userdata, msg):
     post['value'] = str(post['value']).split(',')[0]
 
     collection.insert_one(post)
-
+receiveTime = datetime.datetime.now()
+print(str(receiveTime))
 # Set up client for MongoDB
 mongoClient = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
 db = mongoClient.Website

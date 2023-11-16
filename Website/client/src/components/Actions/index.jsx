@@ -19,15 +19,9 @@ const Actions = () => {
 
   const handleButtonWater = () => {
     setbuttongroupstate(0);
-    console.log("Water");
   };
   const handleAir = () => {
     setbuttongroupstate(1);
-    console.log("Air");
-  };
-  const handleSunshine = () => {
-    setbuttongroupstate(2);
-    console.log("Sunshine");
   };
 
   const printButtonLabel = (event) => {
@@ -36,9 +30,6 @@ const Actions = () => {
     }
     if (event.target.name === "Air") {
       handleAir();
-    }
-    if (event.target.name === "Sunshine") {
-      handleSunshine();
     }
   };
   const toggleDevice = (device, value) => {
@@ -49,28 +40,25 @@ const Actions = () => {
   };
   //calling it after changing with start and stop
   const fetchData_current_state = async () => {
-    setTimeout(async () => {
-      try {
-        const response = await axios.get(
-          `${apiUrl}/api/actions/current_state?group=${groupId}`
-        );
-        const valuesArr = response.data.message.map((item) => ({
-          object: item.object,
-          group: item.group,
-          value: item.value,
-        }));
-        setList2(valuesArr);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-      fetchData_current_state();
-    }, 500);
+    try {
+      const response = await axios.get(
+        `${apiUrl}/api/actions/current_state?group=${groupId}`
+      );
+      const valuesArr = response.data.message.map((item) => ({
+        object: item.object,
+        group: item.group,
+        value: item.value,
+      }));
+      setList2(valuesArr);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
   //GETTING IT TO BE SURE IT IS THE CURRENT STATE EVERY 10 SECONDS
   useEffect(() => {
     if (currentPage === "/actions") {
       fetchData_current_state();
-      const interval = setInterval(fetchData_current_state, 10000);
+      const interval = setInterval(fetchData_current_state, 2000);
       return () => {
         clearInterval(interval);
       };
@@ -81,35 +69,68 @@ const Actions = () => {
     "pump_2",
     "pump_3",
     "ventilator_1",
-    "humidifyer_1" /* 
-    "roof_1", */,
+    "humidifyer_1",
   ];
   const sortedList = list2.sort(
     (a, b) => objectOrder.indexOf(a.object) - objectOrder.indexOf(b.object)
   );
-  const Device = ({ type, number }) => (
-    <div className={styles.box}>
-      <h1>
-        {type} {number && number}
-        <button
-          className={styles.button}
-          onClick={() => toggleDevice(`${type}_${number || ""}`, "on")}
-        >
-          Start
-        </button>
-        <button
-          className={styles.button}
-          onClick={() => toggleDevice(`${type}_${number || ""}`, "off")}
-        >
-          Stop
-        </button>
-      </h1>
-    </div>
-  );
+  const Device = ({ type, number }) => {
+    const deviceName = `${type}_${number || ""}`;
+    const device = sortedList.find((item) => item.object === deviceName);
+
+    if (!device) return null; // Add this line
+    const capitalizedType = type.charAt(0).toUpperCase() + type.slice(1);
+
+    if (type !== "pump") {
+      return (
+        <div className={styles.box}>
+          <h1
+            tyle={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {capitalizedType}
+            <button
+              className={styles.button}
+              onClick={() =>
+                toggleDevice(deviceName, device.value === "on" ? "off" : "on")
+              }
+            >
+              {device.value === "on" ? "Stop" : "Start"}
+            </button>
+          </h1>
+        </div>
+      );
+    } else {
+      return (
+        <div className={styles.box}>
+          <h1
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {capitalizedType} {number}
+            <button
+              className={styles.button}
+              onClick={() =>
+                toggleDevice(deviceName, device.value === "on" ? "off" : "on")
+              }
+            >
+              {device.value === "on" ? "Stop" : "Start"}
+            </button>
+          </h1>
+        </div>
+      );
+    }
+  };
   const objectMap = {
-    pump_1: { objectName: "Pump 1", sensorHeading: "Status" },
-    pump_2: { objectName: "Pump 2", sensorHeading: "Status" },
-    pump_3: { objectName: "Pump 3", sensorHeading: "Status" },
+    pump_1: { objectName: "Pump 1", sensorHeading: "Water" },
+    pump_2: { objectName: "Pump 2", sensorHeading: "Water" },
+    pump_3: { objectName: "Pump 3", sensorHeading: "Water" },
     ventilator_1: { objectName: "Fan 1", sensorHeading: "Speed" },
     humidifyer_1: { objectName: "Humidifyer 1", sensorHeading: "Humidity" },
   };
@@ -146,7 +167,7 @@ const Actions = () => {
       <div className={styles.box_gray}>
         <div className={styles.buttonGroup}>
           <ButtonGroup
-            buttons={["Water", "Air", "Sunshine"]}
+            buttons={["Water", "Air"]}
             doSomethingAfterClick={printButtonLabel}
             defaultActiveButton={0}
             activeButton={buttongroupstate}
@@ -162,8 +183,12 @@ const Actions = () => {
               <Device type="pump" number="3" />
             </div>
           )}
-          {buttongroupstate === 1 && <Device type="ventilator" />}
-          {buttongroupstate === 2 && <Device type="humidifyer" />}
+          {buttongroupstate === 1 && (
+            <div>
+              <Device type="humidifyer" number="1" />
+              <Device type="ventilator" number="1" />
+            </div>
+          )}
         </div>
       </div>
     </div>

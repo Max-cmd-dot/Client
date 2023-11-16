@@ -2,14 +2,13 @@ import styles from "./styles.module.css";
 import { Doughnut } from "react-chartjs-2";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import ClipLoader from "react-spinners/ClipLoader";
 import "chartjs-adapter-moment";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-const apiUrl = process.env.REACT_APP_API_URL;
 import { changeRoute } from "../../reduxStore";
+import { useSelector, useDispatch } from "react-redux";
 // needed for dayClick
 
 import {
@@ -30,7 +29,7 @@ Chart.register(
   TimeScale
 );
 
-import { useSelector, useDispatch } from "react-redux";
+const apiUrl = process.env.REACT_APP_API_URL;
 const Main = () => {
   let [list, setList] = useState([]);
   let [list2, setList2] = useState([]);

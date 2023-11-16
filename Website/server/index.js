@@ -16,6 +16,7 @@ const actionsRoutes = require("./src/routes/actions");
 const devicesRoutes = require("./src/routes/devices");
 const historyChart = require("./src/routes/historyChart");
 const emailchangeRoutes = require("./src/routes/changeEmail");
+const hardwareRoutes = require("./src/routes/hardware");
 
 // database connection
 connection();
@@ -36,6 +37,7 @@ app.use("/api/actions", actionsRoutes);
 app.use("/api/devices", devicesRoutes);
 app.use("/api/historyChart", historyChart);
 app.use("/api/changeEmail", emailchangeRoutes);
+app.use("/api/hardware", hardwareRoutes);
 
 app.get("/", (req, res) => {
   res.send("Running...");
