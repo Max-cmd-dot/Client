@@ -9,6 +9,7 @@ const {
 router.get("/", async (req, res) => {
   try {
     const { group } = req.query;
+    console.log(group);
     const { error } = validate(req.query);
     if (error)
       return res.status(400).send({ message: error.details[0].message });

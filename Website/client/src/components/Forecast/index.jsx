@@ -771,7 +771,7 @@ const Forecast = () => {
                                 return `${datasetLabel}: ${value}`;
                               },
                             },
-                          },
+                          }, //https://www.chartjs.org/docs/latest/samples/line/segments.html
                           scales: {
                             x: {
                               type: "time",

@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "Controller_sender",
+			"path": "Scripts/Hardware/Controller_sender"
+		},
+		{
+			"name": "Sender_esp32",
+			"path": "Scripts/Hardware/Sender_esp32"
+		},
+		{
+			"name": "OTA_Esp32",
+			"path": "Scripts/Hardware/OTA_Esp32"
+		}
+	],
+	"settings": {}
+}

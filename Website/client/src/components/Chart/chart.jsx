@@ -90,20 +90,24 @@ const ChartComponent = ({ chartName }) => {
 
   //fetch the data and initilize it from the server
   useEffect(() => {
+    // Fetch data from the settings table in the database
     const fetchDataPreset = async () => {
       try {
         const response = await fetch(
           `${apiUrl}/api/historyChart/settings/${userId}/${chartName}`
         );
         const data = await response.json();
-        setchartTyp(data.type);
-        setupdate_interval(data.update_interval);
-        setUpdateDataInterval(data.data_interval);
-        setmax_count(data.max_count);
-        setDatasetTemperatureChecked(data.datasets[0].checked_temperature);
-        setDatasetHumidityChecked(data.datasets[0].checked_humidity);
-        setdatasetMoistureOneChecked(data.datasets[0].checked_moisture_1);
-        setDatasetLuxChecked(data.datasets[0].checked_lux);
+        // Set the state with the data from the response
+        if (data) {
+          setchartTyp(data.type);
+          setupdate_interval(data.update_interval);
+          setUpdateDataInterval(data.data_interval);
+          setmax_count(data.max_count);
+          setDatasetTemperatureChecked(data.datasets[0].checked_temperature);
+          setDatasetHumidityChecked(data.datasets[0].checked_humidity);
+          setdatasetMoistureOneChecked(data.datasets[0].checked_moisture_1);
+          setDatasetLuxChecked(data.datasets[0].checked_lux);
+        }
       } catch (error) {
         console.error("Error:", error);
       }

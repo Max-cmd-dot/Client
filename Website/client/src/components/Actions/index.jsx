@@ -1,7 +1,6 @@
 import styles from "./styles.module.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import ClipLoader from "react-spinners/ClipLoader";
 import { changeRoute } from "../../reduxStore";
 import { useSelector, useDispatch } from "react-redux";
 const apiUrl = process.env.REACT_APP_API_URL;
@@ -177,14 +176,14 @@ const Actions = () => {
         </div>
         <div>
           {buttongroupstate === 0 && (
-            <div>
+            <div className="pumps">
               <Device type="pump" number="1" />
               <Device type="pump" number="2" />
               <Device type="pump" number="3" />
             </div>
           )}
           {buttongroupstate === 1 && (
-            <div>
+            <div className="other">
               <Device type="humidifyer" number="1" />
               <Device type="ventilator" number="1" />
             </div>

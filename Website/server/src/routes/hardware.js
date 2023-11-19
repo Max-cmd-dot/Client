@@ -33,7 +33,20 @@ router.get("/update", async (req, res) => {
   });
 });
 router.get("/download", async (req, res) => {
-  const utilsDir = path.join(__dirname, "..", "utils");
+  const utilsDir = path.join(
+    __dirname,
+    "..",
+    "..",
+    "..",
+    "..",
+    "Scripts",
+    "Hardware",
+    "OTA_Esp32",
+    ".pio",
+    "build",
+    "az-delivery-devkit-v4"
+  );
+  const alternative_dir = path.join(__dirname, "..", "utils");
   const file = `${utilsDir}/firmware.bin`;
   res.download(file); // Set disposition and send it.
 });

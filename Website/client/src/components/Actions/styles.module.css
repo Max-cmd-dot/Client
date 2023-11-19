@@ -7,17 +7,16 @@
   font-size: 24px; /* Increased font size for headings */
 }
 .box {
-  margin-left: 5%;
-  margin-right: 5%;
-  margin-top: 2%;
-  margin-bottom: 2%;
+  margin: 2% auto;
   border-radius: 10px;
   box-shadow: 0px 3px 3px -2px rgb(0, 0, 0, 0.4), 0px 3px 4px rgb(0, 0, 0, 0.24),
     0px 1px 8px rgb(0, 0, 0, 0.22);
   background-color: #ffffff;
   color: #13395a;
   padding: 20px;
+  max-width: 400px; /* Add this line */
 }
+
 .box_gray {
   margin-left: 5%;
   margin-right: 5%;
@@ -74,6 +73,9 @@
     flex-wrap: wrap;
     justify-content: space-evenly;
     /* Boxen sind untereinander, wenn der Viewport 1250px oder weniger breit ist */
+  }
+  .box {
+    margin: 7% auto;
   }
 }
 .sensordata {

@@ -25,10 +25,10 @@ const int maxRetries = 50;
 
 // backend server //for mongodb credentials
 // const char *host = "https://bll-backend.vercel.app/api/hardware";
-const char *host = "http://192.168.178.121:8080/api/hardware";
-const char *endpoint = "/hardware";
-const int deviceId = 1;
-
+const char *hostBackendHardware = "http://192.168.178.121:8080/api/hardware";
+//const int deviceId = 1;
+const int deviceId = wifi.macAddress();
+Serial.println("Mac Adress: "+deviceId);
 // digital sensors
 Adafruit_BME280 bme; // I2C
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS34725_GAIN_1X);
@@ -120,7 +120,7 @@ void makeRequest()
 
   do
   {
-    http.begin(String(host)); // Specify the URL
+    http.begin(String(hostBackendHardware)); // Specify the URL
     http.addHeader("Content-Type", "application/json");
     http.addHeader("deviceId", String(deviceId));
 

@@ -14,7 +14,10 @@
 #include <WiFiManager.h>
 // https://dronebotworkshop.com/wifimanager/
 //  JSON configuration file
+#define JSON_CONFIG_FILE "/config.json"
 
+// Flag for saving data
+bool shouldSaveConfig = false;
 
 // Define WiFiManager Object
 WiFiManager wm;
@@ -49,7 +52,6 @@ int value = 0;
 #define AOUT_PIN 35
 #define AOUT_PIN2 34
 #define AOUT_PIN3 33
-#define BUTTON_PIN 15
 
 // define sensor variables
 float temperature = 0;
@@ -70,6 +72,102 @@ const int ledHumidifyer1 = 17;
 // Define the API key
 String apiKey, hostMongo, url, group;
 
+void saveConfigFile()
+// Save Config in JSON format
+{
+  Serial.println(F("Saving configuration..."));
+// Create a JSON document
+  StaticJsonDocument<512> json;
+     // Add data to the JSON document
+    json["code"] = "samplecode";
+  // Open config file
+  File configFile = SPIFFS.open(JSON_CONFIG_FILE, "w");
+  if (!configFile)
+  {
+    // Error, file did not open
+    Serial.println("failed to open config file for writing");
+  }
+  // Serialize JSON data to write to file
+  serializeJsonPretty(json, Serial);
+  if (serializeJson(json, configFile) == 0)
+  {
+    // Error writing file
+    Serial.println(F("Failed to write to file"));
+  }
+  // Close file
+  configFile.close();
+}
+
+bool loadConfigFile()
+{
+  Serial.println("Mounting File System...");
+  if (!SPIFFS.begin(true)) {
+    Serial.println("An Error has occurred while mounting SPIFFS");
+    return false;
+  }
+
+  File configFile = SPIFFS.open(JSON_CONFIG_FILE, "r");
+  if (!configFile) {
+    Serial.println("Failed to open config file");
+    return false;
+  }
+
+
+  if (SPIFFS.begin(false) || SPIFFS.begin(true))
+  {
+    Serial.println("Mounted file system");
+    if (SPIFFS.exists(JSON_CONFIG_FILE))
+    {
+      Serial.println("Reading config file");
+      File configFile = SPIFFS.open(JSON_CONFIG_FILE, "r");
+      if (configFile)
+      {
+        Serial.println("Opened configuration file");
+        StaticJsonDocument<512> json;
+        DeserializationError error = deserializeJson(json, configFile);
+        if (error) {
+          Serial.print("deserializeJson() failed with code ");
+          Serial.println(error.c_str());
+          return false;
+        }
+        else {
+          serializeJsonPretty(json, Serial);
+          return true;
+        }
+      }
+      else {
+        Serial.println("Failed to open config file");
+      }
+    }
+    else {
+      Serial.println("Config file does not exist");
+    }
+  }
+  else {
+    Serial.println("Failed to mount FS");
+  }
+
+  return false;
+}
+
+void saveConfigCallback()
+// Callback notifying us of the need to save configuration
+{
+  Serial.println("Should save config");
+  shouldSaveConfig = true;
+}
+
+void configModeCallback(WiFiManager *myWiFiManager)
+// Called when config mode launched
+{
+  Serial.println("Entered Configuration Mode");
+
+  Serial.print("Config SSID: ");
+  Serial.println(myWiFiManager->getConfigPortalSSID());
+
+  Serial.print("Config IP Address: ");
+  Serial.println(WiFi.softAPIP());
+}
 
 void initializeNTP()
 {
@@ -128,36 +226,52 @@ void makeRequest()
     http.end(); // Free the resources
   } while (httpCode != 200 && retries < maxRetries);
 }
-std::vector<const char*> wmMenuItems = { "wifi", "info", "param", "exit" }; //"erase"
-
 void WifiManager()
 {
+  // wifiManager and config
+  //  Change to true when testing to force configuration every time we run
+  bool forceConfig = false;
+
+  bool spiffsSetup = loadConfigFile();
+  if (!spiffsSetup)
+  {
+    Serial.println(F("Forcing config mode as there is no saved config"));
+    forceConfig = true;
+  }
+
   // Explicitly set WiFi mode
   WiFi.mode(WIFI_STA);
   delay(10);
-  wm.setMenu(wmMenuItems);
-  wm.setTitle("Brand Name"); //brand name
-  int buttonState = digitalRead(BUTTON_PIN); // Read the state of the button
 
-  Serial.println("Resetting Wifi-Settings"+String(buttonState));
-  if (buttonState == LOW) { // If the button is pressed (connects the pin to GND)
-    wm.startConfigPortal("ESP32 Network", "password"); // Start the 
-  } else {
-  if (!wm.autoConnect("NEWTEST_AP", "password")) //brand name
+  // Set config save notify callback
+  wm.setSaveConfigCallback(saveConfigCallback);
+
+  // Set callback that gets called when connecting to previous WiFi fails, and enters Access Point mode
+  wm.setAPCallback(configModeCallback);
+
+  if (forceConfig)
+  // Run if we need a configuration
   {
-    Serial.println("failed to connect and hit timeout");
-    delay(3000);
-    // if we still have not connected restart and try all over again
-    ESP.restart();
-    delay(5000);
+    if (!wm.startConfigPortal("NEWTEST_AP", "password"))
+    {
+      Serial.println("failed to connect and hit timeout");
+      delay(3000);
+      // reset and try again, or maybe put it to deep sleep
+      ESP.restart();
+      delay(5000);
+    }
   }
   else
   {
-    //if you get here you have connected to the WiFi
-    Serial.println("connected...yeey :)");
+    if (!wm.autoConnect("NEWTEST_AP", "password"))
+    {
+      Serial.println("failed to connect and hit timeout");
+      delay(3000);
+      // if we still have not connected restart and try all over again
+      ESP.restart();
+      delay(5000);
+    }
   }
-  }
-  
 
   // If we get here, we are connected to the WiFi
 
@@ -167,7 +281,12 @@ void WifiManager()
   Serial.println(WiFi.localIP());
   Serial.print("MAC address: ");
   Serial.println(WiFi.macAddress());
-
+  // Save the custom parameters to FS
+  if (shouldSaveConfig)
+  {
+    Serial.println("Saving config");
+    saveConfigFile();
+  }
 }
 void setup()
 {
@@ -182,9 +301,6 @@ void setup()
   pinMode(ledVentilator1, OUTPUT);
   pinMode(ledHumidifyer1, OUTPUT);
   pinMode(ledStatus, OUTPUT);
-
-  //reset button
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
 
   // Initialize I2C communication
   Wire.begin();
@@ -262,61 +378,43 @@ void processHttpResponse()
 {
   HTTPClient http;
   http.begin("https://" + hostMongo + url + "/action/find");
-  Serial.println("https://" + hostMongo + url + "/action/find");
   http.addHeader("Content-Type", "application/json");
   http.addHeader("Access-Control-Request-Headers", "*");
   http.addHeader("api-key", apiKey);
 
   String requestData = "{\"collection\":\"actions\",\"database\":\"Website\",\"dataSource\":\"Cluster0\"}";
   int httpResponseCode = http.POST(requestData);
-  String response = http.getString();
+
   if (httpResponseCode == 200)
   {
-  // Check if the response is not empty
-  Serial.println("Data received successfully");
-    if (response.length() > 0) {
-      // Parse the JSON response
-      DynamicJsonDocument doc(1024);
-      DeserializationError error = deserializeJson(doc, response);
+    Serial.println("Data received successfully");
+    httpResponseCode = http.GET();
+    String response = http.getString();
 
-      // Check for errors in parsing
-      if (error) {
-        Serial.println("Failed to parse JSON response");
-      } else {
-        if (httpResponseCode == 200)
-         {
+    // Parse the JSON response
+    DynamicJsonDocument doc(1024);
+    deserializeJson(doc, response);
 
+    // Loop through each document in the response
+    for (JsonObject document : doc["documents"].as<JsonArray>())
+    {
+      String object = document["object"];
+      String value = document["value"];
 
-         // Parse the JSON response
-         DynamicJsonDocument doc(1024);
-         deserializeJson(doc, response);
-
-          // Loop through each document in the response
-         for (JsonObject document : doc["documents"].as<JsonArray>())
-         {
-            String object = document["object"];
-           String value = document["value"];
-
-           // Turn on or off the LED based on the object value
-           if (object == "pump_1")
-             digitalWrite(ledPump1, value == "on" ? HIGH : LOW);
-           else if (object == "pump_2")
-             digitalWrite(ledPump2, value == "on" ? HIGH : LOW);
-           else if (object == "pump_3")
-              digitalWrite(ledPump3, value == "on" ? HIGH : LOW);
-           else if (object == "ventilator_1")
-              digitalWrite(ledVentilator1, value == "on" ? HIGH : LOW);
-            else if (object == "humidifyer_1")
-             digitalWrite(ledHumidifyer1, value == "on" ? HIGH : LOW);
-         }
-        }
-      }
-    } else {
-      Serial.println("Empty response received");
+      // Turn on or off the LED based on the object value
+      if (object == "pump_1")
+        digitalWrite(ledPump1, value == "on" ? HIGH : LOW);
+      else if (object == "pump_2")
+        digitalWrite(ledPump2, value == "on" ? HIGH : LOW);
+      else if (object == "pump_3")
+        digitalWrite(ledPump3, value == "on" ? HIGH : LOW);
+      else if (object == "ventilator_1")
+        digitalWrite(ledVentilator1, value == "on" ? HIGH : LOW);
+      else if (object == "humidifyer_1")
+        digitalWrite(ledHumidifyer1, value == "on" ? HIGH : LOW);
     }
-  
   }
-   else
+  else
   {
     Serial.print("Error on sending POST: ");
     digitalWrite(ledStatus, HIGH);
