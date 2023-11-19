@@ -1,7 +1,6 @@
 {
   "name": "client",
   "version": "0.1.1",
-  "homepage": "https://bll-maximilian.vercel.app",
   "dependencies": {
     "@cyntler/react-doc-viewer": "^1.13.0",
     "@fullcalendar/core": "^6.1.8",
