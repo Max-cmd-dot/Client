@@ -47,7 +47,7 @@ const Landing = () => {
     <div>
       <div className={styles.hero_section}>
         <div className={styles.login_button}>{renderButton()}</div>
-        <h1 className={styles.project_name}>Projekt XYZ</h1>
+        <h1 className={styles.project_name}>Nexa Harvest</h1>
         <div className={styles.hero_content}>
           <h1 className={styles.info3words}>Future, Efficiency, Planting</h1>
           <img src={image1} alt="Hero" className={styles.img} />
@@ -56,9 +56,9 @@ const Landing = () => {
       <div className={styles.info_section}>
         <div className={styles.info_container}>
           <div className={styles.info_text}>
-            <h2>Was ist Projekt XYZ?</h2>
+            <h2>Was ist Nexa Harvest?</h2>
             <p>
-              Projekt XYZ ist eine umfassende IoT-Lösung, die speziell
+              Nexa Harvest ist eine umfassende IoT-Lösung, die speziell
               entwickelt wurde, um Sensordaten zu erfassen, zu überwachen und zu
               analysieren. Durch die Integration von Sensoren, einer
               leistungsstarken Mikrocontroller-Plattform und Cloud-Konnektivität
@@ -67,7 +67,7 @@ const Landing = () => {
             </p>
           </div>
           <div className={`${styles.info_text} ${styles.vorteile}`}>
-            <h2>Vorteile von Projekt XYZ</h2>
+            <h2>Vorteile von Nexa Harvest</h2>
             <ul>
               <li>Echtzeitüberwachung und -steuerung</li>
               <li>Umfassende Datenanalyse</li>
@@ -85,7 +85,7 @@ const Landing = () => {
             </ul>
           </div>
           <div className={`${styles.info_text} ${styles.contact_box}`}>
-            <h2>Bereit, die Vorteile von Projekt XYZ zu nutzen?</h2>
+            <h2>Bereit, die Vorteile von Nexa Harvest zu nutzen?</h2>
             <p>
               Kontaktieren Sie uns noch heute, um mehr über unsere IoT-Lösung zu
               erfahren oder eine maßgeschneiderte Demo anzufordern. Steigern Sie

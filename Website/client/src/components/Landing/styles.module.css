@@ -9,7 +9,7 @@
   border: none;
   outline: none;
   padding: 12px 0;
-  background-color: #73a24e;
+  background-color: #186db8; /* 73a24e*/
   border-radius: 20px;
   width: 120px;
   font-weight: bold;
@@ -31,7 +31,7 @@
   top: 70px;
   left: 50%;
   transform: translateX(-50%);
-  color: #73a24e;
+  color: #186db8;
   font-size: 30px;
   text-align: center;
   z-index: 2;
@@ -49,7 +49,7 @@
 }
 
 .info3words {
-  color: #73a24e;
+  color: #186db8;
   font-size: 60px;
   font-weight: bold;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
@@ -74,7 +74,7 @@
 .info_section {
   background-color: #f5eec2;
   padding: 40px;
-  color: #73a24e;
+  color: #186db8;
 }
 
 .info_container {
@@ -117,7 +117,7 @@
   font-weight: bold;
   margin-bottom: 10px;
   text-align: center;
-  color: #73a24e;
+  color: #186db8;
 }
 
 .info_text p,
@@ -137,7 +137,7 @@
   padding: 50px 0;
   text-align: center;
   background-color: #f5eec2;
-  color: #73a24e;
+  color: #186db8;
 }
 
 .contact_section h2 {
@@ -166,7 +166,7 @@
   border: none;
   outline: none;
   padding: 12px 30px;
-  background-color: #73a24e;
+  background-color: #186db8;
   border-radius: 20px;
   color: #f5eec2;
   font-size: 18px;
@@ -195,5 +195,5 @@
 
 .footer a {
   margin-right: 10px;
-  color: #73a24e;
+  color: #186db8;
 }
