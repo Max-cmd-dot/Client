@@ -1,5 +1,5 @@
 # BLL
-https://bll-maximilian.vercel.app/landing
+https://nexaharvest.com/landing
 
 # installation
 - install mosquitto
