@@ -78,8 +78,11 @@
     top: 350px; /* Adjust the value as needed */
   }
   .white_btn {
-    top: 20px;
+    font-size: 15px;
+    top: 22px;
     right: 20px;
+    width: 80px;
+    margin-right: 7px;
   }
 }
 .hero_content {
