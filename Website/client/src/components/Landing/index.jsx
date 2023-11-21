@@ -51,7 +51,7 @@ const Landing = () => {
         rel="stylesheet"
       ></link>
       <div className={styles.hero_section}>
-        <div className={styles.login_button}>{renderButton()}</div>
+        <div className="Button">{renderButton()}</div>
         <div className={styles.logo_and_heading}>
           <img src={logo} alt="Logo" className={styles.logo} />
           <h1 className={styles.project_name}>Nexa Harvest</h1>
@@ -61,7 +61,68 @@ const Landing = () => {
           <img src={image1} alt="Hero" className={styles.img} />
         </div>
       </div>
-      <div className={styles.info_section}>
+      <section className={styles.info_section}>
+        <h2>WHO WE ARE</h2>
+        <p>
+          Nexa Harvest ist eine umfassende IoT-Lösung, die speziell entwickelt
+          wurde, um Sensordaten zu erfassen, zu überwachen und zu analysieren.
+          Durch die Integration von Sensoren, einer leistungsstarken
+          Mikrocontroller-Plattform und Cloud-Konnektivität ermöglicht unser
+          System die nahtlose Erfassung und Verarbeitung von Daten in Echtzeit.
+        </p>
+        <div className={styles.row}>
+          <div className={styles.column}>
+            <h3>Content 1</h3>
+            <p>Text of Content 1</p>
+          </div>
+          <div className={styles.column}>
+            <h3>Content 2</h3>
+            <p>Text of Content 2</p>
+          </div>
+          <div className={styles.column}>
+            <h3>Content 3</h3>
+            <p>Text of Content 2</p>
+          </div>
+        </div>
+      </section>
+      <section className={styles.info_section}>
+        <h2>WHAT WE DO</h2>
+        <p>
+          Nexa Harvest ist eine umfassende IoT-Lösung, die speziell entwickelt
+          wurde, um Sensordaten zu erfassen, zu überwachen und zu analysieren.
+          Durch die Integration von Sensoren, einer leistungsstarken
+          Mikrocontroller-Plattform und Cloud-Konnektivität ermöglicht unser
+          System die nahtlose Erfassung und Verarbeitung von Daten in Echtzeit.
+        </p>
+      </section>
+      <section className={styles.info_section}>
+        <div className={styles.contact_box}>
+          <h2>Bereit, die Vorteile von Nexa Harvest zu nutzen?</h2>
+          <p>
+            Kontaktieren Sie uns noch heute, um mehr über unsere IoT-Lösung zu
+            erfahren oder eine maßgeschneiderte Demo anzufordern. Steigern Sie
+            Ihre Effizienz, verbessern Sie Ihre Prozesse und bleiben Sie der
+            Konkurrenz einen Schritt voraus.
+          </p>
+          <button
+            href="mailto:your-email@example.com"
+            className={styles.contact_btn}
+          >
+            Contact
+          </button>
+        </div>
+      </section>
+      <section className={styles.info_section}>
+        <footer className={styles.footer}>
+          <Link to="/impressum">Impressum</Link>
+          <Link to="/agb">AGB</Link>
+        </footer>
+      </section>
+    </div>
+  );
+};
+/*
+<div className={styles.info_section}>
         <div className={styles.info_container}>
           <div className={styles.info_text}>
             <h2>Was ist Nexa Harvest?</h2>
@@ -108,14 +169,6 @@ const Landing = () => {
             </a>
           </div>
         </div>
-
-        <footer className={styles.footer}>
-          <Link to="/impressum">Impressum</Link>
-          <Link to="/agb">AGB</Link>
-        </footer>
       </div>
-    </div>
-  );
-};
-
+*/
 export default Landing;
