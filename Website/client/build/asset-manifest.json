@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/static/css/main.5d03097b.css",
-    "main.js": "/static/js/main.e8dfac94.js",
+    "main.css": "/static/css/main.b7c5dc35.css",
+    "main.js": "/static/js/main.0214b58c.js",
     "static/media/sensor2.png": "/static/media/sensor2.bc7415f3168f95c2345c.png",
     "static/media/Gymnasium-Buckhorn-bll-final.pdf": "/static/media/Gymnasium-Buckhorn-bll-final.6b539340967d4f21ee42.pdf",
     "index.html": "/index.html",
-    "main.5d03097b.css.map": "/static/css/main.5d03097b.css.map",
-    "main.e8dfac94.js.map": "/static/js/main.e8dfac94.js.map"
+    "main.b7c5dc35.css.map": "/static/css/main.b7c5dc35.css.map",
+    "main.0214b58c.js.map": "/static/js/main.0214b58c.js.map"
   },
   "entrypoints": [
-    "static/css/main.5d03097b.css",
-    "static/js/main.e8dfac94.js"
+    "static/css/main.b7c5dc35.css",
+    "static/js/main.0214b58c.js"
   ]
 }

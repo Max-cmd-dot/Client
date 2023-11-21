@@ -2,6 +2,7 @@ import { Link, useHistory } from "react-router-dom";
 import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import image1 from "../images/sensor2.png";
+import logo from "../images/logo.png";
 import { changeRoute } from "../../reduxStore";
 const Landing = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -45,9 +46,16 @@ const Landing = () => {
 
   return (
     <div>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet"
+      ></link>
       <div className={styles.hero_section}>
         <div className={styles.login_button}>{renderButton()}</div>
-        <h1 className={styles.project_name}>Nexa Harvest</h1>
+        <div className={styles.logo_and_heading}>
+          <img src={logo} alt="Logo" className={styles.logo} />
+          <h1 className={styles.project_name}>Nexa Harvest</h1>
+        </div>
         <div className={styles.hero_content}>
           <h1 className={styles.info3words}>Future, Efficiency, Planting</h1>
           <img src={image1} alt="Hero" className={styles.img} />
