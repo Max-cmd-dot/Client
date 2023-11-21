@@ -128,7 +128,12 @@ const Notifications = () => {
   };
   useEffect(() => {
     fetch(
-      "https://api.github.com/repos/Max-cmd-dot/BLL/commits?sha=main&per_page=10"
+      "https://api.github.com/repos/Max-cmd-dot/BLL/commits?sha=main&per_page=10",
+      {
+        headers: {
+          Authorization: `token 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`,
+        },
+      }
     )
       .then((response) => response.json())
       .then((data) => {
