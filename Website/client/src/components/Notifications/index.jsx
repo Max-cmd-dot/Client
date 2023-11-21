@@ -10,7 +10,7 @@ const Notifications = () => {
   const groupId = localStorage.getItem("groupId");
   const [notificationtype, setnotificationtype] = useState("alarms");
   const [notificationtype_filter, setnotificationtype_filter] = useState("all");
-  const [releaseNotes, setReleaseNotes] = useState("Comming soon");
+  const [releaseNotes, setReleaseNotes] = useState([]);
   const currentPage = useSelector((state) => state.currentPage);
   const dispatch = useDispatch();
   // Use another effect hook to dispatch changeRoute when the component mounts
@@ -117,7 +117,7 @@ const Notifications = () => {
       setnotificationtype("log");
     }
     if (event.target.name === "release notes") {
-      setnotificationtype("release_notes");
+      setnotificationtype("release notes");
     }
     if (event.target.name === "alarms") {
       setnotificationtype("alarms");
@@ -127,22 +127,23 @@ const Notifications = () => {
     setnotificationtype_filter(filter.target.name);
   };
   useEffect(() => {
-    fetch(
-      "https://api.github.com/repos/Max-cmd-dot/BLL/commits?sha=main&per_page=10",
-      {
-        headers: {
-          Authorization: `token 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`,
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${apiUrl}/api/notification/latestdata/github`
+        );
+        const data = response.data;
         const commitMessages = data.map((commit) => ({
           date: new Date(commit.commit.author.date).toLocaleDateString(),
           message: commit.commit.message,
         }));
         setReleaseNotes(commitMessages);
-      });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
   }, []);
   return (
     <div>
@@ -177,11 +178,7 @@ const Notifications = () => {
                 buttonHeight={40}
               />
             </div>
-          ) : (
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "20px" }}
-            ></div>
-          )}
+          ) : null}
 
           {notificationtype === "log" && list.length > 2 ? (
             <button
@@ -254,9 +251,7 @@ const Notifications = () => {
                           </p>
                           <p>{item.group}</p>
                         </div>
-                      ) : (
-                        <div></div>
-                      )}
+                      ) : null}
                     </div>
                   ))}
                 </div>
@@ -287,39 +282,36 @@ const Notifications = () => {
                           </p>
                           <p>{item.group}</p>
                         </div>
-                      ) : (
-                        <div></div>
-                      )}
+                      ) : null}
                     </div>
                   ))}
                 </div>
-              ) : (
-                <div></div>
-              )}
+              ) : null}
             </div>
-          ) : (
-            <div></div>
-          )}
+          ) : null}
         </div>
-        {notificationtype === "release_notes" ? (
+        {notificationtype === "release notes" ? (
           <div>
-            {releaseNotes.map((note, index) => (
-              <div key={index} className={styles.release_note}>
-                <span className={styles.release_note_date}>
-                  [{note.date}]:{" "}
-                </span>
-                {note.message}
+            {releaseNotes.length > 0 ? (
+              releaseNotes.map((note, index) => (
+                <div key={index} className={styles.release_note}>
+                  <span className={styles.release_note_date}>
+                    [{note.date}]:{" "}
+                  </span>
+                  {note.message}
+                </div>
+              ))
+            ) : (
+              <div>
+                Error fetching data. If this error presis, please contact the
+                support!
               </div>
-            ))}
+            )}
           </div>
-        ) : (
-          <div></div>
-        )}
+        ) : null}
         {notificationtype === "alarms" ? (
           <div className={styles.alarms}> No active alarms!</div>
-        ) : (
-          <div></div>
-        )}
+        ) : null}
       </div>
     </div>
   );

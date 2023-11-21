@@ -30,9 +30,9 @@ export default function LoadingScreen() {
         <div
           style={{
             display: "flex",
+            flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            height: "100vh",
           }}
         >
           <h1>loading</h1>
@@ -40,7 +40,7 @@ export default function LoadingScreen() {
             style={{
               display: "flex",
               justifyContent: "center",
-              margin: "100px",
+              margin: "20px",
             }}
           >
             <ClipLoader

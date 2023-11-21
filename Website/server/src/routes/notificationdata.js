@@ -73,5 +73,22 @@ router.post("/notifications/ignore", async (req, res) => {
     res.status(500).send({ message: "Internal Server Error" });
   }
 });
-
+router.get("/latestdata/github", async (req, res) => {
+  fetch(
+    "https://api.github.com/repos/Max-cmd-dot/BLL/commits?sha=main&per_page=10",
+    {
+      headers: {
+        Authorization: `token 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`,
+      },
+    }
+  )
+    .then((response) => response.json())
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send("An error occurred while fetching data from GitHub");
+    });
+});
 module.exports = router;
