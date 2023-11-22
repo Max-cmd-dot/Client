@@ -60,22 +60,23 @@
 @media (max-width: 768px) {
   /* Adjust as needed */
   .logo_and_heading {
-    flex-direction: column; /* Stack the items vertically on small screens */
     align-items: flex-start; /* Align the items to the start on small screens */
     margin-right: 0px;
   }
 
   .logo {
-    margin-bottom: 20px; /* Add some space between the logo and the heading on small screens */
     width: 50px;
+    margin-right: 10px;
   }
   .project_name {
-    font-size: 30px;
-    margin-top: 30px;
+    font-size: 21px;
+    margin-top: 12px;
   }
   .info3words {
     font-size: 50px;
-    top: 350px; /* Adjust the value as needed */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   .white_btn {
     font-size: 15px;

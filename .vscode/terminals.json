@@ -11,11 +11,11 @@
     },
     {
       "name": "mqtt2mongodb",
-      "commands": ["cd scripts", "python mqtt2mongodb.py"]
+      "commands": ["cd scripts", "python3 mqtt2mongodb.py"]
     },
     {
       "name": "alertsystem_Group_A",
-      "commands": ["cd scripts", "python alertsystem_Group_A.py"]
+      "commands": ["cd scripts", "python3 alertsystem_Group_A.py"]
     }
   ]
 }
