@@ -10,6 +10,7 @@ function getConnectionSpeed() {
 
 export function sendToVercelAnalytics(metric) {
   const analyticsId = process.env.REACT_APP_VERCEL_ANALYTICS_ID;
+  console.log(analyticsId);
   if (!analyticsId) {
     console.log(
       "No analytics ID found. Please set the VERCEL_ANALYTICS_ID environment variable."
