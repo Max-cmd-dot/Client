@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { store } from "./reduxStore";
 import "./index.css";
 import App from "./App";
+import { sendToVercelAnalytics } from "./vitals";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -15,3 +16,4 @@ createRoot(document.getElementById("root")).render(
     </Provider>
   </React.StrictMode>
 );
+reportWebVitals(sendToVercelAnalytics);
