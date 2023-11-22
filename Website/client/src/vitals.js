@@ -11,6 +11,9 @@ function getConnectionSpeed() {
 export function sendToVercelAnalytics(metric) {
   const analyticsId = process.env.REACT_APP_VERCEL_ANALYTICS_ID;
   if (!analyticsId) {
+    console.log(
+      "No analytics ID found. Please set the VERCEL_ANALYTICS_ID environment variable."
+    );
     return;
   }
 
@@ -29,12 +32,15 @@ export function sendToVercelAnalytics(metric) {
     type: "application/x-www-form-urlencoded",
   });
   if (navigator.sendBeacon) {
+    console.log("Sending beacon");
     navigator.sendBeacon(vitalsUrl, blob);
-  } else
+  } else {
+    console.log("Sending fetch");
     fetch(vitalsUrl, {
       body: blob,
       method: "POST",
       credentials: "omit",
       keepalive: true,
     });
+  }
 }
