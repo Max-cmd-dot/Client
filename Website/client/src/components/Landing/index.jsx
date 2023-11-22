@@ -105,7 +105,7 @@ const Landing = () => {
             Konkurrenz einen Schritt voraus.
           </p>
           <button
-            href="mailto:your-email@example.com"
+            href="mailto:maximilian.nobis@nexaharvest.com"
             className={styles.contact_btn}
           >
             Contact
