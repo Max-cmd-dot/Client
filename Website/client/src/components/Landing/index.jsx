@@ -140,7 +140,7 @@ const Landing = () => {
             competition.
           </p>
           <button
-            href="mailto:maximilian.nobis@nexaharvest.com"
+            href="mailto:max.nobis@nexaharvest.com"
             className={styles.contact_btn}
           >
             Contact
