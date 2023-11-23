@@ -142,8 +142,8 @@ const Landing = () => {
           </p>
           <button
             onClick={(e) => {
-              window.location = "mailto:max.nobis@nexaharvest.com";
-              setButtonText("max.nobis@nexaharvest.com");
+              window.location = "mailto:info@nexaharvest.com";
+              setButtonText("info@nexaharvest.com");
               e.preventDefault();
             }}
             className={styles.contact_btn}
