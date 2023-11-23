@@ -37,7 +37,11 @@
   height: auto;
   margin-right: 20px;
 }
-
+.pages {
+  width: 400px; /* Adjust as needed */
+  height: auto;
+  margin-right: 20px;
+}
 .project_name {
   color: #2d8adb;
   font-size: clamp(2.5rem, 3vw, 3.5rem);
@@ -129,54 +133,6 @@
   gap: 20px;
 }
 
-.info_text {
-  width: 40%;
-  padding: 20px;
-  text-align: left;
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #39395f;
-  color: #f5eec2;
-  font-size: 18px; /* Increase the font size as desired */
-  line-height: 1.5; /* Increase the line-height as desired */
-  margin-bottom: 70px; /* Increase the margin-bottom as desired */
-}
-
-.info_text.vorteile {
-  width: 40%; /* Set the width to 40 */
-  height: 250px; /* Set the height to 250px */
-  padding: 20px;
-  text-align: left;
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #39395f;
-  color: #f5eec2;
-  margin-left: auto; /* Align the box to the right */
-}
-
-.info_text h2 {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  text-align: center;
-  color: #2d8adb;
-}
-
-.info_text p,
-.info_text ul {
-  font-size: 20px;
-}
-
-.info_text ul {
-  margin-left: 20px;
-}
-
-.info_text li {
-  margin-bottom: 10px;
-}
-
 .contact_section {
   padding: 50px 0;
   text-align: center;
@@ -189,39 +145,28 @@
   margin-bottom: 15px;
 }
 
-.info_text.contact_box {
-  width: 40%; /* Set the width to 40 */
-  height: 250px; /* Set the height to 250px */
-  padding: 20px;
-  text-align: left;
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #39395f;
-  color: #d4c040;
-  margin-left: auto; /* Align the box to the right */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
 .row {
   display: flex;
-  flex-direction: row; /* Stack the items horizontally */
+  flex-wrap: wrap; /* Allow the items to wrap as necessary */
 }
 
 .column {
-  flex: 1; /* Make the items take up an equal amount of space */
+  flex: 1 0 25%; /* Make the items take up an equal amount of space, but not less than 25% */
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Center the items vertically */
-  align-items: center; /* Center the items horizontally */
+  justify-content: center;
+  align-items: center;
 }
 
-@media (max-width: 768px) {
-  /* Adjust as needed */
-  .row {
-    flex-direction: column; /* Stack the items vertically on small screens */
+@media (max-width: 1200px) {
+  .column {
+    flex: 1 0 50%; /* On medium screens, items take up half the space */
+  }
+}
+
+@media (max-width: 600px) {
+  .column {
+    flex: 1 0 100%; /* On small screens, items take up the full width */
   }
 }
 .contact_btn {
@@ -230,7 +175,7 @@
   padding: 12px 30px;
   background-color: #2d8adb;
   border-radius: 20px;
-  color: white;
+  color: black;
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
@@ -257,4 +202,48 @@
 .footer a {
   margin-right: 10px;
   color: #2d8adb;
+}
+.custom_list {
+  list-style-position: inside;
+  padding-left: 20px;
+  font-size: 20px;
+}
+.flex_container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+@media screen and (min-width: 768px) {
+  .flex_container {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+.centered_list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: left;
+  width: 100%;
+}
+
+.centered_list div {
+  width: 80%; /* Adjust this value as needed */
+}
+
+@media screen and (min-width: 768px) {
+  .centered_list {
+    width: 45%; /* Adjust this value as needed */
+  }
+}
+h3 {
+  margin-top: 30px;
+}
+p {
+  margin: auto;
+  font-size: 20px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  max-width: 750px;
 }
