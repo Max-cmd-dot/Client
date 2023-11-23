@@ -2,15 +2,16 @@ import { Link, useHistory } from "react-router-dom";
 import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import image1 from "../images/sensor2.png";
-
+//images of pages
 import dashboard from "../images/pages/dashboard.png";
 import actions from "../images/pages/actions.png";
 import notifications from "../images/pages/notifications.png";
 import history from "../images/pages/history.png";
-
 import logo from "../images/logo.png";
 import { changeRoute } from "../../reduxStore";
+
 const Landing = () => {
+  const [buttonText, setButtonText] = useState("Contact");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const handlegoback = () => {
     changeRoute("/");
@@ -140,10 +141,14 @@ const Landing = () => {
             competition.
           </p>
           <button
-            href="mailto:max.nobis@nexaharvest.com"
+            onClick={(e) => {
+              window.location = "mailto:max.nobis@nexaharvest.com";
+              setButtonText("max.nobis@nexaharvest.com");
+              e.preventDefault();
+            }}
             className={styles.contact_btn}
           >
-            Contact
+            {buttonText}
           </button>
         </div>
       </section>
