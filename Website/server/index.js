@@ -1,6 +1,6 @@
-//const fs = require("fs");
-//const https = require("https");
 require("dotenv").config();
+
+// pages imports
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -19,6 +19,7 @@ const emailchangeRoutes = require("./src/routes/changeEmail");
 const hardwareRoutes = require("./src/routes/hardware");
 const alarmsRoutes = require("./src/routes/alarmsData");
 const { checkAll } = require("./src/utils/alertSystem");
+
 // database connection
 connection();
 
@@ -41,22 +42,26 @@ app.use("/api/changeEmail", emailchangeRoutes);
 app.use("/api/hardware", hardwareRoutes);
 app.use("/api/alarms", alarmsRoutes);
 
-app.get("/", (req, res) => {
+// for routing through backend, and also for testing
+app.get("/", (res) => {
   res.send("Running...");
 });
-app.get("/api", (req, res) => {
+app.get("/api", (res) => {
   res.send("Running API...");
 });
 
 // Call the testFunctions function
 checkAll().catch(console.error);
 module.exports = app;
-//const options = {
-//  key: fs.readFileSync("key.pem"),
-//  cert: fs.readFileSync("cert.pem"),
-//};
+
+// Call the checkAll() function every full hour
+setInterval(() => {
+  const date = new Date();
+  if (date.getMinutes() === 0 && date.getSeconds() === 0) {
+    checkAll().catch(console.error);
+  }
+}, 1000); // Check every second
+
+//create server for backend on port 8080
 const port = process.env.PORT || 8080;
 app.listen(port, console.log(`Listening on port ${port}...`));
-//https
-//.createServer(options, app)
-//.listen(port, console.log(`server runs on port ${port}`));
