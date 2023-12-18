@@ -123,7 +123,7 @@ const Profile = () => {
       const url = `${apiUrl}/api/group/abo?group=${group}`;
       const response = await axios.get(url);
       if (response.data.package === "small") {
-        return "Standart";
+        return "Default";
       } else if (response.data.package === "medium") {
         return "Premium";
       } else if (response.data.package === "big") {

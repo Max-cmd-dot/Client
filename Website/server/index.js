@@ -17,7 +17,8 @@ const devicesRoutes = require("./src/routes/devices");
 const historyChart = require("./src/routes/historyChart");
 const emailchangeRoutes = require("./src/routes/changeEmail");
 const hardwareRoutes = require("./src/routes/hardware");
-
+const alarmsRoutes = require("./src/routes/alarmsData");
+const { checkAll } = require("./src/utils/alertSystem");
 // database connection
 connection();
 
@@ -38,6 +39,7 @@ app.use("/api/devices", devicesRoutes);
 app.use("/api/historyChart", historyChart);
 app.use("/api/changeEmail", emailchangeRoutes);
 app.use("/api/hardware", hardwareRoutes);
+app.use("/api/alarms", alarmsRoutes);
 
 app.get("/", (req, res) => {
   res.send("Running...");
@@ -45,6 +47,9 @@ app.get("/", (req, res) => {
 app.get("/api", (req, res) => {
   res.send("Running API...");
 });
+
+// Call the testFunctions function
+checkAll().catch(console.error);
 module.exports = app;
 //const options = {
 //  key: fs.readFileSync("key.pem"),

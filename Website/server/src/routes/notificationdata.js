@@ -1,9 +1,5 @@
 const router = require("express").Router();
-const {
-  Notification,
-  validate,
-  validate_alarms,
-} = require("../models/notificationdata");
+const { Notification, validate } = require("../models/notificationdata");
 router.get("/latestdata/notifications", async (req, res) => {
   try {
     const groupId = req.query.groupId;
@@ -23,49 +19,35 @@ router.get("/latestdata/notifications", async (req, res) => {
     res.status(500).send({ message: "Internal Server Error" });
   }
 });
-router.get("/alarms", async (req, res) => {
-  try {
-    const groupId = req.query.groupId;
-    const { error } = validate(req.body);
-    if (error)
-      return res.status(400).send({ message: error.details[0].message });
 
-    const notifications = await Notification.find({
-      ignore: "false",
-      group: groupId,
-    }).sort({
-      _id: -1,
-    });
-    if (notifications) return res.json(notifications);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-});
 router.post("/notifications/ignore", async (req, res) => {
   try {
-    const { time } = req.body;
+    const { time, times } = req.body;
     const groupId = req.query.groupId;
-    console.log("time");
-    console.log(time);
-    // Convert the time to a JavaScript Date object
-    const formattedTime = new Date(time);
-    console.log("formattedTime");
-    console.log(formattedTime);
-    // Find the notification with the given time
-    const notification = await Notification.findOne({
-      time: formattedTime,
-      group: groupId,
-    });
-    console.log("notification");
-    console.log(notification);
-    if (!notification) {
-      return res.status(404).send({ message: "Notification not found" });
-    }
 
-    // Update the 'ignore' value to true
-    notification.ignore = "true";
-    await notification.save();
+    if (times) {
+      // If times is defined, ignore all notifications with those times
+      const formattedTimes = times.map((t) => new Date(t));
+      await Notification.updateMany(
+        { time: { $in: formattedTimes }, group: groupId },
+        { ignore: "true" }
+      );
+    } else if (time) {
+      // If time is defined, handle it as a single notification
+      const formattedTime = new Date(time);
+      const notification = await Notification.findOne({
+        time: formattedTime,
+        group: groupId,
+      });
+      if (!notification) {
+        return res.status(404).send({ message: "Notification not found" });
+      }
+      notification.ignore = "true";
+      await notification.save();
+    } else {
+      // If neither time nor times is defined, return an error
+      return res.status(400).send({ message: "No time or times provided" });
+    }
 
     res.sendStatus(200);
   } catch (error) {

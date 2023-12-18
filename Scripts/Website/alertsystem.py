@@ -1,43 +1,34 @@
 from pymongo import MongoClient
 import pymongo
 from datetime import datetime, timedelta
-# Threshold for low temperature
-AIR_TEMPERATURE_THRESHOLD = 20.0  # Adjust the threshold value as needed
+
+# Constants
+CONNECTION_STRING = "mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/"
+AIR_TEMPERATURE_THRESHOLD = 20.0
 SOIL_MOISTURE_AREA_1_THRESHOLD = 1000
 count_water_sensors = 3
-CONNECTION_STRING="mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/"
-#IF CONNECTION IS TIMEOUT CHECK IF PYTHON CERTIFICATES.COMMAND HAS BEEN RUN ON MAC
+
+# Open a single MongoDB connection
+mongoClient = MongoClient(CONNECTION_STRING)
+db = mongoClient.Website
+
 def get_all_groups():
-    # Connect to MongoDB
-    mongoClient_groups_get  = MongoClient(CONNECTION_STRING)
-    db_groups_get = mongoClient_groups_get.Website
-    collection_groups_get = db_groups_get.groups
-
-    # Get all documents from the 'groups' collection
+    collection_groups_get = db.groups
     all_groups = collection_groups_get.find()
-
-    # Extract the group names into a list
     group_names = [group['name'] for group in all_groups]
-
-    # Close the MongoDB connection
-    mongoClient_groups_get.close()
-
     return group_names
 
 def check_last_message(group):
-    # Connect to MongoDB
-    mongoClient = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
-    db = mongoClient.Website
     collection_data = db.datas
     collection_notifications = db.notifications
     collection_alarms = db.alarms
 
     # Calculate the timestamp 1 hour ago
-    fifteen_minutes_ago = datetime.now() - timedelta(hours=1)
+    one_hour_ago = datetime.now() - timedelta(hours=1)
 
-    # Query the database for temperature values within the last 15 minutes
+    # Query the database for temperature values within the last 1 hour
     query = {
-        'time': {'$gte': fifteen_minutes_ago},
+        'time': {'$gte': one_hour_ago},
         'group': group
     }
     projection = {
@@ -46,21 +37,17 @@ def check_last_message(group):
     }
 
     result = collection_data.find(query, projection).sort('time', pymongo.DESCENDING).limit(1)
-    print(result)
     result_list = list(result)
-    print(result_list)
 
-    # Check if there is any temperature data within the last 15 minutes
+    # Check if there is any temperature data within the last 1 hour
     if len(result_list) == 0:
-        print("----------data_check--------")
-        print("[",datetime.now(),"] ","No data received for 1 hour.")
         # Perform your alert action here
         # For example, send an email or trigger a notification
         receiveTime = datetime.now()
         receiveTime = receiveTime.replace(microsecond=0)
         post = {
             'time': receiveTime,
-            'message': 'No data received in the last 15 minutes.',
+            'message': 'No data received in the last 1 hour.',
             'status': 'not handeled',
             'ignore': 'false',
             'group': group
@@ -82,8 +69,6 @@ def check_last_message(group):
         collection_alarms.find_one_and_update(query_alarm, update_alarm, upsert=True)
         
     else:
-        print("----------data_check--------")
-        print("Received data in the the last hour.")
         # Update the document in the alarms collection
         query_alarm = {
             'topic': 'No data received'
@@ -97,18 +82,15 @@ def check_last_message(group):
         }
         collection_alarms.find_one_and_update(query_alarm, update_alarm, upsert=True)
         return True
-
-    mongoClient.close()
     
-    def check_temperature(group):
-        # Connect to MongoDB
-        mongoClient = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
-        db = mongoClient.Website
-        collection = db.datas
-        
+def check_temperature(group):
+        collection_data = db.datas
+        collection_notifications = db.notifications
+        collection_alarms = db.alarms
+
         # Calculate the timestamp 15 minutes ago
-        fifteen_minutes_ago = datetime.now() - timedelta(hour=1)
-        
+        fifteen_minutes_ago = datetime.now() - timedelta(minutes=15)
+
         # Query the database for temperature values within the last 15 minutes
         query = {
             'time': {'$gte': fifteen_minutes_ago},
@@ -120,197 +102,176 @@ def check_last_message(group):
             '_id': 0
         }
 
-        result = collection.find(query, projection).sort('time', pymongo.DESCENDING).limit(1)
+        result = collection_data.find(query, projection).sort('time', pymongo.DESCENDING).limit(1)
         result_list = list(result)
-        mongoClient.close()
-        mongoClient3 = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
-        db3 = mongoClient3.Website
-        collection3 = db3.notifications
-        collection4 = db3.alarms
 
         # Check if there is any temperature data within the last 15 minutes
         if len(result_list) == 0:
-            print("No temperature data received in the last 15 minutes.")
+            # Perform your alert action here
+            # For example, send an email or trigger a notification
             receiveTime = datetime.now()
-            post={
+            post = {
                 'time': receiveTime,
                 'message': 'No temperature data received in the last 15 minutes.',
                 'status': 'not handeled',
                 'ignore': 'false',
                 'group': group
-                }
-            collection3.insert_one(post)
-            
+            }
+            collection_notifications.insert_one(post)
+
             # Update the document in the alarms collection
-            query3 = {
+            query_alarm = {
                 'topic': 'Temperature'
             }
-            update3 = {
+            update_alarm = {
                 '$set': {
                     'time': receiveTime,
                     'state': 'active',
                     'message': 'No temperature data received in the last 15 minutes.'
                 }
             }
-            collection4.find_one_and_update(query3, update3)
+            collection_alarms.find_one_and_update(query_alarm, update_alarm, upsert=True)
 
         else:
             latest_data = result_list[0]
             temperature = float(latest_data['value'])
-            
+
             if temperature < AIR_TEMPERATURE_THRESHOLD:
-                print("Temperature too high!")
-                print("Last temperature: ", temperature)
-                print("Temperature max set to:", AIR_TEMPERATURE_THRESHOLD)
+                # Perform your alert action here
+                # For example, send an email or trigger a notification
                 receiveTime = datetime.now()
-                post={
-                'time':  receiveTime,
-                'message': 'Temperature too high!',
-                'treshhold': AIR_TEMPERATURE_THRESHOLD,
-                'status': 'not handeled',
-                'ignore': 'false',
-                'group': group
+                post = {
+                    'time': receiveTime,
+                    'message': 'Temperature too high!',
+                    'treshhold': AIR_TEMPERATURE_THRESHOLD,
+                    'status': 'not handeled',
+                    'ignore': 'false',
+                    'group': group
                 }
-                
-                collection3.insert_one(post)
+                collection_notifications.insert_one(post)
+
                 # Update the document in the alarms collection
-                query3 = {
+                query_alarm = {
                     'topic': 'Temperature'
                 }
-                update3 = {
+                update_alarm = {
                     '$set': {
                         'time': receiveTime,
                         'state': 'active',
                         'message': 'Temperature too high!'
                     }
                 }
-                collection4.find_one_and_update(query3, update3)
+                collection_alarms.find_one_and_update(query_alarm, update_alarm, upsert=True)
 
             else:
-                print("Last temperature: ", temperature)
-                print("Temperature max set to:", AIR_TEMPERATURE_THRESHOLD)
-                print("Temperature ok.")
                 # Update the document in the alarms collection
-                query3 = {
+                query_alarm = {
                     'topic': 'Temperature'
                 }
-                update3 = {
+                update_alarm = {
                     '$set': {
-                        'time': receiveTime,
+                        'time': datetime.now(),
                         'state': 'passive',
                         'message': 'Temperature ok.'
                     }
                 }
-                collection4.find_one_and_update(query3, update3)
-        
-        # Close the MongoDB connection
-        mongoClient3.close()
-def check_water_area(sensor_number, group):
-    # Connect to MongoDB
-    mongoClient = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
-    db = mongoClient.Website
-    collection = db.datas
-    
-    # Calculate the timestamp 15 minutes ago
-    fifteen_minutes_ago = datetime.now() - timedelta(hour=1)
-    
-    # Query the database for soil moisture values within the last 15 minutes
-    query = {
-        'time': {'$gte': fifteen_minutes_ago},
-        'topic': f'esp/ground/moisture/{sensor_number}',
-        'group': group
-    }
-    projection = {
-        'value': 1,
-        '_id': 0
-    }
+                collection_alarms.find_one_and_update(query_alarm, update_alarm, upsert=True)
 
-    result = collection.find(query, projection).sort('time', pymongo.DESCENDING).limit(1)
-    result_list = list(result)
-    mongoClient.close()
-    mongoClient3 = MongoClient("mongodb+srv://maximiliannobis:kICNweoQqqRrTHoJ@cluster0.dhq8xia.mongodb.net/")
-    db3 = mongoClient3.Website
-    collection3 = db3.notifications
-    collection4 = db3.alarms
-    
-    # Check if there is any soil moisture data within the last 15 minutes
-    if len(result_list) == 0:
-        print(f"----------Soil Moisture {sensor_number}--------")
-        print(f"No soil moisture {sensor_number} data received in the last 15 minutes.")
-        receiveTime = datetime.now()
-        post={
-            'time': receiveTime,
-            'message': f'No soil moisture {sensor_number} data received in the last 15 minutes.',
-            'status': 'not handeled',
-            'ignore': 'false',
+def check_water_area(sensor_number, group):
+        collection_data = db.datas
+        collection_notifications = db.notifications
+        collection_alarms = db.alarms
+
+        # Calculate the timestamp 15 minutes ago
+        fifteen_minutes_ago = datetime.now() - timedelta(minutes=15)
+
+        # Query the database for soil moisture values within the last 15 minutes
+        query = {
+            'time': {'$gte': fifteen_minutes_ago},
+            'topic': f'esp/ground/moisture/{sensor_number}',
             'group': group
-            }
-        collection3.insert_one(post)
-        query3 = {
-                'topic': f'water_{sensor_number}'
-            }
-        update3 = {
-            '$set': {
-                'time': receiveTime,
-                'state': 'active',
-                'message': f'No soil moisture {sensor_number} data received in the last 15 minutes.'
-            }
         }
-        collection4.find_one_and_update(query3, update3)
-        
-        
-    else:
-        latest_data = result_list[0]
-        soil_moisture_area = float(latest_data['value'])
-        
-        if soil_moisture_area > SOIL_MOISTURE_AREA_1_THRESHOLD:
-            print(f"----------Soil Moisture {sensor_number}--------")
-            print(f"Last soil moisture: {soil_moisture_area}")
-            print(f"Soil moisture threshhold set to {SOIL_MOISTURE_AREA_1_THRESHOLD}")
-            print(f"Soil moisture {sensor_number} too less!")
+        projection = {
+            'value': 1,
+            '_id': 0
+        }
+
+        result = collection_data.find(query, projection).sort('time', pymongo.DESCENDING).limit(1)
+        result_list = list(result)
+
+        # Check if there is any soil moisture data within the last 15 minutes
+        if len(result_list) == 0:
+            # Perform your alert action here
+            # For example, send an email or trigger a notification
             receiveTime = datetime.now()
-            post={
-            'time': receiveTime,
-            'message': f'Soil moisture {sensor_number} too less!',
-            'treshhold': AIR_TEMPERATURE_THRESHOLD,
-            'status': 'not handeled',
-            'ignore': 'false',
-            'group': group
+            post = {
+                'time': receiveTime,
+                'message': f'No soil moisture {sensor_number} data received in the last 15 minutes.',
+                'status': 'not handeled',
+                'ignore': 'false',
+                'group': group
             }
-            collection3.insert_one(post)
-            query3 = {
+            collection_notifications.insert_one(post)
+
+            # Update the document in the alarms collection
+            query_alarm = {
                 'topic': f'water_{sensor_number}'
             }
-            update3 = {
-              '$set': {
-                  'time': receiveTime,
-                  'state': 'active',
-                  'message': f'Soil moisture {sensor_number} too less!'
-                }
-            }
-            collection4.find_one_and_update(query3, update3)
-        else:
-            print(f"----------Soil Moisture {sensor_number}--------")
-            print(f"Last soil moisture: {soil_moisture_area}")
-            print(f"Soil moisture threshhold set to {SOIL_MOISTURE_AREA_1_THRESHOLD}")
-            print(f"Soil moisture {sensor_number} ok.")
-            query3 = {
-                'topic': f'water_{sensor_number}'
-            }
-            update3 = {
+            update_alarm = {
                 '$set': {
                     'time': receiveTime,
-                    'state': 'passive',
-                    'message': f'Soil moisture {sensor_number} ok.'
+                    'state': 'active',
+                    'message': f'No soil moisture {sensor_number} data received in the last 15 minutes.'
                 }
             }
-            collection4.find_one_and_update(query3, update3)
+            collection_alarms.find_one_and_update(query_alarm, update_alarm, upsert=True)
 
-    # Close the MongoDB connection
-    mongoClient3.close() 
+        else:
+            latest_data = result_list[0]
+            soil_moisture_area = float(latest_data['value'])
 
+            if soil_moisture_area > SOIL_MOISTURE_AREA_1_THRESHOLD:
+                # Perform your alert action here
+                # For example, send an email or trigger a notification
+                receiveTime = datetime.now()
+                post = {
+                    'time': receiveTime,
+                    'message': f'Soil moisture {sensor_number} too less!',
+                    'treshhold': AIR_TEMPERATURE_THRESHOLD,
+                    'status': 'not handeled',
+                    'ignore': 'false',
+                    'group': group
+                }
+                collection_notifications.insert_one(post)
+
+                # Update the document in the alarms collection
+                query_alarm = {
+                    'topic': f'water_{sensor_number}'
+                }
+                update_alarm = {
+                    '$set': {
+                        'time': receiveTime,
+                        'state': 'active',
+                        'message': f'Soil moisture {sensor_number} too less!'
+                    }
+                }
+                collection_alarms.find_one_and_update(query_alarm, update_alarm, upsert=True)
+
+            else:
+                # Update the document in the alarms collection
+                query_alarm = {
+                    'topic': f'water_{sensor_number}'
+                }
+                update_alarm = {
+                    '$set': {
+                        'time': datetime.now(),
+                        'state': 'passive',
+                        'message': f'Soil moisture {sensor_number} ok.'
+                    }
+                }
+                collection_alarms.find_one_and_update(query_alarm, update_alarm, upsert=True)
+                
 while True:
-   
     now = datetime.now()
     wait_time = (60 - now.minute) * 60 - now.second
     #time.sleep(wait_time)

@@ -1,6 +1,7 @@
 .data {
   display: flex;
   justify-content: space-evenly;
+  font-size: 11px;
 }
 @media (max-width: 1200px) {
   .data {
@@ -28,6 +29,7 @@
 
 .sensordata p,
 .sensordata h2 {
+  font-size: 17px;
   text-align: center;
 }
 .elementssensordata {

@@ -10,7 +10,6 @@ router.get("/", async (req, res) => {
   try {
     const { group, object, value } = req.query;
     const { error } = validate(req.query);
-    console.log(req.query);
     if (error)
       return res.status(400).send({ message: error.details[0].message });
     if (!error) {
@@ -20,7 +19,6 @@ router.get("/", async (req, res) => {
         await data.save(); // save the updated data object to the database
         return res.status(200).send({ message: "actions success" });
       } else {
-        console.log("no data found");
         return res.status(400).send({ message: "no data found" });
       }
     }
