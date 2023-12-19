@@ -1,0 +1,79 @@
+.button {
+  background-color: #13395a;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  margin: 8px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #ccc;
+}
+
+.button:disabled {
+  background-color: #47525d;
+  color: #888;
+  cursor: not-allowed;
+}
+.buttonContainer {
+  position: sticky;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  background-color: white;
+  padding: 8px;
+  box-shadow: 0px -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pageNumber {
+  margin: 0 16px;
+  background-color: white;
+  padding: 8px;
+  box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.1);
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 16px;
+}
+
+.pdfContainer {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.buttonContainer {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2; /* Ensure the buttons appear above other content */
+  width: 100%; /* Make the buttons span the full width of the screen */
+}
+
+.heading {
+  text-align: center;
+  margin-bottom: 16px;
+}
+@media (max-width: 768px) {
+  .button {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  .pageNumber {
+    padding: 4px;
+    font-size: 12px;
+  }
+}

@@ -1,0 +1,141 @@
+.signup_container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signup_form_container {
+  width: 100%;
+  max-width: 900px;
+  height: 600px; /* Increase the height of the blue box */
+  display: flex;
+  border-radius: 10px;
+  box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 40%),
+    0px 3px 4px 0px rgb(0 0 0 / 24%), 0px 1px 8px 0px rgb(0 0 0 / 22%);
+}
+
+.left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #0088ff;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.left h1 {
+  margin-top: 0;
+  color: white;
+  font-size: 30px; /* Reduce the font size of the heading */
+  align-self: center;
+}
+
+.right {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.right h1 {
+  margin-top: 0;
+  color: black;
+  font-size: 30px; /* Reduce the font size of the heading */
+  align-self: center;
+}
+
+@media (max-width: 768px) {
+  .signup_form_container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .left,
+  .right {
+    border-radius: 10px;
+  }
+
+  .left h1,
+  .right h1 {
+    font-size: 25px; /* Reduce the font size of the heading */
+  }
+
+  .right {
+    margin-top: 20px;
+  }
+  .form_container h1 {
+    font-size: 30px; /* Reduce the font size of the heading on mobile */
+  }
+}
+
+.form_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form_container h1 {
+  font-size: 40px;
+  margin-top: 0;
+}
+
+.input {
+  outline: none;
+  border: none;
+  width: 370px;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #edf5f3;
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.error_msg {
+  width: 370px;
+  padding: 15px;
+  margin: 5px 0;
+  font-size: 14px;
+  background-color: #f34646;
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.white_btn,
+.green_btn {
+  border: none;
+  outline: none;
+  margin: 10px;
+  padding: 12px 0;
+  background-color: white;
+  border-radius: 20px;
+  width: 120px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.green_btn {
+  background-color: #0088ff;
+  color: white;
+  margin: 10px;
+}
+
+.white_btn:hover {
+  transition: 0.2s;
+  background-color: #dbdfde;
+}
+
+.green_btn:hover {
+  transition: 0.3s;
+  background-color: #1f77c4;
+}

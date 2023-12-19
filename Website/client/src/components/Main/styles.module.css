@@ -1,0 +1,131 @@
+.data {
+  display: flex;
+  justify-content: space-evenly;
+  font-size: 11px;
+}
+@media (max-width: 1200px) {
+  .data {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+  }
+}
+
+.sensordata {
+  width: 100%;
+  max-width: 250px;
+  height: 140px;
+  border-radius: 10px;
+  margin: 20px auto;
+  box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 40%),
+    0px 3px 4px 0px rgb(0 0 0 / 24%), 0px 1px 8px 0px rgb(0 0 0 / 22%);
+  background-color: #13395a;
+  color: #ffffff;
+  text-align: center;
+
+  /* Added transition for smooth changes */
+  transition: all 0.2s ease-in-out;
+}
+
+.sensordata p,
+.sensordata h2 {
+  font-size: 17px;
+  text-align: center;
+}
+.elementssensordata {
+  pointer-events: none;
+  position: relative;
+  width: 90%;
+  height: 220%;
+  margin: 5%;
+  top: -40%;
+}
+.sensorheading {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9;
+}
+.sensorvalue {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9;
+}
+.doughnut {
+  position: relative;
+  z-index: 1;
+}
+.calendar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.CalendarBox {
+  margin-left: 5%; /* Reduced left margin */
+  margin-right: 5%; /* Reduced right margin */
+
+  /* Added box styling for calendar */
+  border-radius: 10px;
+  box-shadow:
+    /* Added box shadow for calendar */ 0px 3px 3px -2px rgb(0, 0, 0, 0.4),
+    0px 3px 4px rgb(0, 0, 0, 0.24), 0px 1px 8px rgb(0, 0, 0, 0.22);
+  background-color: #ffffff;
+  color: #2c3e50;
+
+  /* Added padding for calendar box */
+  padding: 20px;
+}
+
+.calendar-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Added hover effect for sensordata */
+.sensordata:hover {
+  color: #ffffff; /* Changed hover color for text */
+  background-color: #014682;
+  box-shadow:
+    /* Added box shadow on hover */ 0px 3px 3px -2px rgb(0, 0, 0, 0.55),
+    0px 3px 4px rgb(0, 0, 0, 0.39), 0px 1px 8px rgb(0, 0, 0, 0.37);
+  transform:
+    /* Added scale effect on hover */ scale(1.05);
+}
+
+/* Added styling for headings */
+.heading {
+  text-align: center;
+  font-family: "Open Sans", sans-serif; /* Changed font for headings */
+  color: #2c3e50; /* Changed color for headings */
+  font-weight: bold; /* Made headings bold */
+  text-shadow: 1px 1px #ffffff; /* Added text shadow for headings */
+  font-size: 24px; /* Increased font size for headings */
+}
+
+/* Beginning of the div specifications*/
+.blue {
+  text-align: center;
+}
+.loading {
+  position: fixed;
+  left: 46%;
+  top: 50%;
+}
+@media (max-width: 767px) {
+  /* Adjust the font size for sensordata on small screens */
+  .sensordata p,
+  .sensordata h2 {
+    font-size: 14px;
+  }
+  .calendar-container {
+    margin: 0 20px;
+  }
+}
+.space {
+  padding: 2rem;
+}

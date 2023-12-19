@@ -1,0 +1,21 @@
+{
+  "autorun": true,
+  "terminals": [
+    {
+      "name": "server",
+      "commands": ["cd website/server", "npm run start"]
+    },
+    {
+      "name": "client",
+      "commands": ["cd website/client", "npm run start"]
+    },
+    {
+      "name": "mqtt2mongodb",
+      "commands": ["cd scripts", "python3 mqtt2mongodb.py"]
+    },
+    {
+      "name": "alertsystem_Group_A",
+      "commands": ["cd scripts", "python3 alertsystem_Group_A.py"]
+    }
+  ]
+}
