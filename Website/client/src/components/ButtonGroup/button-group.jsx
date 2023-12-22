@@ -10,7 +10,8 @@ const ButtonGroup = ({
   buttonSize,
   buttonWidth,
   buttonHeight,
-  activeButton, // Add activeButton as a prop
+  activeButton,
+  disabled,
 }) => {
   const handleClick = (event, id) => {
     doSomethingAfterClick(event);
@@ -33,7 +34,9 @@ const ButtonGroup = ({
               activeButton
                 ? "customButton activeButton"
                 : "customButton"
-            } ${overrideButtonColor ? "override_button_color" : ""}`}
+            } ${overrideButtonColor ? "override_button_color" : ""}${
+              disabled ? "disabled" : "" // Add this line
+            }`}
             style={{
               fontSize: buttonSize,
               width: buttonWidth,

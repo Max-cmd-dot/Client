@@ -31,6 +31,15 @@
   z-index: 10;
 }
 
+.nav-menu:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 64px;
+  width: calc(100% - 64px);
+  box-shadow: inset -10px 0px 10px -10px rgba(255, 255, 255, 0.22);
+  height: 100%;
+}
 .nav-menu.active {
   left: -34px;
   transition: 350ms;

@@ -5,6 +5,7 @@ import ButtonGroup from "../ButtonGroup/button-group";
 import { changeRoute } from "../../reduxStore";
 import { useSelector, useDispatch } from "react-redux";
 import { FiSettings } from "react-icons/fi";
+import ClipLoader from "react-spinners/ClipLoader";
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const Notifications = () => {
@@ -15,15 +16,16 @@ const Notifications = () => {
   const [releaseNotes, setReleaseNotes] = useState([]);
   const currentPage = useSelector((state) => state.currentPage);
   const [isSettingsPopupVisible, setSettingsPopupVisibility] = useState(false);
-
+  const [saveStatus, setSaveStatus] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   //settings states
-  const [tempMin, setTempMin] = useState(0);
-  const [tempMax, setTempMax] = useState(100);
-  const [moistureMin, setMoistureMin] = useState(0);
-  const [moistureMax, setMoistureMax] = useState(100);
-  const [emailNotification, setEmailNotification] = useState(false); // Inside your component
-  const [email, setEmail] = useState("");
-  const [isValid, setIsValid] = useState(false);
+  const [tempMin, setTempMin] = useState();
+  const [tempMax, setTempMax] = useState();
+  const [moistureMin, setMoistureMin] = useState();
+  const [moistureMax, setMoistureMax] = useState();
+  const [emailNotification, setEmailNotification] = useState(); // Inside your component
+  const [email, setEmail] = useState();
+  const [isValid, setIsValid] = useState();
 
   const dispatch = useDispatch();
 
@@ -31,6 +33,36 @@ const Notifications = () => {
   useEffect(() => {
     dispatch(changeRoute("/forecast"));
   }, [dispatch]); // Re-run the effect if dispatch changes
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/group/settings`, {
+          params: { groupId },
+        });
+        if (!response.data) {
+          console.error("Error fetching settings: No settings in response");
+          return;
+        }
+        const settingsArray = response.data;
+        const settings = {};
+        settingsArray.forEach((setting) => {
+          const key = Object.keys(setting)[0];
+          settings[key] = setting[key];
+        });
+        setTempMin(settings.tempMin);
+        setTempMax(settings.tempMax);
+        setMoistureMin(settings.moistureMin);
+        setMoistureMax(settings.moistureMax);
+        setEmailNotification(settings.emailNotification);
+        setEmail(settings.email);
+        setIsValid(settings.isValid);
+      } catch (error) {
+        console.error("Error fetching settings:", error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
   //settings popup
   const handleSettingsClick = () => {
     setSettingsPopupVisibility(true);
@@ -46,34 +78,36 @@ const Notifications = () => {
   };
 
   const handleSave = () => {
+    setIsLoading(true);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailRegex.test(email)) {
-      // Create an array with all the settings to save
-      const settings = [
-        { tempMin: tempMin },
-        { tempMax: tempMax },
-        { moistureMin: moistureMin },
-        { moistureMax: moistureMax },
-        { emailNotification: emailNotification },
-        { email: email },
-        { isValid: isValid },
-      ];
 
-      // Send a PUT request to the /group/:id route
-      const urld = `${apiUrl}/api/group/update?groupId=${groupId}`;
-      console.log(urld);
-      axios
-        .put(`${apiUrl}/api/group/update?groupId=${groupId}`, { settings })
-        .then((response) => {
-          console.log("Success:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    } else {
-      console.log("Invalid email");
+    if (emailNotification && !emailRegex.test(email)) {
       setIsValid(false);
+      return;
     }
+
+    // Create an array with all the settings to save
+    const settings = [
+      { tempMin: tempMin },
+      { tempMax: tempMax },
+      { moistureMin: moistureMin },
+      { moistureMax: moistureMax },
+      { emailNotification: emailNotification },
+      { email: email },
+      { isValid: isValid },
+    ];
+
+    // Send a PUT request to the /group/:id route
+    axios
+      .put(`${apiUrl}/api/group/update?groupId=${groupId}`, { settings })
+      .then((response) => {
+        setSaveStatus("Settings saved successfully.");
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setSaveStatus("Error saving settings.");
+        setIsLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -225,6 +259,7 @@ const Notifications = () => {
       <div className={styles.box_container}>
         <FiSettings
           onClick={handleSettingsClick}
+          size={20}
           style={{
             position: "absolute",
             top: "10px",
@@ -244,6 +279,7 @@ const Notifications = () => {
               width: "100%",
               height: "100%",
               backgroundColor: "rgba(0, 0, 0, 0.5)",
+              zIndex: 4,
             }}
             onClick={handleSettingsClose}
           >
@@ -368,34 +404,23 @@ const Notifications = () => {
                     ) : (
                       <span style={{ color: "red" }}>X</span>
                     )}
-                    <button
-                      style={{
-                        display: "block",
-                        marginTop: "10px",
-                        padding: "5px 10px",
-                        borderRadius: "5px",
-                        border: "none",
-                        backgroundColor: "#007BFF",
-                        color: "white",
-                        cursor: "pointer",
-                      }}
-                      onClick={handleSave}
-                    >
-                      Save
-                    </button>
                   </div>
                 )}
+                <button className={styles.button} onClick={handleSave}>
+                  Save
+                </button>
+                {saveStatus}
               </div>
             </div>
           </div>
         )}
-
         <div
           className={styles.buttonGroup}
           style={{
             display: "flex",
             flexDirection: "column",
             position: "relative",
+            pointerEvents: isSettingsPopupVisible ? "none" : "auto",
           }}
         >
           <div style={{ marginBottom: "20px" }}>
@@ -437,10 +462,8 @@ const Notifications = () => {
               Ignore all
             </button>
           ) : null}
-          {list.length === 0 && notificationtype === "log" ? (
-            <div className={styles.no_log}>No log data!</div>
-          ) : null}
         </div>
+
         <div>{notificationtype === "log" ? renderNotifications() : null}</div>
 
         {notificationtype === "release notes" ? (
@@ -462,8 +485,11 @@ const Notifications = () => {
             )}
           </div>
         ) : null}
+        {list.length === 0 && notificationtype === "log" ? (
+          <div className={styles.noLog}>No log data!</div>
+        ) : null}
         {notificationtype === "alarms" ? (
-          <div className={styles.alarms}> No active alarms!</div>
+          <div className={styles.noAlarms}> No active alarms!</div>
         ) : null}
       </div>
     </div>

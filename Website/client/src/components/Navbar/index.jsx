@@ -143,7 +143,6 @@ function Navbar() {
                 </Link>
               </div>
             </div>
-            <div className="placeholder">placeholder</div>
           </ul>
         </nav>
       </IconContext.Provider>

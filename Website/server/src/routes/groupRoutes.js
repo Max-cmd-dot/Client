@@ -45,4 +45,18 @@ router.put("/update", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+// GET route to fetch settings for a group
+router.get("/settings", async (req, res) => {
+  const { groupId } = req.query;
+
+  try {
+    const group = await Group.findOne({ name: groupId });
+    if (!group) return res.status(404).json({ message: "Group not found" });
+
+    res.json(group.settings);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 module.exports = router;

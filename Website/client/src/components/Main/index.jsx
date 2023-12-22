@@ -165,7 +165,7 @@ const Main = () => {
       yellowEnd: 350,
       colors: ["darkblue", "blue", "lightblue", "white"],
       heading: "Moisture",
-      unit: "°C",
+      unit: "",
     },
     "esp/air/pressure": {
       maxValue: 300,
@@ -173,7 +173,7 @@ const Main = () => {
       yellowEnd: 50,
       colors: ["darkblue", "blue", "lightblue", "white"],
       heading: "Pressure",
-      unit: "°C",
+      unit: "hPa",
     },
     "esp/air/humidity": {
       maxValue: 100,
@@ -181,7 +181,7 @@ const Main = () => {
       yellowEnd: 25,
       colors: ["blue", "lightblue", "yellow", "red"],
       heading: "Humidity",
-      unit: "°C",
+      unit: "%",
     },
   };
 
