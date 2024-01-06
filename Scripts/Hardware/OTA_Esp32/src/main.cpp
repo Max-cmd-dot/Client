@@ -1,4 +1,3 @@
-#define ESP_DRD_USE_SPIFFS true
 
 #include <WiFi.h>
 #include <Wire.h>
@@ -15,15 +14,20 @@
 // https://dronebotworkshop.com/wifimanager/
 //  JSON configuration file
 
-
 // Define WiFiManager Object
 WiFiManager wm;
 
 // esp32fota esp32fota("<Type of Firme for this device>", <this version>, <validate signature>);
 esp32FOTA esp32FOTAmy("esp32-fota-http", "1.0.2", false);
+unsigned long lastHttpResponseTime = 0;
+unsigned long httpResponseInterval = 5000; // 5 seconds
 
+unsigned long lastSensorDataTime = 0;
+unsigned long sensorDataInterval = 60000; // 1 minute
 const char *manifest_url = "http://192.168.178.121:8080/api/hardware/update";
-// Replace the next variables with your SSID/Password combination
+
+// const char *manifest_url = "https://backend.nexaharvest.com/api/hardware/update";
+//  Replace the next variables with your SSID/Password combination
 const char *ssid = "5551 2771";
 const char *password = "a16c41b0f19cd116c4f1672ebe";
 
@@ -35,13 +39,16 @@ const int timeout = 5000; // 5 seconds
 const int maxRetries = 50;
 
 // backend server //for mongodb credentials
-// const char *host = "https://bll-backend.vercel.app/api/hardware";
 const char *hostBackendHardware = "http://192.168.178.121:8080/api/hardware";
+// const char *hostBackendHardware = "https://backend.nexaharvest.com/api/hardware";
+
 // const int deviceId = 1;
-String deviceId = WiFi.macAddress();
+String deviceId = String(ESP.getEfuseMac(), HEX); // Convert uint64_t to String
 // digital sensors
 Adafruit_BME280 bme; // I2C
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS34725_GAIN_1X);
+
+// start values
 long lastMsg = 0;
 int value = 0;
 
@@ -55,21 +62,19 @@ int value = 0;
 float temperature = 0;
 float humidity = 0;
 float pressure = 0;
-float moisture = 0;
+float moisture_1 = 0;
 float moisture_2 = 0;
 float moisture_3 = 0;
 
 // Define the LED pins
-const int ledPump1 = 12;
-const int ledPump2 = 14;
-const int ledPump3 = 27;
-const int ledVentilator1 = 16;
+const int led_1 = 27;
+const int led_2 = 14;
+const int led_3 = 16;
+const int led_4 = 17;
 const int ledStatus = 18;
-const int ledHumidifyer1 = 17;
 
 // Define the API key
 String apiKey, hostMongo, url, group;
-
 
 void initializeNTP()
 {
@@ -119,7 +124,7 @@ void makeRequest()
     }
     else
     {
-      Serial.println("Error on HTTP request: " + String(http.errorToString(httpCode)));
+      Serial.println("[Backend Hardware] Error on HTTP request: " + String(http.errorToString(httpCode)));
       retries++;
       digitalWrite(ledStatus, HIGH);
       delay(1000); // wait for a second before retrying
@@ -128,7 +133,7 @@ void makeRequest()
     http.end(); // Free the resources
   } while (httpCode != 200 && retries < maxRetries);
 }
-std::vector<const char*> wmMenuItems = { "wifi", "info", "param", "exit" }; //"erase"
+std::vector<const char *> wmMenuItems = {"wifi", "info", "param", "exit"}; //"erase"
 
 void WifiManager()
 {
@@ -136,38 +141,37 @@ void WifiManager()
   WiFi.mode(WIFI_STA);
   delay(10);
   wm.setMenu(wmMenuItems);
-  wm.setTitle("Brand Name"); //brand name
+  wm.setTitle("Brand Name");                 // brand name
   int buttonState = digitalRead(BUTTON_PIN); // Read the state of the button
 
-  Serial.println("Resetting Wifi-Settings"+String(buttonState));
-  if (buttonState == LOW) { // If the button is pressed (connects the pin to GND)
-    wm.startConfigPortal("ESP32 Network", "password"); // Start the 
-  } else {
-  if (!wm.autoConnect("NEWTEST_AP", "password")) //brand name
-  {
-    Serial.println("failed to connect and hit timeout");
-    delay(3000);
-    // if we still have not connected restart and try all over again
-    ESP.restart();
-    delay(5000);
+  Serial.println("[Wifi] Resetting Wifi-Settings" + String(buttonState));
+  if (buttonState == LOW)
+  {                                                    // If the button is pressed (connects the pin to GND)
+    wm.startConfigPortal("ESP32 Network", "password"); // Start the
   }
   else
   {
-    //if you get here you have connected to the WiFi
-    Serial.println("connected...yeey :)");
+    if (!wm.autoConnect("NEWTEST_AP", "password")) // brand name
+    {
+      Serial.println("[Wifi] failed to connect and hit timeout");
+      delay(3000);
+      // if we still have not connected restart and try all over again
+      ESP.restart();
+      delay(5000);
+    }
+    else
+    {
+      // if you get here you have connected to the WiFi
+      Serial.println("[Wifi] connected...yeey :)");
+    }
   }
-  }
-  
 
   // If we get here, we are connected to the WiFi
-
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.print("IP address: ");
+  Serial.println("[Wifi] WiFi connected");
+  Serial.print("[Wifi] IP address: ");
   Serial.println(WiFi.localIP());
-  Serial.print("MAC address: ");
+  Serial.print("[Wifi] MAC address: ");
   Serial.println(WiFi.macAddress());
-
 }
 void setup()
 {
@@ -175,15 +179,22 @@ void setup()
   Serial.begin(115200);
   delay(1000);
 
-  // Initialize the LED pins as output
-  pinMode(ledPump1, OUTPUT);
-  pinMode(ledPump2, OUTPUT);
-  pinMode(ledPump3, OUTPUT);
-  pinMode(ledVentilator1, OUTPUT);
-  pinMode(ledHumidifyer1, OUTPUT);
-  pinMode(ledStatus, OUTPUT);
+  // Initialize the LED pins as output and set them to LOW
+  pinMode(led_1, OUTPUT);
+  digitalWrite(led_1, HIGH);
 
-  //reset button
+  pinMode(led_2, OUTPUT);
+  digitalWrite(led_2, HIGH);
+
+  pinMode(led_3, OUTPUT);
+  digitalWrite(led_3, HIGH);
+
+  pinMode(led_4, OUTPUT);
+  digitalWrite(led_4, HIGH);
+
+  pinMode(ledStatus, OUTPUT);
+  digitalWrite(ledStatus, HIGH);
+  // reset button
   pinMode(BUTTON_PIN, INPUT_PULLUP);
 
   // Initialize I2C communication
@@ -192,7 +203,7 @@ void setup()
   // Check BME280 sensor connection
   if (!bme.begin(0x76))
   { // Replace 0x76 with the appropriate sensor address
-    Serial.println("Failed to connect to the BME280 sensor. Please check the wiring.");
+    Serial.println("[Wiring] Failed to connect to the BME280 sensor. Please check the wiring.");
     digitalWrite(ledStatus, HIGH);
     while (1)
       ; // Halt the program if the sensor connection fails
@@ -201,7 +212,7 @@ void setup()
   // Check TCS34725 sensor connection
   if (!tcs.begin())
   {
-    Serial.println("Failed to connect to the TCS34725 sensor. Please check the wiring.");
+    Serial.println("[Wiring] Failed to connect to the TCS34725 sensor. Please check the wiring.");
     digitalWrite(ledStatus, HIGH);
     while (1)
       ; // Halt the program if the sensor connection fails
@@ -225,7 +236,7 @@ void sendToServer(String topic, String group, String value)
   struct tm timeinfo;
   if (!getLocalTime(&timeinfo))
   {
-    Serial.println("Failed to obtain time");
+    Serial.println("[Sensor Data Server] Failed to obtain time");
     digitalWrite(ledStatus, HIGH);
     return;
   }
@@ -245,12 +256,12 @@ void sendToServer(String topic, String group, String value)
 
   if (httpResponseCode == 200 || httpResponseCode == 201)
   {
-    Serial.println("Data sent successfully");
+    Serial.println("[Sensor Data Server] Data sent successfully");
     String response = http.getString();
   }
   else
   {
-    Serial.print("Error on sending POST (error nor clear): ");
+    Serial.print("[Sensor Data Server] Error on sending POST (error nor clear): ");
     digitalWrite(ledStatus, HIGH);
     String response = http.getString();
     Serial.println(response);
@@ -262,7 +273,7 @@ void processHttpResponse()
 {
   HTTPClient http;
   http.begin("https://" + hostMongo + url + "/action/find");
-  Serial.println("https://" + hostMongo + url + "/action/find");
+  Serial.println("[Get Actions] from: https://" + hostMongo + url + "/action/find");
   http.addHeader("Content-Type", "application/json");
   http.addHeader("Access-Control-Request-Headers", "*");
   http.addHeader("api-key", apiKey);
@@ -270,55 +281,65 @@ void processHttpResponse()
   String requestData = "{\"collection\":\"actions\",\"database\":\"Website\",\"dataSource\":\"Cluster0\"}";
   int httpResponseCode = http.POST(requestData);
   String response = http.getString();
+  Serial.println(response);
   if (httpResponseCode == 200)
   {
-  // Check if the response is not empty
-  Serial.println("Data received successfully");
-    if (response.length() > 0) {
+    // Check if the response is not empty
+    Serial.println("[Get Actions] Data received successfully");
+    if (response.length() > 0)
+    {
       // Parse the JSON response
-      DynamicJsonDocument doc(1024);
+      DynamicJsonDocument doc(3500); // change this if we change the schema of actions
       DeserializationError error = deserializeJson(doc, response);
 
       // Check for errors in parsing
-      if (error) {
-        Serial.println("Failed to parse JSON response");
-      } else {
-        if (httpResponseCode == 200)
-         {
+      if (error)
+      {
+        Serial.print(F("[Get Actions] deserializeJson() failed with code "));
+        Serial.println(error.c_str());
+        Serial.println(response);
+        digitalWrite(ledStatus, HIGH);
+      }
+      else
+      {
+        // Loop through each document in the response
+        for (JsonObject document : doc["documents"].as<JsonArray>())
+        {
+          String object = document["object"];
+          String value = document["value"];
 
-
-         // Parse the JSON response
-         DynamicJsonDocument doc(1024);
-         deserializeJson(doc, response);
-
-          // Loop through each document in the response
-         for (JsonObject document : doc["documents"].as<JsonArray>())
-         {
-            String object = document["object"];
-           String value = document["value"];
-
-           // Turn on or off the LED based on the object value
-           if (object == "pump_1")
-             digitalWrite(ledPump1, value == "on" ? HIGH : LOW);
-           else if (object == "pump_2")
-             digitalWrite(ledPump2, value == "on" ? HIGH : LOW);
-           else if (object == "pump_3")
-              digitalWrite(ledPump3, value == "on" ? HIGH : LOW);
-           else if (object == "ventilator_1")
-              digitalWrite(ledVentilator1, value == "on" ? HIGH : LOW);
-            else if (object == "humidifyer_1")
-             digitalWrite(ledHumidifyer1, value == "on" ? HIGH : LOW);
-         }
+          // Turn on or off the LED based on the object value
+          if (object == "pump_1")
+          {
+            digitalWrite(led_1, value == "on" ? LOW : HIGH);
+            Serial.println(value == "on" ? "[Backend status] Pump 1 is turned on" : "[Backend status] Pump 1 is turned off");
+          }
+          else if (object == "led_1")
+          { // Corrected object name
+            digitalWrite(led_2, value == "on" ? LOW : HIGH);
+            Serial.println(value == "on" ? "[Backend status] Led 1 is turned on" : "[Backend status] Led 1 is turned off");
+          }
+          else if (object == "ventilator_1")
+          {
+            digitalWrite(led_3, value == "on" ? LOW : HIGH);
+            Serial.println(value == "on" ? "[Backend status] Ventilator 1 is turned on" : "[Backend status] Ventilator 1 is turned off");
+          }
+          else if (object == "ventilator_2")
+          {
+            digitalWrite(led_4, value == "on" ? LOW : HIGH);
+            Serial.println(value == "on" ? "[Backend status] Ventilator 2 is turned on" : "[Backend status] Ventilator 2 is turned off");
+          }
         }
       }
-    } else {
-      Serial.println("Empty response received");
     }
-  
+    else
+    {
+      Serial.println("[Get Actions] Empty response received");
+    }
   }
-   else
+  else
   {
-    Serial.print("Error on sending POST: ");
+    Serial.print("[Get Actions] Error on sending POST to get actions Data: ");
     digitalWrite(ledStatus, HIGH);
     String response = http.getString();
     Serial.println(response);
@@ -349,8 +370,8 @@ void sendSensorData()
   sendSensorData(pressure, "esp/air/pressure");
 
   // moisture/1
-  moisture = analogRead(AOUT_PIN);
-  sendSensorData(moisture, "esp/ground/moisture/1");
+  moisture_1 = analogRead(AOUT_PIN);
+  sendSensorData(moisture_1, "esp/ground/moisture/1");
 
   // moisture/2
   moisture_2 = analogRead(AOUT_PIN);
@@ -391,11 +412,18 @@ void loop()
     esp32FOTAmy.execOTA();
   }
 
-  // check here wifi maybe
-  printf("Processing http response...\n");
-  processHttpResponse();
-  printf("Sending data to server...\n");
-  sendSensorData();
+  unsigned long currentMillis = millis();
+  if (currentMillis - lastHttpResponseTime >= httpResponseInterval)
+  {
+    lastHttpResponseTime = currentMillis;
+    printf("[System loop] Processing http response...\n");
+    processHttpResponse();
+  }
 
-  delay(20000);
+  if (currentMillis - lastSensorDataTime >= sensorDataInterval)
+  {
+    lastSensorDataTime = currentMillis;
+    printf("[System loop] Sending data to server...\n");
+    sendSensorData();
+  }
 }

@@ -6,39 +6,6 @@ const apiUrl = process.env.REACT_APP_API_URL;
 import { changeRoute } from "../../reduxStore";
 import { useSelector, useDispatch } from "react-redux";
 
-// This function fetches all of the charts that the user has saved in their history
-const getAllCharts = async (userId) => {
-  const response = await fetch(`${apiUrl}/api/historyChart/all/${userId}`);
-  const data = await response.json();
-  return data.charts.map((chart) => chart.chartName);
-};
-
-// This function adds a new chart to the user's history
-const addChart = async (userId, chartName) => {
-  const response = await fetch(`${apiUrl}/api/historyChart/update/${userId}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ chartName }),
-  });
-  const data = await response.json();
-  return data;
-};
-
-// This function deletes a chart from the user's history
-const deleteChart = async (userId, chartName) => {
-  const response = await fetch(
-    `${apiUrl}/api/historyChart/delete/${userId}/${chartName}`,
-    {
-      method: "DELETE",
-    }
-  );
-  console.log("deleted chart");
-  const data = await response.json();
-  return data;
-};
-
 const History = () => {
   const [buttons, setButtons] = useState(["+"]);
   const [which_chart, setWhichChart] = useState(null);

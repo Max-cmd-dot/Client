@@ -55,7 +55,6 @@ function App() {
     const timer = setTimeout(() => {
       setShowServerError(true);
     }, 20000); // 20 seconds
-
     return () => clearTimeout(timer); // cleanup on unmount
   }, []);
 

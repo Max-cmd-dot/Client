@@ -4,16 +4,20 @@ const router = express.Router();
 const path = require("path");
 const { Device } = require("../models/devices");
 
+//häufigstes problem deviceId wird nicht gefunden
+//device Ids müssen beim onboarding in die Datenbank geschrieben werden
 router.get("/", async (req, res) => {
   const deviceId = req.headers.deviceid;
   try {
     const device = await Device.findOne({ deviceId });
-
+    console.log("Device ID: ", deviceId);
     if (!device) {
+      console.error("Device not found");
       return res
         .status(400)
         .json({ message: "Invalid device ID or device not found" });
     }
+    console.log("Device found");
     res.json({
       group: device.group,
       host: "eu-central-1.aws.data.mongodb-api.com",
@@ -22,6 +26,7 @@ router.get("/", async (req, res) => {
         "wvNMOVt8Ad5sd3surfPXFePxxPIJLYe29bSnETeQqwIH7smcbzUM2Lt2t9fbOiDb",
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: err.message });
   }
 });

@@ -40,6 +40,10 @@ router.post("/update/:userId", async (req, res) => {
     chartName = "Default Name",
     chartData = {},
   } = req.body;
+
+  // Set the update_interval to 15000
+  chartData.update_interval = 15000;
+
   const newChart = {
     chartId,
     chartName,
@@ -47,6 +51,7 @@ router.post("/update/:userId", async (req, res) => {
     createdAt: new Date(),
     updatedAt: new Date(),
   };
+
   try {
     const historyChart = await HistoryChart.findOneAndUpdate(
       { userId: req.params.userId },

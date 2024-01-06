@@ -27,7 +27,7 @@ int value = 0;
 float temperature = 0;
 float humidity = 0;
 float pressure = 0;
-float moisture = 0;
+float moisture_1 = 0;
 float moistureb = 0;
 float moisturec = 0;
 
@@ -166,10 +166,10 @@ void loop()
   String pressurePayload = String(preString) + "," + "Group A";
   client.publish(pressureTopic.c_str(), pressurePayload.c_str());
   // moisture/1
-  moisture = analogRead(AOUT_PIN);
-  Serial.println(moisture);
+  moisture_1 = analogRead(AOUT_PIN);
+  Serial.println(moisture_1);
   char moiString[8];
-  dtostrf(moisture, 1, 2, moiString);
+  dtostrf(moisture_1, 1, 2, moiString);
   Serial.print("Moisture: ");
   Serial.println(moiString);
   String moistureTopic = "esp/ground/moisture/1";

@@ -128,7 +128,7 @@ const Main = () => {
         clearInterval(interval_data);
       };
     }
-  }, [currentPage, fetchData_notification, fetchData_abo, fetchData]);
+  }, [currentPage]);
   const isMediumOrBig = rightabo === "medium" || rightabo === "big";
   const topicOrder = [
     "esp/air/temperature",
@@ -273,7 +273,12 @@ const Main = () => {
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             events={events}
             initialView="timeGridWeek"
-            height={500}
+            height={1300}
+            slotLabelFormat={{
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            }}
           />
         </div>
         <div className={styles.space}></div>

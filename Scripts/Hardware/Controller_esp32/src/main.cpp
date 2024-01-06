@@ -9,12 +9,12 @@ String url = "/app/data-vycfd/endpoint/data/v1";
 String apiKey = "wvNMOVt8Ad5sd3surfPXFePxxPIJLYe29bSnETeQqwIH7smcbzUM2Lt2t9fbOiDb";
 
 // Define the LED pins
-const int ledPump1 = 12;
-const int ledPump2 = 14;
-const int ledPump3 = 27;
-const int ledVentilator1 = 16;
+const int led_1 = 12;
+const int led_2 = 14;
+const int led_3 = 27;
+const int led_4 = 16;
 const int ledRoof1 = 18;
-const int ledHumidifyer1 = 17;
+const int led_5 = 17;
 
 void setup()
 {
@@ -29,12 +29,12 @@ void setup()
   Serial.println("Connected to WiFi");
 
   // Initialize the LED pins as output
-  pinMode(ledPump1, OUTPUT);
-  pinMode(ledPump2, OUTPUT);
-  pinMode(ledPump3, OUTPUT);
-  pinMode(ledVentilator1, OUTPUT);
+  pinMode(led_1, OUTPUT);
+  pinMode(led_2, OUTPUT);
+  pinMode(led_3, OUTPUT);
+  pinMode(led_4, OUTPUT);
   pinMode(ledRoof1, OUTPUT);
-  pinMode(ledHumidifyer1, OUTPUT);
+  pinMode(led_5, OUTPUT);
 }
 
 void loop()
@@ -68,17 +68,17 @@ void loop()
 
         // Turn on or off the LED based on the object value
         if (object == "pump_1")
-          digitalWrite(ledPump1, value == "on" ? HIGH : LOW);
+          digitalWrite(led_1, value == "on" ? HIGH : LOW);
         else if (object == "pump_2")
-          digitalWrite(ledPump2, value == "on" ? HIGH : LOW);
+          digitalWrite(led_2, value == "on" ? HIGH : LOW);
         else if (object == "pump_3")
-          digitalWrite(ledPump3, value == "on" ? HIGH : LOW);
+          digitalWrite(led_3, value == "on" ? HIGH : LOW);
         else if (object == "ventilator_1")
-          digitalWrite(ledVentilator1, value == "on" ? HIGH : LOW);
+          digitalWrite(led_4, value == "on" ? HIGH : LOW);
         else if (object == "roof_1")
           digitalWrite(ledRoof1, value == "on" ? HIGH : LOW);
         else if (object == "humidifyer_1")
-          digitalWrite(ledHumidifyer1, value == "on" ? HIGH : LOW);
+          digitalWrite(led_5, value == "on" ? HIGH : LOW);
       }
     }
     else

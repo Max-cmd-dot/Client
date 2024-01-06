@@ -65,19 +65,15 @@
   text-align: center;
 }
 .CalendarBox {
-  margin-left: 5%; /* Reduced left margin */
-  margin-right: 5%; /* Reduced right margin */
-
-  /* Added box styling for calendar */
+  margin-left: 5%;
+  margin-right: 5%;
   border-radius: 10px;
-  box-shadow:
-    /* Added box shadow for calendar */ 0px 3px 3px -2px rgb(0, 0, 0, 0.4),
-    0px 3px 4px rgb(0, 0, 0, 0.24), 0px 1px 8px rgb(0, 0, 0, 0.22);
+  box-shadow: 0px 3px 3px -2px rgb(0, 0, 0, 0.4), 0px 3px 4px rgb(0, 0, 0, 0.24),
+    0px 1px 8px rgb(0, 0, 0, 0.22);
   background-color: #ffffff;
   color: #2c3e50;
-
-  /* Added padding for calendar box */
   padding: 20px;
+  max-height: 1280px;
 }
 
 .calendar-container {

@@ -57,17 +57,17 @@ int value = 0;
 float temperature = 0;
 float humidity = 0;
 float pressure = 0;
-float moisture = 0;
+float moisture_1 = 0;
 float moisture_2 = 0;
 float moisture_3 = 0;
 
 // Define the LED pins
-const int ledPump1 = 12;
-const int ledPump2 = 14;
-const int ledPump3 = 27;
-const int ledVentilator1 = 16;
+const int led_1 = 12;
+const int led_2 = 14;
+const int led_3 = 27;
+const int led_4 = 16;
 const int ledStatus = 18;
-const int ledHumidifyer1 = 17;
+const int led_5 = 17;
 
 // Define the API key
 String apiKey, hostMongo, url, group;
@@ -76,10 +76,10 @@ void saveConfigFile()
 // Save Config in JSON format
 {
   Serial.println(F("Saving configuration..."));
-// Create a JSON document
+  // Create a JSON document
   StaticJsonDocument<512> json;
-     // Add data to the JSON document
-    json["code"] = "samplecode";
+  // Add data to the JSON document
+  json["code"] = "samplecode";
   // Open config file
   File configFile = SPIFFS.open(JSON_CONFIG_FILE, "w");
   if (!configFile)
@@ -101,17 +101,18 @@ void saveConfigFile()
 bool loadConfigFile()
 {
   Serial.println("Mounting File System...");
-  if (!SPIFFS.begin(true)) {
+  if (!SPIFFS.begin(true))
+  {
     Serial.println("An Error has occurred while mounting SPIFFS");
     return false;
   }
 
   File configFile = SPIFFS.open(JSON_CONFIG_FILE, "r");
-  if (!configFile) {
+  if (!configFile)
+  {
     Serial.println("Failed to open config file");
     return false;
   }
-
 
   if (SPIFFS.begin(false) || SPIFFS.begin(true))
   {
@@ -125,25 +126,30 @@ bool loadConfigFile()
         Serial.println("Opened configuration file");
         StaticJsonDocument<512> json;
         DeserializationError error = deserializeJson(json, configFile);
-        if (error) {
+        if (error)
+        {
           Serial.print("deserializeJson() failed with code ");
           Serial.println(error.c_str());
           return false;
         }
-        else {
+        else
+        {
           serializeJsonPretty(json, Serial);
           return true;
         }
       }
-      else {
+      else
+      {
         Serial.println("Failed to open config file");
       }
     }
-    else {
+    else
+    {
       Serial.println("Config file does not exist");
     }
   }
-  else {
+  else
+  {
     Serial.println("Failed to mount FS");
   }
 
@@ -295,11 +301,11 @@ void setup()
   delay(1000);
 
   // Initialize the LED pins as output
-  pinMode(ledPump1, OUTPUT);
-  pinMode(ledPump2, OUTPUT);
-  pinMode(ledPump3, OUTPUT);
-  pinMode(ledVentilator1, OUTPUT);
-  pinMode(ledHumidifyer1, OUTPUT);
+  pinMode(led_1, OUTPUT);
+  pinMode(led_2, OUTPUT);
+  pinMode(led_3, OUTPUT);
+  pinMode(led_4, OUTPUT);
+  pinMode(led_5, OUTPUT);
   pinMode(ledStatus, OUTPUT);
 
   // Initialize I2C communication
@@ -403,15 +409,15 @@ void processHttpResponse()
 
       // Turn on or off the LED based on the object value
       if (object == "pump_1")
-        digitalWrite(ledPump1, value == "on" ? HIGH : LOW);
+        digitalWrite(led_1, value == "on" ? HIGH : LOW);
       else if (object == "pump_2")
-        digitalWrite(ledPump2, value == "on" ? HIGH : LOW);
+        digitalWrite(led_2, value == "on" ? HIGH : LOW);
       else if (object == "pump_3")
-        digitalWrite(ledPump3, value == "on" ? HIGH : LOW);
+        digitalWrite(led_3, value == "on" ? HIGH : LOW);
       else if (object == "ventilator_1")
-        digitalWrite(ledVentilator1, value == "on" ? HIGH : LOW);
+        digitalWrite(led_4, value == "on" ? HIGH : LOW);
       else if (object == "humidifyer_1")
-        digitalWrite(ledHumidifyer1, value == "on" ? HIGH : LOW);
+        digitalWrite(led_5, value == "on" ? HIGH : LOW);
     }
   }
   else
@@ -447,8 +453,8 @@ void sendSensorData()
   sendSensorData(pressure, "esp/air/pressure");
 
   // moisture/1
-  moisture = analogRead(AOUT_PIN);
-  sendSensorData(moisture, "esp/ground/moisture/1");
+  moisture_1 = analogRead(AOUT_PIN);
+  sendSensorData(moisture_1, "esp/ground/moisture/1");
 
   // moisture/2
   moisture_2 = analogRead(AOUT_PIN);

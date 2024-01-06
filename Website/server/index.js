@@ -19,6 +19,7 @@ const emailchangeRoutes = require("./src/routes/changeEmail");
 const hardwareRoutes = require("./src/routes/hardware");
 const alarmsRoutes = require("./src/routes/alarmsData");
 const { checkAll } = require("./src/utils/alertSystem");
+const { automationSystem } = require("./src/utils/actionSystem");
 
 // database connection
 connection();
@@ -49,19 +50,32 @@ app.get("/", (res) => {
 app.get("/api", (res) => {
   res.send("Running API...");
 });
+/**
+ * This script sets up two timers to periodically call the `automationSystem` and `checkAll` functions.
+ *
+ * The `automationSystem` function is called every minute. This function checks all automations and updates the actions
+ * based on the automation data. It handles both time-based and sensor/value-based automations.
+ *
+ * The `checkAll` function is called every full hour. The specifics of what this function does are not detailed here.
+ *
+ * The timers are set up using the `setInterval` function. Each time the functions are called, a message is logged to the console.
+ *
+ * Note: There is no cleanup logic to clear the timers, as this script is presumably running in a Node.js environment where the timers should continue running indefinitely.
+ */
+// Set up a timer to call the automationSystem function every minute
+setInterval(() => {
+  console.log("Calling automationSystem");
+  automationSystem();
+}, 60 * 1000);
 
-// Call the testFunctions function
-checkAll().catch(console.error);
-module.exports = app;
-
-// Call the checkAll() function every full hour
+// Set up a timer to call the checkAll() function every full hour
 setInterval(() => {
   const date = new Date();
-  if (date.getMinutes() === 0 && date.getSeconds() === 0) {
+  if (date.getMinutes() === 0) {
+    console.log("Calling checkAll");
     checkAll().catch(console.error);
   }
-}, 1000); // Check every second
-
+}, 60 * 1000); // Check every minute
 //create server for backend on port 8080
 const port = process.env.PORT || 8080;
 app.listen(port, console.log(`Listening on port ${port}...`));
