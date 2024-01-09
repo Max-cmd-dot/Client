@@ -1,8 +1,7 @@
-
+#include <Arduino.h>
 #include <WiFi.h>
 #include <Wire.h>
-#include <Adafruit_BME280.h>
-#include <Adafruit_Sensor.h>
+#include <bsec.h>
 #include <Adafruit_TCS34725.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
@@ -45,7 +44,8 @@ const char *hostBackendHardware = "http://192.168.178.121:8080/api/hardware";
 // const int deviceId = 1;
 String deviceId = String(ESP.getEfuseMac(), HEX); // Convert uint64_t to String
 // digital sensors
-Adafruit_BME280 bme; // I2C
+// Create an object of the class Bsec
+Bsec iaqSensor;
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS34725_GAIN_1X);
 
 // start values
@@ -56,6 +56,8 @@ int value = 0;
 #define AOUT_PIN 35
 #define AOUT_PIN2 34
 #define AOUT_PIN3 33
+
+// define button pin
 #define BUTTON_PIN 15
 
 // define sensor variables
@@ -64,14 +66,25 @@ float humidity = 0;
 float pressure = 0;
 float moisture_1 = 0;
 float moisture_2 = 0;
-float moisture_3 = 0;
+float gasResistance = 0;
+float iaq = 0;
+float iaqAccuracy = 0;
+float rawTemperature = 0;
+float rawHumidity = 0;
+float staticIaq = 0;
+float co2Equivalent = 0;
+float breathVocEquivalent = 0;
+float gasPercentage = 0;
 
 // Define the LED pins
-const int led_1 = 27;
-const int led_2 = 14;
-const int led_3 = 16;
-const int led_4 = 17;
-const int ledStatus = 18;
+const int relay_1 = 27;
+const int relay_2 = 14;
+const int relay_3 = 16;
+const int relay_4 = 17;
+
+// status led
+const int ledStatusError = 18;
+const int ledStatusOnline = 19;
 
 // Define the API key
 String apiKey, hostMongo, url, group;
@@ -113,7 +126,7 @@ void makeRequest()
       {
         Serial.print("deserializeJson() failed: ");
         Serial.println(error.f_str());
-        digitalWrite(ledStatus, HIGH);
+        digitalWrite(ledStatusError, HIGH);
         return;
       }
 
@@ -126,7 +139,7 @@ void makeRequest()
     {
       Serial.println("[Backend Hardware] Error on HTTP request: " + String(http.errorToString(httpCode)));
       retries++;
-      digitalWrite(ledStatus, HIGH);
+      digitalWrite(ledStatusError, HIGH);
       delay(1000); // wait for a second before retrying
     }
 
@@ -141,17 +154,17 @@ void WifiManager()
   WiFi.mode(WIFI_STA);
   delay(10);
   wm.setMenu(wmMenuItems);
-  wm.setTitle("Brand Name");                 // brand name
+  wm.setTitle("Nexa Harvest");               // brand name
   int buttonState = digitalRead(BUTTON_PIN); // Read the state of the button
 
-  Serial.println("[Wifi] Resetting Wifi-Settings" + String(buttonState));
+  Serial.println("[Wifi] Resetting Wifi-Settings. Buttonstate:" + String(buttonState));
   if (buttonState == LOW)
   {                                                    // If the button is pressed (connects the pin to GND)
     wm.startConfigPortal("ESP32 Network", "password"); // Start the
   }
   else
   {
-    if (!wm.autoConnect("NEWTEST_AP", "password")) // brand name
+    if (!wm.autoConnect("BlackPrototyp", "password")) // brand name
     {
       Serial.println("[Wifi] failed to connect and hit timeout");
       delay(3000);
@@ -163,6 +176,7 @@ void WifiManager()
     {
       // if you get here you have connected to the WiFi
       Serial.println("[Wifi] connected...yeey :)");
+      digitalWrite(ledStatusOnline, HIGH);
     }
   }
 
@@ -180,40 +194,34 @@ void setup()
   delay(1000);
 
   // Initialize the LED pins as output and set them to LOW
-  pinMode(led_1, OUTPUT);
-  digitalWrite(led_1, HIGH);
+  pinMode(relay_1, OUTPUT);
+  digitalWrite(relay_1, HIGH);
 
-  pinMode(led_2, OUTPUT);
-  digitalWrite(led_2, HIGH);
+  pinMode(relay_2, OUTPUT);
+  digitalWrite(relay_2, HIGH);
 
-  pinMode(led_3, OUTPUT);
-  digitalWrite(led_3, HIGH);
+  pinMode(relay_3, OUTPUT);
+  digitalWrite(relay_3, HIGH);
 
-  pinMode(led_4, OUTPUT);
-  digitalWrite(led_4, HIGH);
+  pinMode(relay_4, OUTPUT);
+  digitalWrite(relay_4, HIGH);
 
-  pinMode(ledStatus, OUTPUT);
-  digitalWrite(ledStatus, HIGH);
+  pinMode(ledStatusError, OUTPUT);
+  digitalWrite(ledStatusError, LOW);
+
+  pinMode(ledStatusOnline, OUTPUT);
+  digitalWrite(ledStatusOnline, LOW);
   // reset button
   pinMode(BUTTON_PIN, INPUT_PULLUP);
 
   // Initialize I2C communication
   Wire.begin();
 
-  // Check BME280 sensor connection
-  if (!bme.begin(0x76))
-  { // Replace 0x76 with the appropriate sensor address
-    Serial.println("[Wiring] Failed to connect to the BME280 sensor. Please check the wiring.");
-    digitalWrite(ledStatus, HIGH);
-    while (1)
-      ; // Halt the program if the sensor connection fails
-  }
-
   // Check TCS34725 sensor connection
   if (!tcs.begin())
   {
     Serial.println("[Wiring] Failed to connect to the TCS34725 sensor. Please check the wiring.");
-    digitalWrite(ledStatus, HIGH);
+    digitalWrite(ledStatusError, HIGH);
     while (1)
       ; // Halt the program if the sensor connection fails
   }
@@ -237,7 +245,7 @@ void sendToServer(String topic, String group, String value)
   if (!getLocalTime(&timeinfo))
   {
     Serial.println("[Sensor Data Server] Failed to obtain time");
-    digitalWrite(ledStatus, HIGH);
+    digitalWrite(ledStatusError, HIGH);
     return;
   }
   char timeStringBuff[50]; // 50 chars should be enough
@@ -262,7 +270,7 @@ void sendToServer(String topic, String group, String value)
   else
   {
     Serial.print("[Sensor Data Server] Error on sending POST (error nor clear): ");
-    digitalWrite(ledStatus, HIGH);
+    digitalWrite(ledStatusError, HIGH);
     String response = http.getString();
     Serial.println(response);
   }
@@ -298,7 +306,7 @@ void processHttpResponse()
         Serial.print(F("[Get Actions] deserializeJson() failed with code "));
         Serial.println(error.c_str());
         Serial.println(response);
-        digitalWrite(ledStatus, HIGH);
+        digitalWrite(ledStatusError, HIGH);
       }
       else
       {
@@ -311,22 +319,22 @@ void processHttpResponse()
           // Turn on or off the LED based on the object value
           if (object == "pump_1")
           {
-            digitalWrite(led_1, value == "on" ? LOW : HIGH);
+            digitalWrite(relay_1, value == "on" ? LOW : HIGH);
             Serial.println(value == "on" ? "[Backend status] Pump 1 is turned on" : "[Backend status] Pump 1 is turned off");
           }
-          else if (object == "led_1")
+          else if (object == "relay_1")
           { // Corrected object name
-            digitalWrite(led_2, value == "on" ? LOW : HIGH);
+            digitalWrite(relay_2, value == "on" ? LOW : HIGH);
             Serial.println(value == "on" ? "[Backend status] Led 1 is turned on" : "[Backend status] Led 1 is turned off");
           }
           else if (object == "ventilator_1")
           {
-            digitalWrite(led_3, value == "on" ? LOW : HIGH);
+            digitalWrite(relay_3, value == "on" ? LOW : HIGH);
             Serial.println(value == "on" ? "[Backend status] Ventilator 1 is turned on" : "[Backend status] Ventilator 1 is turned off");
           }
           else if (object == "ventilator_2")
           {
-            digitalWrite(led_4, value == "on" ? LOW : HIGH);
+            digitalWrite(relay_4, value == "on" ? LOW : HIGH);
             Serial.println(value == "on" ? "[Backend status] Ventilator 2 is turned on" : "[Backend status] Ventilator 2 is turned off");
           }
         }
@@ -340,7 +348,7 @@ void processHttpResponse()
   else
   {
     Serial.print("[Get Actions] Error on sending POST to get actions Data: ");
-    digitalWrite(ledStatus, HIGH);
+    digitalWrite(ledStatusError, HIGH);
     String response = http.getString();
     Serial.println(response);
   }
@@ -354,32 +362,77 @@ void sendSensorData(float value, const char *topic)
   String payload = String(valueString);
   sendToServer(topic, group, payload);
 }
+
 void sendSensorData()
 {
+  if (iaqSensor.run())
+  { // If new data is available
 
-  // temperature
-  temperature = bme.readTemperature();
-  sendSensorData(temperature, "esp/air/temperature");
+    // temperature
+    temperature = iaqSensor.temperature;
+    sendSensorData(temperature, "esp/air/temperature");
 
-  // humidity
-  humidity = bme.readHumidity();
-  sendSensorData(humidity, "esp/air/humidity");
+    // humidity
+    humidity = iaqSensor.humidity;
+    sendSensorData(humidity, "esp/air/humidity");
 
-  // pressure
-  pressure = (bme.readPressure() / 100.0F);
-  sendSensorData(pressure, "esp/air/pressure");
+    // pressure
+    pressure = iaqSensor.pressure;
+    sendSensorData(pressure, "esp/air/pressure");
+
+    // gas resistance
+    gasResistance = iaqSensor.gasResistance;
+    sendSensorData(gasResistance, "esp/air/gasResistance");
+
+    // IAQ
+    iaq = iaqSensor.iaq;
+    sendSensorData(iaq, "esp/air/iaq");
+
+    // IAQ accuracy
+    iaqAccuracy = iaqSensor.iaqAccuracy;
+    sendSensorData(iaqAccuracy, "esp/air/iaqAccuracy");
+
+    // raw temperature
+    rawTemperature = iaqSensor.rawTemperature;
+    sendSensorData(rawTemperature, "esp/air/rawTemperature");
+
+    // raw humidity
+    rawHumidity = iaqSensor.rawHumidity;
+    sendSensorData(rawHumidity, "esp/air/rawHumidity");
+
+    // static IAQ
+    staticIaq = iaqSensor.staticIaq;
+    sendSensorData(staticIaq, "esp/air/staticIaq");
+
+    // CO2 equivalent
+    co2Equivalent = iaqSensor.co2Equivalent;
+    sendSensorData(co2Equivalent, "esp/air/co2Equivalent");
+
+    // breath VOC equivalent
+    breathVocEquivalent = iaqSensor.breathVocEquivalent;
+    sendSensorData(breathVocEquivalent, "esp/air/breathVocEquivalent");
+
+    // gas percentage
+    gasPercentage = iaqSensor.gasPercentage;
+    sendSensorData(gasPercentage, "esp/air/gasPercentage");
+  }
+  else
+  {
+    // Handle error
+    digitalWrite(ledStatusError, LOW);
+  }
 
   // moisture/1
   moisture_1 = analogRead(AOUT_PIN);
   sendSensorData(moisture_1, "esp/ground/moisture/1");
 
   // moisture/2
-  moisture_2 = analogRead(AOUT_PIN);
+  moisture_2 = analogRead(AOUT_PIN2);
   sendSensorData(moisture_2, "esp/ground/moisture/2");
 
   // moisture/3
-  moisture_3 = analogRead(AOUT_PIN);
-  sendSensorData(moisture_3, "esp/ground/moisture/3");
+  // moisture_3 = analogRead(AOUT_PIN);
+  // sendSensorData(moisture_3, "esp/ground/moisture/3");
 
   // light/colorTemp
   uint16_t r, g, b, c, colorTemp, lux;
