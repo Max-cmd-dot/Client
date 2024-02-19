@@ -153,6 +153,7 @@ void WifiManager()
   // Explicitly set WiFi mode
   WiFi.mode(WIFI_STA);
   delay(10);
+  wm.setTimeout(60); // 1 minute
   wm.setMenu(wmMenuItems);
   wm.setTitle("Nexa Harvest");               // brand name
   int buttonState = digitalRead(BUTTON_PIN); // Read the state of the button
@@ -355,6 +356,14 @@ void processHttpResponse()
 
   http.end();
 }
+// Structure to hold sensor data
+struct SensorData
+{
+  float value;
+  const char *topic;
+};
+
+// Function to send sensor data to server
 void sendSensorData(float value, const char *topic)
 {
   char valueString[8];
@@ -363,98 +372,58 @@ void sendSensorData(float value, const char *topic)
   sendToServer(topic, group, payload);
 }
 
+// Function to send all sensor data
+void sendAllSensorData(SensorData sensorData[], int size)
+{
+  for (int i = 0; i < size; i++)
+  {
+    sendSensorData(sensorData[i].value, sensorData[i].topic);
+  }
+}
+
+// Function to send sensor data
 void sendSensorData()
 {
-  if (iaqSensor.run())
-  { // If new data is available
 
-    // temperature
-    temperature = iaqSensor.temperature;
-    sendSensorData(temperature, "esp/air/temperature");
+  printf("[Sensor Data] running 1\n");
 
-    // humidity
-    humidity = iaqSensor.humidity;
-    sendSensorData(humidity, "esp/air/humidity");
+  printf("[Sensor Data] running 2\n");
+  // If new data is available
+  // Array to hold all sensor data
+  SensorData sensorData[] = {
+      {iaqSensor.temperature, "esp/air/temperature"},
+      {iaqSensor.humidity, "esp/air/humidity"},
+      {iaqSensor.pressure, "esp/air/pressure"},
+      {iaqSensor.gasResistance, "esp/air/gasResistance"},
+      {iaqSensor.iaq, "esp/air/iaq"},
+      {iaqSensor.iaqAccuracy, "esp/air/iaqAccuracy"},
+      {iaqSensor.rawTemperature, "esp/air/rawTemperature"},
+      {iaqSensor.rawHumidity, "esp/air/rawHumidity"},
+      {iaqSensor.staticIaq, "esp/air/staticIaq"},
+      {iaqSensor.co2Equivalent, "esp/air/co2Equivalent"},
+      {iaqSensor.breathVocEquivalent, "esp/air/breathVocEquivalent"},
+      {iaqSensor.gasPercentage, "esp/air/gasPercentage"},
+      {analogRead(AOUT_PIN), "esp/ground/moisture/1"},
+      {analogRead(AOUT_PIN2), "esp/ground/moisture/2"}};
 
-    // pressure
-    pressure = iaqSensor.pressure;
-    sendSensorData(pressure, "esp/air/pressure");
-
-    // gas resistance
-    gasResistance = iaqSensor.gasResistance;
-    sendSensorData(gasResistance, "esp/air/gasResistance");
-
-    // IAQ
-    iaq = iaqSensor.iaq;
-    sendSensorData(iaq, "esp/air/iaq");
-
-    // IAQ accuracy
-    iaqAccuracy = iaqSensor.iaqAccuracy;
-    sendSensorData(iaqAccuracy, "esp/air/iaqAccuracy");
-
-    // raw temperature
-    rawTemperature = iaqSensor.rawTemperature;
-    sendSensorData(rawTemperature, "esp/air/rawTemperature");
-
-    // raw humidity
-    rawHumidity = iaqSensor.rawHumidity;
-    sendSensorData(rawHumidity, "esp/air/rawHumidity");
-
-    // static IAQ
-    staticIaq = iaqSensor.staticIaq;
-    sendSensorData(staticIaq, "esp/air/staticIaq");
-
-    // CO2 equivalent
-    co2Equivalent = iaqSensor.co2Equivalent;
-    sendSensorData(co2Equivalent, "esp/air/co2Equivalent");
-
-    // breath VOC equivalent
-    breathVocEquivalent = iaqSensor.breathVocEquivalent;
-    sendSensorData(breathVocEquivalent, "esp/air/breathVocEquivalent");
-
-    // gas percentage
-    gasPercentage = iaqSensor.gasPercentage;
-    sendSensorData(gasPercentage, "esp/air/gasPercentage");
-  }
-  else
-  {
-    // Handle error
-    digitalWrite(ledStatusError, LOW);
-  }
-
-  // moisture/1
-  moisture_1 = analogRead(AOUT_PIN);
-  sendSensorData(moisture_1, "esp/ground/moisture/1");
-
-  // moisture/2
-  moisture_2 = analogRead(AOUT_PIN2);
-  sendSensorData(moisture_2, "esp/ground/moisture/2");
-
-  // moisture/3
-  // moisture_3 = analogRead(AOUT_PIN);
-  // sendSensorData(moisture_3, "esp/ground/moisture/3");
-
-  // light/colorTemp
+  // Get light sensor data
   uint16_t r, g, b, c, colorTemp, lux;
   tcs.getRawData(&r, &g, &b, &c);
   colorTemp = tcs.calculateColorTemperature_dn40(r, g, b, c);
   lux = tcs.calculateLux(r, g, b);
-  sendSensorData(colorTemp, "esp/ground/light/colorTemp");
 
-  // light/lux
-  sendSensorData(lux, "esp/ground/light/lux");
+  // Array to hold light sensor data
+  SensorData lightData[] = {
+      {colorTemp, "esp/ground/light/colorTemp"},
+      {lux, "esp/ground/light/lux"},
+      {r, "esp/ground/light/red"},
+      {g, "esp/ground/light/green"},
+      {b, "esp/ground/light/blue"},
+      {c, "esp/ground/light/clear"}};
 
-  // light/red
-  sendSensorData(r, "esp/ground/light/red");
-
-  // light/green
-  sendSensorData(g, "esp/ground/light/green");
-
-  // light/blue
-  sendSensorData(b, "esp/ground/light/blue");
-
-  // light/clear
-  sendSensorData(c, "esp/ground/light/clear");
+  // Send all sensor data
+  sendAllSensorData(sensorData, sizeof(sensorData) / sizeof(SensorData));
+  sendAllSensorData(lightData, sizeof(lightData) / sizeof(SensorData));
 }
 
 void loop()
@@ -478,5 +447,6 @@ void loop()
     lastSensorDataTime = currentMillis;
     printf("[System loop] Sending data to server...\n");
     sendSensorData();
+    printf("[System loop] Data sent to server\n");
   }
 }
