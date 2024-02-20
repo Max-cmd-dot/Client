@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <Wire.h>
-#include <bsec.h>
 #include <Adafruit_TCS34725.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
@@ -10,6 +9,7 @@
 #include <FS.h>
 #include <SPIFFS.h>
 #include <WiFiManager.h>
+#include <Adafruit_BME680.h>
 // https://dronebotworkshop.com/wifimanager/
 //  JSON configuration file
 
@@ -17,18 +17,15 @@
 WiFiManager wm;
 
 // esp32fota esp32fota("<Type of Firme for this device>", <this version>, <validate signature>);
-esp32FOTA esp32FOTAmy("esp32-fota-http", "1.0.2", false);
+esp32FOTA esp32FOTAmy("esp32-fota-http", "1.0.3", false);
 unsigned long lastHttpResponseTime = 0;
 unsigned long httpResponseInterval = 5000; // 5 seconds
 
 unsigned long lastSensorDataTime = 0;
-unsigned long sensorDataInterval = 60000; // 1 minute
+unsigned long sensorDataInterval = 5000; // 5 seconds
+// unsigned long sensorDataInterval = 60000; // 1 minute
 const char *manifest_url = "http://192.168.178.121:8080/api/hardware/update";
-
 // const char *manifest_url = "https://backend.nexaharvest.com/api/hardware/update";
-//  Replace the next variables with your SSID/Password combination
-const char *ssid = "5551 2771";
-const char *password = "a16c41b0f19cd116c4f1672ebe";
 
 // getting the current time
 const char *ntpServer = "pool.ntp.org";
@@ -44,8 +41,7 @@ const char *hostBackendHardware = "http://192.168.178.121:8080/api/hardware";
 // const int deviceId = 1;
 String deviceId = String(ESP.getEfuseMac(), HEX); // Convert uint64_t to String
 // digital sensors
-// Create an object of the class Bsec
-Bsec iaqSensor;
+Adafruit_BME680 bme; // I2C
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS34725_GAIN_1X);
 
 // start values
@@ -56,6 +52,12 @@ int value = 0;
 #define AOUT_PIN 35
 #define AOUT_PIN2 34
 #define AOUT_PIN3 33
+
+// define BME680 pins
+#define BME_SCK 13
+#define BME_MISO 12
+#define BME_MOSI 11
+#define BME_CS 10
 
 // define button pin
 #define BUTTON_PIN 15
@@ -227,12 +229,29 @@ void setup()
       ; // Halt the program if the sensor connection fails
   }
 
+  // Check BME680 sensor connection
+  if (!bme.begin())
+  {
+    Serial.println("[Wiring] Failed to connect to the BME680 sensor. Please check the wiring.");
+    digitalWrite(ledStatusError, HIGH);
+    while (1)
+      ; // Halt the program if the sensor connection fails
+  }
+  // Set up oversampling and filter initialization
+  bme.setTemperatureOversampling(BME680_OS_8X);
+  bme.setHumidityOversampling(BME680_OS_2X);
+  bme.setPressureOversampling(BME680_OS_4X);
+  bme.setIIRFilterSize(BME680_FILTER_SIZE_3);
+  bme.setGasHeater(320, 150); // 320*C for 150 ms
+
+  // call the wifi manager
   WifiManager();
   // check for update
 
   // set update things
   esp32FOTAmy.setManifestURL(manifest_url);
   esp32FOTAmy.printConfig();
+
   // init and get the time
   initializeNTP();
 
@@ -323,7 +342,7 @@ void processHttpResponse()
             digitalWrite(relay_1, value == "on" ? LOW : HIGH);
             Serial.println(value == "on" ? "[Backend status] Pump 1 is turned on" : "[Backend status] Pump 1 is turned off");
           }
-          else if (object == "relay_1")
+          else if (object == "led_1")
           { // Corrected object name
             digitalWrite(relay_2, value == "on" ? LOW : HIGH);
             Serial.println(value == "on" ? "[Backend status] Led 1 is turned on" : "[Backend status] Led 1 is turned off");
@@ -357,6 +376,7 @@ void processHttpResponse()
   http.end();
 }
 // Structure to hold sensor data
+
 struct SensorData
 {
   float value;
@@ -384,27 +404,25 @@ void sendAllSensorData(SensorData sensorData[], int size)
 // Function to send sensor data
 void sendSensorData()
 {
-
   printf("[Sensor Data] running 1\n");
 
+  // Update the sensor values
+  if (!bme.performReading())
+  {
+    printf("Failed to read from BME680 sensor\n");
+    return;
+  }
+
   printf("[Sensor Data] running 2\n");
-  // If new data is available
+
   // Array to hold all sensor data
   SensorData sensorData[] = {
-      {iaqSensor.temperature, "esp/air/temperature"},
-      {iaqSensor.humidity, "esp/air/humidity"},
-      {iaqSensor.pressure, "esp/air/pressure"},
-      {iaqSensor.gasResistance, "esp/air/gasResistance"},
-      {iaqSensor.iaq, "esp/air/iaq"},
-      {iaqSensor.iaqAccuracy, "esp/air/iaqAccuracy"},
-      {iaqSensor.rawTemperature, "esp/air/rawTemperature"},
-      {iaqSensor.rawHumidity, "esp/air/rawHumidity"},
-      {iaqSensor.staticIaq, "esp/air/staticIaq"},
-      {iaqSensor.co2Equivalent, "esp/air/co2Equivalent"},
-      {iaqSensor.breathVocEquivalent, "esp/air/breathVocEquivalent"},
-      {iaqSensor.gasPercentage, "esp/air/gasPercentage"},
-      {analogRead(AOUT_PIN), "esp/ground/moisture/1"},
-      {analogRead(AOUT_PIN2), "esp/ground/moisture/2"}};
+      {static_cast<float>(bme.temperature), "esp/air/temperature"},
+      {static_cast<float>(bme.humidity), "esp/air/humidity"},
+      {static_cast<float>(bme.pressure / 100.0), "esp/air/pressure"},             // Convert Pa to hPa
+      {static_cast<float>(bme.gas_resistance / 1000.0), "esp/air/gasResistance"}, // Convert Ohms to KOhms
+      {static_cast<float>(analogRead(AOUT_PIN)), "esp/ground/moisture/1"},
+      {static_cast<float>(analogRead(AOUT_PIN2)), "esp/ground/moisture/2"}};
 
   // Get light sensor data
   uint16_t r, g, b, c, colorTemp, lux;
@@ -414,12 +432,12 @@ void sendSensorData()
 
   // Array to hold light sensor data
   SensorData lightData[] = {
-      {colorTemp, "esp/ground/light/colorTemp"},
-      {lux, "esp/ground/light/lux"},
-      {r, "esp/ground/light/red"},
-      {g, "esp/ground/light/green"},
-      {b, "esp/ground/light/blue"},
-      {c, "esp/ground/light/clear"}};
+      {static_cast<float>(colorTemp), "esp/ground/light/colorTemp"},
+      {static_cast<float>(lux), "esp/ground/light/lux"},
+      {static_cast<float>(r), "esp/ground/light/red"},
+      {static_cast<float>(g), "esp/ground/light/green"},
+      {static_cast<float>(b), "esp/ground/light/blue"},
+      {static_cast<float>(c), "esp/ground/light/clear"}};
 
   // Send all sensor data
   sendAllSensorData(sensorData, sizeof(sensorData) / sizeof(SensorData));
