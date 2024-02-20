@@ -32,7 +32,6 @@ const userId = localStorage.getItem("id");
 const ChartComponent = ({ chartName }) => {
   //generelll
   const groupId = localStorage.getItem("groupId");
-  const [max_count, setmax_count] = useState(100);
   const currentPage = useSelector((state) => state.currentPage);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -66,6 +65,7 @@ const ChartComponent = ({ chartName }) => {
   const [update_interval, setupdate_interval] = useState(15000);
   const [updateDataInterval, setUpdateDataInterval] = useState(15000);
   const [SettingsState, setSettingsState] = useState(true);
+  const [max_count, setmax_count] = useState(100);
 
   //chart 1 datasets checks
   // prettier-ignore
@@ -220,17 +220,13 @@ const ChartComponent = ({ chartName }) => {
               );
               const dataArr = [];
               for (let thing in response.data) {
-                if (dataArr.length < 100) {
-                  dataArr.push({
-                    time: response.data[thing].time,
-                    value: response.data[thing].value,
-                  });
-                }
+                dataArr.push({
+                  time: response.data[thing].time,
+                  value: response.data[thing].value,
+                });
               }
-
-              const reversedDataArr = dataArr.reverse();
               if (isMounted) {
-                setData(reversedDataArr);
+                setData(dataArr.reverse());
               }
             }
           }
