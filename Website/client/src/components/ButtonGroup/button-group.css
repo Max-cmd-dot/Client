@@ -7,6 +7,7 @@
   width: 120px;
   font-weight: bold;
   font-size: 14px;
+  font-size: calc(0.4em + 1vw);
   cursor: pointer;
   background-color: #13395a;
   color: white;
@@ -24,7 +25,7 @@
 }
 .box-container {
   border-radius: 50px;
-  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.4);
 }
 @media (max-width: 768px) {
   .box-container {

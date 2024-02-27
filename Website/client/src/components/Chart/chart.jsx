@@ -306,6 +306,7 @@ const ChartComponent = ({ chartName }) => {
                           (tempchardata) => tempchardata.value
                         ),
                         borderColor: ["rgba(150, 0, 237, 1)"],
+                        backgroundColor: "rgba(150, 0, 237, 1)", //changes the color of the middle of the circle of the legend
                       },
                       datasetHumidityChecked && {
                         label: "Humidity",
@@ -313,6 +314,7 @@ const ChartComponent = ({ chartName }) => {
                           (humchardata) => humchardata.value
                         ),
                         borderColor: ["rgba(0, 100, 137, 1)"],
+                        backgroundColor: "rgba(0, 100, 137, 1)",
                       },
                       datasetMoistureOneChecked && {
                         label: "Moisture 1",
@@ -320,6 +322,7 @@ const ChartComponent = ({ chartName }) => {
                           (moi1chardata) => moi1chardata.value
                         ),
                         borderColor: ["rgba(100, 100, 137, 1)"],
+                        backgroundColor: "rgba(100, 100, 137, 1)",
                       },
                       datasetLuxChecked && {
                         label: "Lux",
@@ -327,6 +330,7 @@ const ChartComponent = ({ chartName }) => {
                           (luxchardata) => luxchardata.value
                         ),
                         borderColor: ["rgba(0, 0, 237, 1)"],
+                        backgroundColor: "rgba(0, 0, 237, 1)",
                       },
                     ].filter(Boolean),
                   }}
@@ -341,6 +345,9 @@ const ChartComponent = ({ chartName }) => {
                       legend: {
                         display: true,
                         onClick: null,
+                        labels: {
+                          usePointStyle: true,
+                        },
                       },
                     },
 
