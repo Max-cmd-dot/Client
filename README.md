@@ -27,7 +27,7 @@ Automatisierung und Überwachung von Pflanzen.
 
 
 # Bezug
-openWB gibt es unter 
+nexaharvest gibt es unter 
 
 	https://shop.nexaharvest.com
 
