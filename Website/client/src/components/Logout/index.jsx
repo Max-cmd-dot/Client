@@ -25,7 +25,7 @@ const Logout = () => {
       <div className={styles.login_form_container}>
         <div className={styles.left}>
           <form className={styles.form_container}>
-            <h1>Are you sure you want to Log out?</h1>
+            <h1>Log out?</h1>
             <button
               type="button"
               className={styles.green_btn}

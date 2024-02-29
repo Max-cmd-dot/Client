@@ -3,24 +3,53 @@
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  background-color: #0c2340;
 }
 
 .white_btn {
   border: none;
   outline: none;
   padding: 12px 0;
-  background-color: #2d8adb; /* 73a24e*/
+  background-color: white;
+  border-radius: 20px;
+  width: 100px;
+  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
+  margin-right: 20px;
+  color: black;
+  position: absolute;
+  top: 45px;
+  right: 20px;
+  z-index: 2;
+}
+.white_btn:hover {
+  color: #fff;
+  background-color: #0088ff;
+}
+.shopButton,
+.productButton,
+.contactButton {
+  padding: 12px 0;
   border-radius: 20px;
   width: 120px;
   font-weight: bold;
   font-size: 18px;
   cursor: pointer;
   margin-right: 20px;
-  color: black;
+  color: white;
   position: absolute;
-  top: 48px;
-  right: 20px;
+  top: 40px;
   z-index: 2;
+  text-decoration: none;
+}
+.shopButton:hover,
+.productButton:hover,
+.contactButton:hover {
+  color: #0088ff;
+}
+.square {
+  height: 120px;
 }
 
 .logo_and_heading {
@@ -28,68 +57,180 @@
   top: 20px;
   left: 20px;
   display: flex;
-  flex-direction: row; /* Stack the items horizontally */
-  align-items: center; /* Center the items vertically */
-  z-index: 2; /* Ensure the elements are on top of the image */
+  flex-direction: row;
+  align-items: center;
+  z-index: 2;
 }
+
 .logo {
-  width: 100px; /* Adjust as needed */
+  width: 70px;
   height: auto;
   margin-right: 20px;
 }
+
 .pages {
-  width: 400px; /* Adjust as needed */
+  width: 400px;
   height: auto;
   margin-right: 20px;
 }
+
 .project_name {
-  color: #2d8adb;
-  font-size: clamp(2.5rem, 3vw, 3.5rem);
+  color: white;
+  font-size: 2rem;
   text-align: center;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Add a text shadow for emphasis */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   font-family: Orbitron;
 }
+
 .info3words {
-  color: #2d8adb;
+  color: white;
   font-size: clamp(3.5rem, 4vw, 4.5rem);
   font-weight: bold;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
   position: absolute;
-  top: 50%;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
-  font-family: Orbitron; /* Replace with your desired font */
+  font-family: Orbitron;
 }
-@media (max-width: 768px) {
-  /* Adjust as needed */
+
+.menuButton {
+  display: none;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 5;
+  background-color: #0c2340;
+  color: #fff;
+  border: none;
+  padding: 10px;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 100vh;
+  background-color: #0c2340;
+  z-index: 2;
+  transition: 0.3s;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar.open {
+  width: 100%;
+  padding: 20px;
+}
+
+.sidebar div {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
   .logo_and_heading {
-    align-items: flex-start; /* Align the items to the start on small screens */
-    margin-right: 0px;
+    align-items: center;
+    justify-content: center;
+    top: 10px;
   }
 
   .logo {
     width: 50px;
     margin-right: 10px;
   }
+
   .project_name {
     font-size: 21px;
     margin-top: 12px;
   }
+
   .info3words {
     font-size: 50px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
   }
-  .white_btn {
-    font-size: 15px;
-    top: 22px;
-    right: 20px;
-    width: 80px;
-    margin-right: 7px;
+
+  .white_btn,
+  .shopButton,
+  .productButton,
+  .contactButton {
+    display: none;
+  }
+
+  .menuButton {
+    display: block;
+  }
+
+  .sidebar div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  .square {
+    height: 70px;
+  }
+  .white_btn.open,
+  .shopButton.open,
+  .productButton.open,
+  .contactButton.open {
+    display: block;
+    z-index: 10;
+    left: 45%;
+    transform: translateX(-50%);
+  }
+
+  .productButton.open {
+    top: 40%;
+    transform: translateY(-50%);
+  }
+  .shopButton.open {
+    top: 45%;
+    transform: translateY(-50%);
+  }
+  .contactButton.open {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .white_btn.open {
+    top: 57%;
+    transform: translateY(-50%);
   }
 }
+
+@media (min-width: 900px) {
+  .white_btn,
+  .shopButton,
+  .productButton,
+  .contactButton {
+    display: block;
+  }
+  .shopButton {
+    right: 100px;
+  }
+
+  .productButton {
+    right: 230px;
+  }
+
+  .contactButton {
+    right: 360px;
+  }
+  .menuButton {
+    display: none;
+  }
+  .sidebar {
+    display: none;
+  }
+}
+
 .hero_content {
   position: relative;
   z-index: 1;
@@ -117,13 +258,13 @@
   color: white;
   text-align: center;
 }
-.info_section:nth-child(odd) {
+.info_section:nth-child(even) {
   background-color: #0c2340; /* Light gray for odd sections */
 }
 
-.info_section:nth-child(even) {
-  background-color: #151e27; /* Darker gray for even sections */
-  color: white;
+.info_section:nth-child(odd) {
+  background-color: white; /* Darker gray for even sections */
+  color: black;
 }
 .info_container {
   display: flex;
@@ -137,7 +278,7 @@
   padding: 50px 0;
   text-align: center;
   background-color: #f5eec2;
-  color: #2d8adb;
+  color: white;
 }
 
 .contact_section h2 {
@@ -173,7 +314,7 @@
   border: none;
   outline: none;
   padding: 12px 30px;
-  background-color: #2d8adb;
+  background-color: white;
   border-radius: 20px;
   color: black;
   font-size: 18px;
@@ -196,12 +337,12 @@
   transform: translateX(-50%);
   width: 80%;
   height: 2px; /* Adjust the height as desired */
-  background-color: rgba(131, 54, 129);
+  background-color: #0c2340;
 }
 
 .footer a {
   margin-right: 10px;
-  color: #2d8adb;
+  color: #0c2340;
 }
 .custom_list {
   list-style-position: inside;

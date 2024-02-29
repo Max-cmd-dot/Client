@@ -2,6 +2,7 @@ import { Link, useHistory } from "react-router-dom";
 import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import image1 from "../images/sensor2.png";
+import { FaBars } from "react-icons/fa";
 //images of pages
 import dashboard from "../images/pages/dashboard.png";
 import actions from "../images/pages/actions.png";
@@ -13,6 +14,7 @@ import { changeRoute } from "../../reduxStore";
 const Landing = () => {
   const [buttonText, setButtonText] = useState("Contact");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const handlegoback = () => {
     changeRoute("/");
     //redirecting to "/" page
@@ -34,7 +36,7 @@ const Landing = () => {
       return (
         <button
           type="button"
-          className={styles.white_btn}
+          className={`${styles.white_btn} ${sidebarOpen ? styles.open : ""}`}
           onClick={handlegoback}
         >
           Go Back
@@ -43,8 +45,11 @@ const Landing = () => {
     } else {
       return (
         <Link to="/login">
-          <button type="button" className={styles.white_btn}>
-            Log in
+          <button
+            type="button"
+            className={`${styles.white_btn} ${sidebarOpen ? styles.open : ""}`}
+          >
+            LOG IN
           </button>
         </Link>
       );
@@ -58,16 +63,51 @@ const Landing = () => {
         rel="stylesheet"
       ></link>
       <div className={styles.hero_section}>
-        <div className="Button">{renderButton()}</div>
         <div className={styles.logo_and_heading}>
           <img src={logo} alt="Logo" className={styles.logo} />
           <h1 className={styles.project_name}>Nexa Harvest</h1>
         </div>
+        <button
+          className={`${styles.menuButton} ${sidebarOpen ? styles.open : ""}`}
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
+          <FaBars />
+        </button>
+        <div>
+          <Link
+            to="/shop"
+            className={`${styles.shopButton} ${sidebarOpen ? styles.open : ""}`}
+          >
+            SHOP
+          </Link>
+          <Link
+            to="/product"
+            className={`${styles.productButton} ${
+              sidebarOpen ? styles.open : ""
+            }`}
+          >
+            PRODUCT
+          </Link>
+          <Link
+            to="/contact"
+            className={`${styles.contactButton} ${
+              sidebarOpen ? styles.open : ""
+            }`}
+          >
+            CONTACT
+          </Link>
+          <div className="Button">{renderButton()}</div>
+        </div>
+        <div
+          className={`${styles.sidebar} ${sidebarOpen ? styles.open : ""}`}
+        ></div>
+        <div className={styles.square}></div>
         <div className={styles.hero_content}>
-          <h1 className={styles.info3words}>Future, Efficiency, Planting</h1>
+          <h1 className={styles.info3words}>Efficient, Futuristic Planting</h1>
           <img src={image1} alt="Hero" className={styles.img} />
         </div>
       </div>
+
       <section className={styles.info_section}>
         <h2>OUR MISSION</h2>
         <p>
@@ -161,149 +201,4 @@ const Landing = () => {
     </div>
   );
 };
-/*
-
-.info_text {
-  width: 40%;
-  padding: 20px;
-  text-align: left;
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #39395f;
-  color: #f5eec2;
-  font-size: 18px; 
-  line-height: 1.5;
-  margin-bottom: 70px; 
-}
-
-.info_text.vorteile {
-  width: 40%; 
-  height: 250px; 
-  padding: 20px;
-  text-align: left;
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #39395f;
-  color: #f5eec2;
-  margin-left: auto; 
-}
-
-.info_text h2 {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  text-align: center;
-  color: #2d8adb;
-}
-
-.info_text p,
-.info_text ul {
-  font-size: 20px;
-}
-
-.info_text ul {
-  margin-left: 20px;
-}
-
-.info_text li {
-  margin-bottom: 10px;
-}
-
-.info_text {
-  width: 40%;
-  padding: 20px;
-  text-align: left;
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #39395f;
-  color: #f5eec2;
-  font-size: 18px; 
-  margin-bottom: 70px; 
-}
-
-.info_text.vorteile {
-  width: 40%; 
-  height: 250px; 
-  padding: 20px;
-  text-align: left;
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #39395f;
-  color: #f5eec2;
-  margin-left: auto; 
-}
-
-.info_text h2 {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  text-align: center;
-  color: #2d8adb;
-}
-
-.info_text p,
-.info_text ul {
-  font-size: 20px;
-}
-
-.info_text ul {
-  margin-left: 20px;
-}
-
-.info_text li {
-  margin-bottom: 10px;
-}
-<div className={styles.info_section}>
-        <div className={styles.info_container}>
-          <div className={styles.info_text}>
-            <h2>Was ist Nexa Harvest?</h2>
-            <p>
-              Nexa Harvest ist eine umfassende IoT-Lösung, die speziell
-              entwickelt wurde, um Sensordaten zu erfassen, zu überwachen und zu
-              analysieren. Durch die Integration von Sensoren, einer
-              leistungsstarken Mikrocontroller-Plattform und Cloud-Konnektivität
-              ermöglicht unser System die nahtlose Erfassung und Verarbeitung
-              von Daten in Echtzeit.
-            </p>
-          </div>
-          <div className={`${styles.info_text} ${styles.vorteile}`}>
-            <h2>Vorteile von Nexa Harvest</h2>
-            <ul>
-              <li>Echtzeitüberwachung und -steuerung</li>
-              <li>Umfassende Datenanalyse</li>
-              <li>Skalierbare Architektur</li>
-              <li>Sichere und zuverlässige Kommunikation</li>
-            </ul>
-          </div>
-          <div className={styles.info_text}>
-            <h2>Anwendungsbereiche</h2>
-            <ul>
-              <li>Smart Home</li>
-              <li>Industrie 4.0</li>
-              <li>Logistik und Lieferkette</li>
-              <li>Umweltüberwachung</li>
-            </ul>
-          </div>
-          <div className={`${styles.info_text} ${styles.contact_box}`}>
-            <h2>Bereit, die Vorteile von Nexa Harvest zu nutzen?</h2>
-            <p>
-              Kontaktieren Sie uns noch heute, um mehr über unsere IoT-Lösung zu
-              erfahren oder eine maßgeschneiderte Demo anzufordern. Steigern Sie
-              Ihre Effizienz, verbessern Sie Ihre Prozesse und bleiben Sie der
-              Konkurrenz einen Schritt voraus.
-            </p>
-            <a
-              href="mailto:your-email@example.com"
-              className={styles.contact_btn}
-            >
-              Kontakt
-            </a>
-          </div>
-        </div>
-      </div>
-*/
 export default Landing;

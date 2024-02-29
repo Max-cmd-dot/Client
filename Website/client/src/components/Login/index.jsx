@@ -45,7 +45,7 @@ const Login = () => {
       <div className={styles.login_form_container}>
         <div className={styles.left}>
           <form className={styles.form_container} onSubmit={handleSubmit}>
-            <h1>Log in to your Account</h1>
+            <h1>Log in</h1>
             <input
               type="email"
               placeholder="Email"
