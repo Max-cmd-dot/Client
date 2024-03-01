@@ -74,12 +74,12 @@ const Landing = () => {
           <FaBars />
         </button>
         <div>
-          <Link
-            to="/shop"
+          <a
+            href="https://shop.nexaharvest.com"
             className={`${styles.shopButton} ${sidebarOpen ? styles.open : ""}`}
           >
             SHOP
-          </Link>
+          </a>
           <Link
             to="/product"
             className={`${styles.productButton} ${
