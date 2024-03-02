@@ -65,7 +65,7 @@ const Landing = () => {
       <div className={styles.hero_section}>
         <div className={styles.logo_and_heading}>
           <img src={logo} alt="Logo" className={styles.logo} />
-          <h1 className={styles.project_name}>Nexa Harvest</h1>
+          <h1 className={styles.project_name}>Nexaharvest</h1>
         </div>
         <button
           className={`${styles.menuButton} ${sidebarOpen ? styles.open : ""}`}
