@@ -44,10 +44,10 @@ app.use("/api/hardware", hardwareRoutes);
 app.use("/api/alarms", alarmsRoutes);
 
 // for routing through backend, and also for testing
-app.get("/", (res) => {
+app.get("/", (req, res) => {
   res.send("Running...");
 });
-app.get("/api", (res) => {
+app.get("/api", (req, res) => {
   res.send("Running API...");
 });
 /**
