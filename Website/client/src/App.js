@@ -22,6 +22,7 @@ import Actions from "./components/Actions";
 import Devices from "./components/Devices";
 import { Outlet } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
 import ServerError from "./components/ServerError/ServerError";
 /**
@@ -139,6 +140,7 @@ function App() {
         />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      <SpeedInsights />
       <Analytics />
     </div>
   );
