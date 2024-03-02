@@ -57,12 +57,7 @@ router.post("/notifications/ignore", async (req, res) => {
 });
 router.get("/latestdata/github", async (req, res) => {
   fetch(
-    "https://api.github.com/repos/Max-cmd-dot/BLL/commits?sha=main&per_page=10",
-    {
-      headers: {
-        Authorization: `token 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`,
-      },
-    }
+    "https://api.github.com/repos/Max-cmd-dot/BLL/commits?sha=main&per_page=10"
   )
     .then((response) => response.json())
     .then((data) => {
