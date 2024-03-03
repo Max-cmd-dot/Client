@@ -28,13 +28,13 @@ More information at https://nexaharvest.com
 Automation and monitoring of plants. With this Hard and software you can collect percisely all sensor Data view it from anywhere and analyse it. Furthermore you can Set alerts and much more!
 
 ## Reference
-Nexaharvest is available at
+Nexaharvest Boxes are available at
 
 	https://shop.nexaharvest.com
 
 ## Installation
 
-Pre-installed with ready-made modules.
+Pre-installed with ready-made modules. So there is no installation needed! https://shop.nexaharvest.com
 
 **Installation of the software on the hardware (ESP32).**
 1. First, download the required files from this repository. You can find them under Scripts/Hardware/OTA_esp32.
@@ -45,8 +45,9 @@ Pre-installed with ready-made modules.
 2. Open two terminals.
 3. In the first one, navigate to the Website/Client directory using `cd`, then execute `npm install`.
 4. In the second one, navigate to the Website/server directory, and also execute `npm install`.
-5. In both terminals, run `npm run start`.
-6. Now, a window should appear with the interface as shown above.
+5. then in both folders please edit the .env files as you need them
+6. In both terminals, run `npm run start`.
+7. Now, a window should appear with the interface as shown above.
 
 ## Disclaimer
 Work involves low voltage as well as 230V. This should only be done by trained personnel. The guide is without guarantee, and any actions are at your own risk.
