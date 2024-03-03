@@ -1,5 +1,10 @@
 # Nexaharvest
-
+## Contents
+ - [How it looks](#how-it-looks)
+ - [Purpose](#purpose)
+ - [Reference](#reference)
+ - [Installation](#installation)
+ - [Disclaimer](#disclaimer)
 
 ## How it looks:
 | Notifications | History |
@@ -10,47 +15,40 @@
 |:---------:|:-------:|
 | <img width="1466" alt="dashboard" src="https://github.com/Max-cmd-dot/Nexaharvest/assets/60576883/865555bb-916a-4d9d-886e-1ae8963e0fab"> | <img width="1466" alt="actions" src="https://github.com/Max-cmd-dot/Nexaharvest/assets/60576883/e402d42f-b2f3-4158-8e26-e13a2a1ca20e"> |
 
+The software is freely available to everyone, see GPLv3 conditions.
 
+Support is appreciated!
+Whether in the form of code or through donations.
+Please donate to max.nobis@nexaharvest.com
 
+Inquiries for support contracts to max.nobis@nexaharvest.com
+More information at https://nexaharvest.com
 
+## Purpose
+Automation and monitoring of plants.
 
-Die Software steht frei für jeden zur Verfügung, siehe GPLv3 Bedingungen.
-
-Unterstützung ist gerne gesehen!
-Sei es in Form von Code oder durch Spenden
-Spenden bitte an max.nobis@nexaharvest.com
-
-Anfragen für Supportverträge an max.nobis@nexaharvest.com
-Weitere Infos unter https://nexaharvest.com
-
-## Haftungsausschluss
-Es wird mit Kleinspannung aber auch 230V beim Anschluss der EVSE gearbeitet. 
-Dies darf nur geschultes Personal. Die Anleitung ist ohne Gewähr und jegliches Handeln basiert auf eigene Gefahr.
-Eine Fehlkonfiguration der Software kann höchstens ein nicht geladenes Auto bedeuten.
-Falsch zusammengebaute Hardware kann lebensgefährlich sein. Im Zweifel diesen Part von einem Elektriker durchführen lassen.
-Keine Gewährleistung für die Software - use at your own RISK!
-
-## Wofür?
-Automatisierung und Überwachung von Pflanzen.
-
-
-
-
-
-## Bezug
-nexaharvest gibt es unter 
+## Reference
+Nexaharvest is available at
 
 	https://shop.nexaharvest.com
 
-
-
 ## Installation
 
+Pre-installed with ready-made modules.
 
-Bei fertigen Modulen vorinstalliert.
+**Installation of the software on the hardware (ESP32).**
+1. First, download the required files from this repository. You can find them under Scripts/Hardware/OTA_esp32.
+2. To install the software on the ESP, you can use PlatformIO, for example.
 
+**Installation of the web server.**
+1. Download the files here as well.
+2. Open two terminals.
+3. In the first one, navigate to the Website/Client directory using `cd`, then execute `npm install`.
+4. In the second one, navigate to the Website/server directory, and also execute `npm install`.
+5. In both terminals, run `npm run start`.
+6. Now, a window should appear with the interface as shown above.
 
-
-Installation der Software von der Hardware
-
-Installation der Cloud
+## Disclaimer
+Work involves low voltage as well as 230V. This should only be done by trained personnel. The guide is without guarantee, and any actions are at your own risk.
+Misconfiguration of the software can at most result in a dying plant. Incorrectly assembled hardware can be life-threatening. In case of doubt, have this part performed by an electrician.
+No warranty for the software - use at your own risk!
