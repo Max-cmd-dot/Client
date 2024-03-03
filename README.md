@@ -25,7 +25,7 @@ Inquiries for support contracts to max.nobis@nexaharvest.com
 More information at https://nexaharvest.com
 
 ## Purpose
-Automation and monitoring of plants.
+Automation and monitoring of plants. With this Hard and software you can collect percisely all sensor Data view it from anywhere and analyse it. Furthermore you can Set alerts and much more!
 
 ## Reference
 Nexaharvest is available at
