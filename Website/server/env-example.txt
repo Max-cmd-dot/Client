@@ -1,3 +1,4 @@
+#rename this file to .env and change the values as you need them
 REACT_APP_API_URL=https://bll-backend.vercel.app #your backend api point
 JWTPRIVATEKEY=janjbnsdiasdajsndjan #ur pwt key //just use a random one like given
 SALT=1982918 #just a random number for the auth. you can use this example
