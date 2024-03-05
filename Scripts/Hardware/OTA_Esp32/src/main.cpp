@@ -15,9 +15,9 @@
 
 // Define WiFiManager Object
 WiFiManager wm;
-
+String version = "1.0.4";
 // esp32fota esp32fota("<Type of Firme for this device>", <this version>, <validate signature>);
-esp32FOTA esp32FOTAmy("esp32-fota-http", "1.0.3", false);
+esp32FOTA esp32FOTAmy("esp32-fota-http", version, false);
 unsigned long lastHttpResponseTime = 0;
 unsigned long httpResponseInterval = 5000; // 5 seconds
 
@@ -111,6 +111,8 @@ void makeRequest()
     http.begin(String(hostBackendHardware)); // Specify the URL
     http.addHeader("Content-Type", "application/json");
     http.addHeader("deviceId", String(deviceId));
+    http.addHeader("updateVersion", version);
+    http.addHeader("lastactive", String(millis())); // convert millis() to String and added to the header
 
     httpCode = http.GET(); // Make the request
     String response = http.getString();
@@ -157,17 +159,17 @@ void WifiManager()
   delay(10);
   wm.setTimeout(60); // 1 minute
   wm.setMenu(wmMenuItems);
-  wm.setTitle("Nexa Harvest");               // brand name
+  wm.setTitle("Nexaharvest");                // brand name
   int buttonState = digitalRead(BUTTON_PIN); // Read the state of the button
 
   Serial.println("[Wifi] Resetting Wifi-Settings. Buttonstate:" + String(buttonState));
   if (buttonState == LOW)
-  {                                                    // If the button is pressed (connects the pin to GND)
-    wm.startConfigPortal("ESP32 Network", "password"); // Start the
+  {                                              // If the button is pressed (connects the pin to GND)
+    wm.startConfigPortal("NexaBox", "password"); // Start the
   }
   else
   {
-    if (!wm.autoConnect("BlackPrototyp", "password")) // brand name
+    if (!wm.autoConnect("NexaBox", "password")) // brand name
     {
       Serial.println("[Wifi] failed to connect and hit timeout");
       delay(3000);
@@ -246,6 +248,7 @@ void setup()
 
   // call the wifi manager
   WifiManager();
+
   // check for update
 
   // set update things
@@ -376,7 +379,6 @@ void processHttpResponse()
   http.end();
 }
 // Structure to hold sensor data
-
 struct SensorData
 {
   float value;
