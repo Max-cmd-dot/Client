@@ -31,6 +31,7 @@ router.get("/", async (req, res) => {
   }
 });
 router.get("/update", async (req, res) => {
+  console.log(`Update firmware.bin from ${__dirname}`);
   res.json({
     type: "esp32-fota-http",
     version: "1.0.4",
@@ -38,6 +39,7 @@ router.get("/update", async (req, res) => {
   });
 });
 router.get("/download", async (req, res) => {
+  console.log(`Download firmware.bin from ${__dirname}`);
   const utilsDir = path.join(
     __dirname,
     "..",

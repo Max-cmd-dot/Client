@@ -12,17 +12,13 @@
 #include <SPI.h>
 #include <TFT_eSPI.h> // Hardware-specific library
 
-// multitask
-
-TaskHandle_t Task1;
-TaskHandle_t Task2;
 /*Change to your screen resolution*/
 static const uint16_t screenWidth = 320;
 static const uint16_t screenHeight = 240;
 
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[screenWidth * screenHeight / 10];
-TFT_eSPI tft = TFT_eSPI(screenHeight, screenWidth); /* TFT instance */
+TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
 
 // Define WiFiManager Object
 WiFiManager wm;
@@ -34,9 +30,6 @@ unsigned long httpResponseInterval = 5000; // 5 seconds
 
 unsigned long lastSensorDataTime = 0;
 unsigned long sensorDataInterval = 5000; // 5 seconds
-
-unsigned long lastDisplayUpdateTime = 0;
-const unsigned long displayUpdateInterval = 5; // Update display every 5ms
 // unsigned long sensorDataInterval = 60000; // 1 minute
 const char *manifest_url = "http://192.168.178.121:8080/api/hardware/update";
 // const char *manifest_url = "https://backend.nexaharvest.com/api/hardware/update";
@@ -98,15 +91,14 @@ const int ledStatusOnline = 12;
 // Define the API key
 String apiKey, hostMongo, url, group;
 
-// This is the file name used to store the calibration data
-// You can change this to create new calibration files.
-// The SPIFFS file name must start with "/".
-#define CALIBRATION_FILE "/TouchCalData1"
-
-// Set REPEAT_CAL to true instead of false to run calibration
-// again, otherwise it will only be done once.
-// Repeat calibration if you change the screen rotation.
-#define REPEAT_CAL false
+#if LV_USE_LOG != 0
+/* Serial debugging */
+void my_print(const char *buf)
+{
+  Serial.printf(buf);
+  Serial.flush();
+}
+#endif
 
 /* Display flushing */
 void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p)
@@ -127,7 +119,7 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 {
   uint16_t touchX = 0, touchY = 0;
 
-  bool touched = tft.getTouch(&touchX, &touchY, 400);
+  bool touched = false; // tft.getTouch( &touchX, &touchY, 600 );
 
   if (!touched)
   {
@@ -140,79 +132,12 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
     /*Set the coordinates*/
     data->point.x = touchX;
     data->point.y = touchY;
-  }
-}
-/*Calibrate the touchpad*/
-void touch_calibrate()
-{
-  uint16_t calData[5];
-  uint8_t calDataOK = 0;
 
-  // check file system exists
-  if (!SPIFFS.begin())
-  {
-    Serial.println("formatting file system");
-    SPIFFS.format();
-    SPIFFS.begin();
-  }
+    Serial.print("Data x ");
+    Serial.println(touchX);
 
-  // check if calibration file exists and size is correct
-  if (SPIFFS.exists(CALIBRATION_FILE))
-  {
-    if (REPEAT_CAL)
-    {
-      // Delete if we want to re-calibrate
-      SPIFFS.remove(CALIBRATION_FILE);
-    }
-    else
-    {
-      File f = SPIFFS.open(CALIBRATION_FILE, "r");
-      if (f)
-      {
-        if (f.readBytes((char *)calData, 14) == 14)
-          calDataOK = 1;
-        f.close();
-      }
-    }
-  }
-
-  if (calDataOK && !REPEAT_CAL)
-  {
-    // calibration data valid
-    tft.setTouch(calData);
-  }
-  else
-  {
-    // data not valid so recalibrate
-    tft.fillScreen(TFT_BLACK);
-    tft.setCursor(20, 0);
-    tft.setTextFont(2);
-    tft.setTextSize(1);
-    tft.setTextColor(TFT_WHITE, TFT_BLACK);
-
-    tft.println("Touch corners as indicated");
-
-    tft.setTextFont(1);
-    tft.println();
-
-    if (REPEAT_CAL)
-    {
-      tft.setTextColor(TFT_RED, TFT_BLACK);
-      tft.println("Set REPEAT_CAL to false to stop this running again!");
-    }
-
-    tft.calibrateTouch(calData, TFT_MAGENTA, TFT_BLACK, 15);
-
-    tft.setTextColor(TFT_GREEN, TFT_BLACK);
-    tft.println("Calibration complete!");
-
-    // store data
-    File f = SPIFFS.open(CALIBRATION_FILE, "w");
-    if (f)
-    {
-      f.write((const unsigned char *)calData, 14);
-      f.close();
-    }
+    Serial.print("Data y ");
+    Serial.println(touchY);
   }
 }
 // Function to initialize NTP
@@ -279,7 +204,7 @@ std::vector<const char *> wmMenuItems = {"wifi", "info", "param", "exit"}; //"er
 
 void WifiManager()
 {
-
+  tft.println("[Wifi] Starting Wifi-Manager");
   // Explicitly set WiFi mode
   WiFi.mode(WIFI_STA);
   wm.setTimeout(60); // 1 minute
@@ -288,12 +213,8 @@ void WifiManager()
   int buttonState = digitalRead(BUTTON_PIN); // Read the state of the button
   Serial.println("[Wifi] Resetting Wifi-Settings. Buttonstate:" + String(buttonState));
   if (buttonState == LOW)
-  {                                                     // If the button is pressed (connects the pin to GND)
-    wm.startConfigPortal("NexaharvestBox", "password"); // Start the
-    tft.fillScreen(TFT_BLACK);
-    //  write at the top of the screen
-    tft.setCursor(0, 0);
-    tft.println("[System] Wifi-Manager please connect with your phone to the Wifi 'NexaharvestBox'!");
+  {                                              // If the button is pressed (connects the pin to GND)
+    wm.startConfigPortal("NexaBox", "password"); // Start the
   }
   else
   {
@@ -320,6 +241,109 @@ void WifiManager()
   Serial.print("[Wifi] MAC address: ");
   Serial.println(WiFi.macAddress());
 }
+void setup()
+{
+  String LVGL_Arduino = "Hello Arduino! ";
+  LVGL_Arduino += String('V') + lv_version_major() + "." + lv_version_minor() + "." + lv_version_patch();
+
+  Serial.println(LVGL_Arduino);
+  Serial.println("I am LVGL_Arduino");
+
+  lv_init();
+
+  tft.begin();        /* TFT init */
+  tft.setRotation(3); /* Landscape orientation, flipped */
+
+  lv_disp_draw_buf_init(&draw_buf, buf, NULL, screenWidth * screenHeight / 10);
+
+  /*Initialize the display*/
+  static lv_disp_drv_t disp_drv;
+  lv_disp_drv_init(&disp_drv);
+  /*Change the following line to your display resolution*/
+  disp_drv.hor_res = screenWidth;
+  disp_drv.ver_res = screenHeight;
+  disp_drv.flush_cb = my_disp_flush;
+  disp_drv.draw_buf = &draw_buf;
+  lv_disp_drv_register(&disp_drv);
+
+  /*Initialize the (dummy) input device driver*/
+  static lv_indev_drv_t indev_drv;
+  lv_indev_drv_init(&indev_drv);
+  indev_drv.type = LV_INDEV_TYPE_POINTER;
+  indev_drv.read_cb = my_touchpad_read;
+  lv_indev_drv_register(&indev_drv);
+
+  ui_init();
+  // Initialize the LED pins as output and set them to LOW
+  pinMode(relay_1, OUTPUT);
+  digitalWrite(relay_1, HIGH);
+
+  pinMode(relay_2, OUTPUT);
+  digitalWrite(relay_2, HIGH);
+
+  pinMode(relay_3, OUTPUT);
+  digitalWrite(relay_3, HIGH);
+
+  pinMode(relay_4, OUTPUT);
+  digitalWrite(relay_4, HIGH);
+
+  pinMode(ledStatusError, OUTPUT);
+  digitalWrite(ledStatusError, LOW);
+
+  pinMode(ledStatusOnline, OUTPUT);
+  digitalWrite(ledStatusOnline, LOW);
+  // reset button
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
+
+  // Initialize I2C communication
+  Wire.begin();
+  tft.println("[System] I2C communication started");
+
+  // Check TCS34725 sensor connection
+  if (!tcs.begin())
+  {
+    Serial.println("[Wiring] Failed to connect to the TCS34725 sensor. Please check the wiring.");
+    tft.println("[Wiring] Failed to connect to the TCS34725 sensor. Please check the wiring.");
+    digitalWrite(ledStatusError, HIGH);
+    while (1)
+      ; // Halt the program if the sensor connection fails
+  }
+
+  // Check BME680 sensor connection
+  if (!bme.begin())
+  {
+    Serial.println("[Wiring] Failed to connect to the BME680 sensor. Please check the wiring.");
+    tft.println("[Wiring] Failed to connect to the BME680 sensor. Please check the wiring.");
+    digitalWrite(ledStatusError, HIGH);
+    while (1)
+      ; // Halt the program if the sensor connection fails
+  }
+  // Set up oversampling and filter initialization
+  bme.setTemperatureOversampling(BME680_OS_8X);
+  bme.setHumidityOversampling(BME680_OS_2X);
+  bme.setPressureOversampling(BME680_OS_4X);
+  bme.setIIRFilterSize(BME680_FILTER_SIZE_3);
+  bme.setGasHeater(320, 150); // 320*C for 150 ms
+
+  // call the wifi manager
+  WifiManager();
+  tft.fillScreen(TFT_BLACK);
+  // write at the top of the screen
+  tft.setCursor(0, 0);
+  tft.println("[System] Wifi-Manager finished");
+  // check for update
+
+  // set update things
+  esp32FOTAmy.setManifestURL(manifest_url);
+  esp32FOTAmy.printConfig();
+
+  // init and get the time
+  initializeNTP();
+
+  // get the mongodb credentials
+  makeRequest();
+}
+
 void sendToServer(String topic, String group, String value)
 {
   struct tm timeinfo;
@@ -504,189 +528,41 @@ void sendSensorData()
   sendAllSensorData(lightData, sizeof(lightData) / sizeof(SensorData));
 }
 
-// Task1code: blinks an LED every 1000 ms
-void codeForTask1(void *pvParameters)
-{
-  for (;;)
-  {
-    Serial.println("checking for update");
-    // Check for updates
-    bool updatedNeeded = esp32FOTAmy.execHTTPcheck();
-    if (updatedNeeded)
-    {
-      esp32FOTAmy.execOTA();
-    }
-    // Add some delay to allow other tasks to run
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-  }
-}
-
-// Task2code: blinks an LED every 700 ms
-void codeForTask2(void *pvParameters)
-{
-  Serial.print("Task2 running still on core ");
-  Serial.println(xPortGetCoreID());
-  for (;;)
-  {
-    Serial.print("Task2 running still on core ");
-    Serial.println(xPortGetCoreID());
-    // Get current time
-    unsigned long currentMillis = millis();
-    // Process HTTP responses
-    if (currentMillis - lastHttpResponseTime >= httpResponseInterval)
-    {
-      lastHttpResponseTime = currentMillis;
-      printf("[System loop] Processing http response...\n");
-      processHttpResponse();
-      // Add some delay to allow other tasks to run
-      vTaskDelay(10 / portTICK_PERIOD_MS);
-    }
-
-    // Send sensor data
-    if (currentMillis - lastSensorDataTime >= sensorDataInterval)
-    {
-      lastSensorDataTime = currentMillis;
-      printf("[System loop] Sending data to server...\n");
-      sendSensorData();
-      printf("[System loop] Data sent to server\n");
-      // Add some delay to allow other tasks to run
-      vTaskDelay(10 / portTICK_PERIOD_MS);
-    }
-  }
-}
-
-void setup()
-{
-  Serial.begin(115200);
-  // Initialize the LED pins as output and set them to LOW
-  pinMode(relay_1, OUTPUT);
-  digitalWrite(relay_1, HIGH);
-
-  pinMode(relay_2, OUTPUT);
-  digitalWrite(relay_2, HIGH);
-
-  pinMode(relay_3, OUTPUT);
-  digitalWrite(relay_3, HIGH);
-
-  pinMode(relay_4, OUTPUT);
-  digitalWrite(relay_4, HIGH);
-
-  pinMode(ledStatusError, OUTPUT);
-  digitalWrite(ledStatusError, LOW);
-
-  pinMode(ledStatusOnline, OUTPUT);
-  digitalWrite(ledStatusOnline, LOW);
-  // reset button
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
-
-  // Initialize I2C communication
-  Wire.begin();
-  // tft.println("[System] I2C communication started");
-  // Check BME680 sensor connection
-  if (!bme.begin())
-  {
-    Serial.println("[Wiring] Failed to connect to the BME680 sensor. Please check the wiring.");
-    // tft.println("[Wiring] Failed to connect to the BME680 sensor. Please check the wiring.");
-    digitalWrite(ledStatusError, HIGH);
-    while (1)
-      ; // Halt the program if the sensor connection fails
-  }
-  // Check TCS34725 sensor connection
-  if (!tcs.begin())
-  {
-    Serial.println("[Wiring] Failed to connect to the TCS34725 sensor. Please check the wiring.");
-    // tft.println("[Wiring] Failed to connect to the TCS34725 sensor. Please check the wiring.");
-    digitalWrite(ledStatusError, HIGH);
-    while (1)
-      ; // Halt the program if the sensor connection fails
-  }
-
-  // Set up oversampling and filter initialization
-  bme.setTemperatureOversampling(BME680_OS_8X);
-  bme.setHumidityOversampling(BME680_OS_2X);
-  bme.setPressureOversampling(BME680_OS_4X);
-  bme.setIIRFilterSize(BME680_FILTER_SIZE_3);
-  bme.setGasHeater(320, 150); // 320*C for 150 ms
-  // Display start
-  tft.begin();        /* TFT init */
-  tft.setRotation(1); /* Landscape orientation, flipped */
-  // Calibrate the touch screen and retrieve the scaling factors
-  // Clear the screen
-  tft.fillScreen(TFT_BLACK);
-  touch_calibrate();
-  Serial.println("Setup done");
-
-  lv_init();
-  lv_disp_draw_buf_init(&draw_buf, buf, NULL, screenWidth * screenHeight / 10);
-
-  /*Initialize the display*/
-  static lv_disp_drv_t disp_drv;
-  lv_disp_drv_init(&disp_drv);
-  /*Change the following line to your display resolution*/
-  disp_drv.hor_res = screenWidth;
-  disp_drv.ver_res = screenHeight;
-  disp_drv.flush_cb = my_disp_flush;
-  disp_drv.draw_buf = &draw_buf;
-  lv_disp_drv_register(&disp_drv);
-
-  /*Initialize the (dummy) input device driver*/
-  static lv_indev_drv_t indev_drv;
-  lv_indev_drv_init(&indev_drv);
-  indev_drv.type = LV_INDEV_TYPE_POINTER;
-  indev_drv.read_cb = my_touchpad_read;
-  lv_indev_drv_register(&indev_drv);
-
-  ui_init();
-
-  // call the wifi manager
-  WifiManager();
-  // tft.fillScreen(TFT_BLACK);
-  //  write at the top of the screen
-  // tft.setCursor(0, 0);
-  // tft.println("[System] Wifi-Manager finished");
-  //  check for update
-
-  // set update things
-  esp32FOTAmy.setManifestURL(manifest_url);
-  esp32FOTAmy.printConfig();
-
-  // init and get the time
-  initializeNTP();
-
-  // get the mongodb credentials
-  makeRequest();
-
-  Serial.println("Starting task 1");
-  xTaskCreatePinnedToCore(
-      codeForTask1, /* Task function. */
-      "Task1",      /* name of task. */
-      5000,         /* Stack size of task */
-      NULL,         /* parameter of the task */
-      1,            /* priority of the task */
-      &Task1,       /* Task handle to keep track of created task */
-      1);           /* Core */
-  delay(500);
-
-  xTaskCreatePinnedToCore(
-      codeForTask2, /* Task function. */
-      "Task2",      /* name of task. */
-      5000,         /* Stack size of task */
-      NULL,         /* parameter of the task */
-      1,            /* priority of the task */
-      &Task2,       /* Task handle to keep track of created task */
-      0);
-  /* Core */ /* Core */
-  lv_label_set_text(ui_LabelLog, "Sucess");
-}
+unsigned long lastDisplayUpdateTime = 0;
+const unsigned long displayUpdateInterval = 5; // Update display every 5ms
 
 void loop()
 {
-  // Get current time
   unsigned long currentMillis = millis();
+
   // Update the display every 5ms
   if (currentMillis - lastDisplayUpdateTime >= displayUpdateInterval)
   {
     lastDisplayUpdateTime = currentMillis;
     lv_timer_handler(); /* let the GUI do its work */
+  }
+
+  // Check for updates
+  bool updatedNeeded = esp32FOTAmy.execHTTPcheck();
+  if (updatedNeeded)
+  {
+    esp32FOTAmy.execOTA();
+  }
+
+  // Process HTTP responses
+  if (currentMillis - lastHttpResponseTime >= httpResponseInterval)
+  {
+    lastHttpResponseTime = currentMillis;
+    printf("[System loop] Processing http response...\n");
+    processHttpResponse();
+  }
+
+  // Send sensor data
+  if (currentMillis - lastSensorDataTime >= sensorDataInterval)
+  {
+    lastSensorDataTime = currentMillis;
+    printf("[System loop] Sending data to server...\n");
+    sendSensorData();
+    printf("[System loop] Data sent to server\n");
   }
 }
