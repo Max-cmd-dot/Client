@@ -7,7 +7,7 @@
 #include <Adafruit_BME680.h>
 // lvgl
 #include <ui.h>
-
+#include "ui_helpers.h"
 // display
 #include <SPI.h>
 #include <TFT_eSPI.h> // Hardware-specific library
@@ -66,9 +66,6 @@ int value = 0;
 #define GROUNDSENSOR_PIN 35
 #define GROUNDSENSOR_PIN2 34
 
-// define button pin
-#define BUTTON_PIN 5
-
 // define sensor variables
 float temperature = 0;
 float humidity = 0;
@@ -85,15 +82,17 @@ float co2Equivalent = 0;
 float breathVocEquivalent = 0;
 float gasPercentage = 0;
 
-// Define the LED pins
+// Define the relay pins
 const int relay_1 = 27;
 const int relay_2 = 14;
 const int relay_3 = 16;
 const int relay_4 = 17;
 
-// status led
-const int ledStatusError = 13;
-const int ledStatusOnline = 12;
+// Given maximum limits
+const float Temp_max = 40.0;
+const float Hum_max = 100.0;
+const float Moisture_max = 2700.0;
+const float Lux_max = 20000.0;
 
 // Define the API key
 String apiKey, hostMongo, url, group;
@@ -102,6 +101,8 @@ String apiKey, hostMongo, url, group;
 // You can change this to create new calibration files.
 // The SPIFFS file name must start with "/".
 #define CALIBRATION_FILE "/TouchCalData1"
+
+const char *LOG_FILE = "/Log Text"; // File name
 
 // Set REPEAT_CAL to true instead of false to run calibration
 // again, otherwise it will only be done once.
@@ -255,7 +256,6 @@ void makeRequest()
       {
         Serial.print("deserializeJson() failed: ");
         Serial.println(error.f_str());
-        digitalWrite(ledStatusError, HIGH);
         return;
       }
 
@@ -268,7 +268,6 @@ void makeRequest()
     {
       Serial.println("[Backend Hardware] Error on HTTP request: " + String(http.errorToString(httpCode)));
       retries++;
-      digitalWrite(ledStatusError, HIGH);
       delay(1000); // wait for a second before retrying
     }
 
@@ -284,33 +283,24 @@ void WifiManager()
   WiFi.mode(WIFI_STA);
   wm.setTimeout(60); // 1 minute
   wm.setMenu(wmMenuItems);
-  wm.setTitle("Nexaharvest");                // brand name
-  int buttonState = digitalRead(BUTTON_PIN); // Read the state of the button
-  Serial.println("[Wifi] Resetting Wifi-Settings. Buttonstate:" + String(buttonState));
-  if (buttonState == LOW)
-  {                                                     // If the button is pressed (connects the pin to GND)
-    wm.startConfigPortal("NexaharvestBox", "password"); // Start the
-    tft.fillScreen(TFT_BLACK);
-    //  write at the top of the screen
-    tft.setCursor(0, 0);
-    tft.println("[System] Wifi-Manager please connect with your phone to the Wifi 'NexaharvestBox'!");
+  wm.setTitle("Nexaharvest"); // brand name
+  tft.fillScreen(TFT_BLACK);
+  //  write at the top of the screen
+  tft.setCursor(0, 0);
+  tft.println("[System] Wifi-Manager please connect with your phone to the Wifi 'NexaharvestBox'!");
+
+  if (!wm.autoConnect("NexaBox", "password")) // brand name
+  {
+    Serial.println("[Wifi] failed to connect and hit timeout");
+    delay(3000);
+    // if we still have not connected restart and try all over again
+    ESP.restart();
+    delay(5000);
   }
   else
   {
-    if (!wm.autoConnect("NexaBox", "password")) // brand name
-    {
-      Serial.println("[Wifi] failed to connect and hit timeout");
-      delay(3000);
-      // if we still have not connected restart and try all over again
-      ESP.restart();
-      delay(5000);
-    }
-    else
-    {
-      // if you get here you have connected to the WiFi
-      Serial.println("[Wifi] connected...yeey :)");
-      digitalWrite(ledStatusOnline, HIGH);
-    }
+    // if you get here you have connected to the WiFi
+    Serial.println("[Wifi] connected...yeey :)");
   }
 
   // If we get here, we are connected to the WiFi
@@ -326,7 +316,6 @@ void sendToServer(String topic, String group, String value)
   if (!getLocalTime(&timeinfo))
   {
     Serial.println("[Sensor Data Server] Failed to obtain time");
-    digitalWrite(ledStatusError, HIGH);
     return;
   }
   char timeStringBuff[50]; // 50 chars should be enough
@@ -351,7 +340,6 @@ void sendToServer(String topic, String group, String value)
   else
   {
     Serial.print("[Sensor Data Server] Error on sending POST (error nor clear): ");
-    digitalWrite(ledStatusError, HIGH);
     String response = http.getString();
     Serial.println(response);
   }
@@ -387,7 +375,6 @@ void processHttpResponse()
         Serial.print(F("[Get Actions] deserializeJson() failed with code "));
         Serial.println(error.c_str());
         Serial.println(response);
-        digitalWrite(ledStatusError, HIGH);
       }
       else
       {
@@ -429,12 +416,71 @@ void processHttpResponse()
   else
   {
     Serial.print("[Get Actions] Error on sending POST to get actions Data: ");
-    digitalWrite(ledStatusError, HIGH);
     String response = http.getString();
     Serial.println(response);
   }
 
   http.end();
+}
+// Function to update the display with sensor values
+void updateDisplayValues(float temperature, float humidity, float soilMoisture, float lux)
+{
+  // Assuming you have already initialized LVGL and created the necessary objects (bars, labels, etc.)
+
+  // Calculate percentage values
+  float tempPercentage = (temperature / Temp_max) * 100.0;
+  float humPercentage = (humidity / Hum_max) * 100.0;
+  float moisturePercentage = (soilMoisture / Moisture_max) * 100.0;
+  float luxPercentage = (lux / Lux_max) * 100.0;
+
+  // Update temperature bar chart
+  lv_bar_set_value(ui_BarTemperature, tempPercentage, LV_ANIM_OFF);
+
+  // Update humidity bar chart
+  lv_bar_set_value(ui_BarHumidity, humPercentage, LV_ANIM_OFF);
+
+  // Update soil moisture bar chart
+  lv_bar_set_value(ui_BarSoilMoisture, moisturePercentage, LV_ANIM_OFF);
+
+  // Update lux bar chart
+  lv_bar_set_value(ui_BarLux, luxPercentage, LV_ANIM_OFF);
+}
+
+void writeStringToFile(const String &content)
+{
+  File file = SPIFFS.open(LOG_FILE, "a"); // Open the file in append mode
+  if (file)
+  {
+    file.println(content); // Write the entire string to the file
+    file.close();
+    Serial.println("String written to Log Text file.");
+  }
+  else
+  {
+    Serial.println("Error opening Log Text file for writing.");
+  }
+}
+
+String readLogFileContent()
+{
+  String content;
+  if (SPIFFS.exists(LOG_FILE))
+  {
+    File file = SPIFFS.open(LOG_FILE, "r");
+    if (file)
+    {
+      content = file.readString();
+      file.close();
+    }
+  }
+  return content;
+}
+
+void updateLogText()
+{
+  String logContent = readLogFileContent();
+  // Assuming you have an LVGL label object named ui_LabelLog
+  lv_label_set_text(ui_LabelLog, logContent.c_str());
 }
 // Structure to hold sensor data
 struct SensorData
@@ -489,7 +535,7 @@ void sendSensorData()
   tcs.getRawData(&r, &g, &b, &c);
   colorTemp = tcs.calculateColorTemperature_dn40(r, g, b, c);
   lux = tcs.calculateLux(r, g, b);
-
+  updateDisplayValues(bme.temperature, bme.humidity, analogRead(GROUNDSENSOR_PIN), tcs.calculateLux(r, g, b));
   // Array to hold light sensor data
   SensorData lightData[] = {
       {static_cast<float>(colorTemp), "esp/ground/light/colorTemp"},
@@ -517,7 +563,7 @@ void codeForTask1(void *pvParameters)
       esp32FOTAmy.execOTA();
     }
     // Add some delay to allow other tasks to run
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    vTaskDelay(100000 / portTICK_PERIOD_MS);
   }
 }
 
@@ -552,13 +598,26 @@ void codeForTask2(void *pvParameters)
       // Add some delay to allow other tasks to run
       vTaskDelay(10 / portTICK_PERIOD_MS);
     }
+    // Call the function to update the LVGL label
+    updateLogText();
+  }
+}
+// Callback function to handle switch state changes
+static void event_handler(lv_event_t *e)
+{
+  lv_event_code_t code = lv_event_get_code(e);
+  lv_obj_t *obj = lv_event_get_target(e);
+  if (code == LV_EVENT_VALUE_CHANGED)
+  {
+    LV_UNUSED(obj);
+    LV_LOG_USER("State: %s\n", lv_obj_has_state(obj, LV_STATE_CHECKED) ? "On" : "Off");
   }
 }
 
 void setup()
 {
   Serial.begin(115200);
-  // Initialize the LED pins as output and set them to LOW
+  // Initialize the relay pins as output and set them to LOW
   pinMode(relay_1, OUTPUT);
   digitalWrite(relay_1, HIGH);
 
@@ -571,42 +630,6 @@ void setup()
   pinMode(relay_4, OUTPUT);
   digitalWrite(relay_4, HIGH);
 
-  pinMode(ledStatusError, OUTPUT);
-  digitalWrite(ledStatusError, LOW);
-
-  pinMode(ledStatusOnline, OUTPUT);
-  digitalWrite(ledStatusOnline, LOW);
-  // reset button
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
-
-  // Initialize I2C communication
-  Wire.begin();
-  // tft.println("[System] I2C communication started");
-  // Check BME680 sensor connection
-  if (!bme.begin())
-  {
-    Serial.println("[Wiring] Failed to connect to the BME680 sensor. Please check the wiring.");
-    // tft.println("[Wiring] Failed to connect to the BME680 sensor. Please check the wiring.");
-    digitalWrite(ledStatusError, HIGH);
-    while (1)
-      ; // Halt the program if the sensor connection fails
-  }
-  // Check TCS34725 sensor connection
-  if (!tcs.begin())
-  {
-    Serial.println("[Wiring] Failed to connect to the TCS34725 sensor. Please check the wiring.");
-    // tft.println("[Wiring] Failed to connect to the TCS34725 sensor. Please check the wiring.");
-    digitalWrite(ledStatusError, HIGH);
-    while (1)
-      ; // Halt the program if the sensor connection fails
-  }
-
-  // Set up oversampling and filter initialization
-  bme.setTemperatureOversampling(BME680_OS_8X);
-  bme.setHumidityOversampling(BME680_OS_2X);
-  bme.setPressureOversampling(BME680_OS_4X);
-  bme.setIIRFilterSize(BME680_FILTER_SIZE_3);
-  bme.setGasHeater(320, 150); // 320*C for 150 ms
   // Display start
   tft.begin();        /* TFT init */
   tft.setRotation(1); /* Landscape orientation, flipped */
@@ -638,13 +661,41 @@ void setup()
 
   ui_init();
 
+  // add an event to the switches
+  lv_obj_add_event_cb(ui_Switch1, event_handler, LV_EVENT_ALL, NULL);
+  // Call the function to write the string
+  writeStringToFile("ESP32 Log-File-System started");
+
+  // Initialize I2C communication
+  Wire.begin();
+  // Check BME680 sensor connection
+  if (!bme.begin())
+  {
+    Serial.println("[Wiring] Failed to connect to the BME680 sensor. Please check the wiring.");
+    writeStringToFile("[Wiring] Failed to connect to the BME680 sensor. Please check the wiring.");
+    while (1)
+      ; // Halt the program if the sensor connection fails
+  }
+
+  // Check TCS34725 sensor connection
+  if (!tcs.begin())
+  {
+    Serial.println("[Wiring] Failed to connect to the TCS34725 sensor. Please check the wiring.");
+    writeStringToFile("[Wiring] Failed to connect to the TCS34725 sensor. Please check the wiring.");
+    while (1)
+      ; // Halt the program if the sensor connection fails
+  }
+
+  // Set up oversampling and filter initialization
+  bme.setTemperatureOversampling(BME680_OS_8X);
+  bme.setHumidityOversampling(BME680_OS_2X);
+  bme.setPressureOversampling(BME680_OS_4X);
+  bme.setIIRFilterSize(BME680_FILTER_SIZE_3);
+  bme.setGasHeater(320, 150); // 320*C for 150 ms
+
   // call the wifi manager
   WifiManager();
-  // tft.fillScreen(TFT_BLACK);
-  //  write at the top of the screen
-  // tft.setCursor(0, 0);
-  // tft.println("[System] Wifi-Manager finished");
-  //  check for update
+  writeStringToFile("[System] Wifi-Manager finished");
 
   // set update things
   esp32FOTAmy.setManifestURL(manifest_url);
@@ -656,6 +707,7 @@ void setup()
   // get the mongodb credentials
   makeRequest();
 
+  // check for update
   Serial.println("Starting task 1");
   xTaskCreatePinnedToCore(
       codeForTask1, /* Task function. */
@@ -675,8 +727,6 @@ void setup()
       1,            /* priority of the task */
       &Task2,       /* Task handle to keep track of created task */
       0);
-  /* Core */ /* Core */
-  lv_label_set_text(ui_LabelLog, "Sucess");
 }
 
 void loop()

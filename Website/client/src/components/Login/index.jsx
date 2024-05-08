@@ -15,28 +15,39 @@ const Login = () => {
     e.preventDefault();
     try {
       const url = `${apiUrl}/api/auth`;
-      const { data: res } = await axios.post(url, data);
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const body = JSON.stringify(data);
 
-      localStorage.setItem("token", res.data.token); // Store the authentication token in local storage
-      localStorage.setItem("id", res.data.userId);
-      localStorage.setItem("groupId", res.data.group);
-      //console.log(res);
-      //console.log(res.data);
-      //console.log(res.data.token);
-      //console.log(res.data.userId);
-      //console.log(res.data.group);
-      // Redirect the user to the desired page after successful login
-      setTimeout(() => {
-        window.location.href = "/"; // Redirect to the landing page after a delay
-      }, 100); // Delay of 1000 milliseconds (1 second)
+      console.log(`Sending POST request to ${url} with body: ${body}`);
+      const response = await axios.post(url, body, config);
+      crossOriginIsolated.log("response" + response);
+      console.log(`Received response with status ${response.status}`);
+      if (response.status === 200) {
+        console.log("Login successful");
+        localStorage.setItem("token", response.data.token); // Store the authentication token in local storage
+        localStorage.setItem("id", response.data.userId);
+        localStorage.setItem("groupId", response.data.group);
+        // Redirect the user to the desired page after successful login
+        setTimeout(() => {
+          window.location.href = "/"; // Redirect to the landing page after a delay
+        }, 100); // Delay of 1000 milliseconds (1 second)
+      }
     } catch (error) {
+      let errorMessage;
       if (
         error.response &&
         error.response.status >= 400 &&
         error.response.status <= 500
       ) {
-        setError(error.response.data.message);
+        errorMessage = error.response.data.message;
+      } else {
+        errorMessage = "An unexpected error occurred.";
       }
+      setError(errorMessage);
     }
   };
 

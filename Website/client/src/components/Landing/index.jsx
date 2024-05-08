@@ -1,7 +1,7 @@
 import { Link, useHistory } from "react-router-dom";
 import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
-import image1 from "../images/sensor2.png";
+import image1 from "../images/sensor2.jpeg";
 import { FaBars } from "react-icons/fa";
 //images of pages
 import dashboard from "../images/pages/dashboard.png";
@@ -104,7 +104,7 @@ const Landing = () => {
         <div className={styles.square}></div>
         <div className={styles.hero_content}>
           <h1 className={styles.info3words}>Efficient, Futuristic Planting</h1>
-          <img src={image1} alt="Hero" className={styles.img} />
+          <img src={image1} alt="Hero sensor image" className={styles.img} />
         </div>
       </div>
 
