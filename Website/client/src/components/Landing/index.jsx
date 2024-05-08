@@ -4,10 +4,10 @@ import styles from "./styles.module.css";
 import image1 from "../images/sensor2.jpeg";
 import { FaBars } from "react-icons/fa";
 //images of pages
-import dashboard from "../images/pages/dashboard.png";
-import actions from "../images/pages/actions.png";
-import notifications from "../images/pages/notifications.png";
-import history from "../images/pages/history.png";
+import dashboard from "../images/pages/dashboard.jpeg";
+import actions from "../images/pages/actions.jpeg";
+import notifications from "../images/pages/notifications.jpeg";
+import history from "../images/pages/history.jpeg";
 import logo from "../images/logo.png";
 import { changeRoute } from "../../reduxStore";
 
