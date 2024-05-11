@@ -15,27 +15,14 @@ const Login = () => {
     e.preventDefault();
     try {
       const url = `${apiUrl}/api/auth`;
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-      const body = JSON.stringify(data);
-
-      console.log(`Sending POST request to ${url} with body: ${body}`);
-      const response = await axios.post(url, body, config);
-      crossOriginIsolated.log("response" + response);
-      console.log(`Received response with status ${response.status}`);
-      if (response.status === 200) {
-        console.log("Login successful");
-        localStorage.setItem("token", response.data.token); // Store the authentication token in local storage
-        localStorage.setItem("id", response.data.userId);
-        localStorage.setItem("groupId", response.data.group);
-        // Redirect the user to the desired page after successful login
-        setTimeout(() => {
-          window.location.href = "/"; // Redirect to the landing page after a delay
-        }, 100); // Delay of 1000 milliseconds (1 second)
-      }
+      const { data: res } = await axios.post(url, data);
+      localStorage.setItem("token", res.data.token); // Store the authentication token in local storage
+      localStorage.setItem("id", res.data.userId);
+      localStorage.setItem("groupId", res.data.group);
+      // Redirect the user to the desired page after successful login
+      setTimeout(() => {
+        window.location.href = "/"; // Redirect to the landing page after a delay
+      }, 100); // Delay of 1000 milliseconds (1 second)
     } catch (error) {
       let errorMessage;
       if (
