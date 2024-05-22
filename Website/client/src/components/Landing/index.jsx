@@ -10,6 +10,7 @@ import notifications from "../images/pages/notifications.jpeg";
 import history from "../images/pages/history.jpeg";
 import logo from "../images/logo.png";
 import { changeRoute } from "../../reduxStore";
+import Cookies from "js-cookie";
 
 const Landing = () => {
   const [buttonText, setButtonText] = useState("Contact");
@@ -25,7 +26,7 @@ const Landing = () => {
   };
   useEffect(() => {
     // Check if user is logged in based on userId in local storage
-    const userId = localStorage.getItem("id");
+    const userId = Cookies.get("groupId");
     if (userId) {
       setIsLoggedIn(true);
     }

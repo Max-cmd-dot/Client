@@ -26,12 +26,14 @@ Chart.register(
   Tooltip
 );
 import { useSelector, useDispatch } from "react-redux";
+import Cookies from "js-cookie";
+
 const apiUrl = process.env.REACT_APP_API_URL;
-const userId = localStorage.getItem("id");
+const userId = Cookies.get("userId");
 ///////////MAIN FUNCTION///////////
 const ChartComponent = ({ chartName }) => {
   //generelll
-  const groupId = localStorage.getItem("groupId");
+  const groupId = Cookies.get("groupId");
   const currentPage = useSelector((state) => state.currentPage);
   const dispatch = useDispatch();
   useEffect(() => {

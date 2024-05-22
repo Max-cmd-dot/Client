@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { changeRoute } from "../../reduxStore";
 import * as bifrom from "react-icons/bi";
 import * as feathericons from "react-icons/fi";
+import Cookies from "js-cookie";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -19,7 +20,7 @@ function Navbar() {
   const [sidebar, setSidebar] = useState(false);
   const [rightabo, setRightabo] = useState(false);
   const showSidebar = () => setSidebar(!sidebar);
-  const group = localStorage.getItem("groupId");
+  const group = Cookies.get("groupId");
   const dispatch = useDispatch();
 
   useEffect(() => {

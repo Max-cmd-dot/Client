@@ -1,6 +1,7 @@
-import { Route, Routes, Navigate, Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import { Route, Routes, Navigate } from "react-router-dom";
 import axios from "axios";
+import Cookies from "js-cookie";
 import Main from "./components/Main";
 import Signup from "./components/Singup";
 import Login from "./components/Login";
@@ -25,34 +26,22 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
 import ServerError from "./components/ServerError/ServerError";
-/**
- * The API URL for the application.
- * @type {string}
- */
+
 const apiUrl = process.env.REACT_APP_API_URL;
+
 const NavbarLayout = () => (
   <>
     <Navbar />
     <Outlet />
   </>
 );
-/**
- * The main component of the application.
- * @function App
- * @returns {JSX.Element} The JSX element representing the App component.
- */
+
 function App() {
-  const user = localStorage.getItem("token");
-  const [rightabo, setRightabo] = useState(false);
-  const group = localStorage.getItem("groupId");
+  const [isLoggedIn, setIsLoggedIn] = useState(!!Cookies.get("token"));
+  const [rightabo, setRightabo] = useState(null);
   const [showServerError, setShowServerError] = useState(false);
 
   useEffect(() => {
-    /**
-     * Sets a timer for 20 seconds to show the server error page.
-     * @function timer
-     * @returns {void}
-     */
     const timer = setTimeout(() => {
       setShowServerError(true);
     }, 20000); // 20 seconds
@@ -60,40 +49,43 @@ function App() {
   }, []);
 
   useEffect(() => {
-    /**
-     * Fetches data from the server and updates the state with the response.
-     * @async
-     * @function fetchData
-     * @returns {Promise<void>}
-     */
     const fetchData = async () => {
       try {
+        const groupId = Cookies.get("groupId");
+        console.log("group ID " + groupId);
         const response = await axios.get(
-          `${apiUrl}/api/group/abo?group=${group}`
+          `${apiUrl}/api/group/abo?group=${groupId}`,
+          { withCredentials: true }
         );
         setRightabo(response.data.package);
+        console.log(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setRightabo(false); // Set to false if there is an error
       }
     };
 
-    fetchData();
-    const interval = setInterval(fetchData, 100000);
+    if (isLoggedIn) {
+      fetchData();
+      const interval = setInterval(fetchData, 100000);
+      return () => clearInterval(interval);
+    } else {
+      setRightabo(false); // Not logged in, set to false
+    }
+  }, [isLoggedIn]);
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+  if (rightabo === null) {
+    return <LoadingScreen />; // Show loading screen while fetching data
+  }
 
   return (
     <div className="container">
       <Routes>
-        {user ? (
+        {isLoggedIn ? (
           rightabo === "small" ||
           rightabo === "medium" ||
           rightabo === "big" ? (
             <Route element={<NavbarLayout />}>
-              <Route path="/navbar" element={<Navbar />} />
               <Route path="/" element={<Main />} />
               <Route path="/history" element={<History />} />
               <Route path="/profile" element={<Profile />} />
@@ -115,8 +107,8 @@ function App() {
               {rightabo === "big" && (
                 <Route path="/calendar" element={<Calendar />} />
               )}
-              <Route path="/imprint" element={<Imprint />}></Route>
-              <Route path="/privacy" element={<Privacy />}></Route>
+              <Route path="/imprint" element={<Imprint />} />
+              <Route path="/privacy" element={<Privacy />} />
               <Route path="/doc" element={<Doc />} />
             </Route>
           ) : (
@@ -131,8 +123,14 @@ function App() {
 
         <Route path="/landing" element={<Landing />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/logout" element={<Logout />} />
+        <Route
+          path="/login"
+          element={<Login setIsLoggedIn={setIsLoggedIn} />}
+        />
+        <Route
+          path="/logout"
+          element={<Logout setIsLoggedIn={setIsLoggedIn} />}
+        />
         <Route path="/password_reset" element={<Password_reset />} />
         <Route
           path="/reset_password/:userId/:token"

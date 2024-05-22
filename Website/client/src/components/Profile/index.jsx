@@ -2,6 +2,7 @@ import styles from "./styles.module.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
+import Cookies from "js-cookie";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -10,9 +11,9 @@ const Profile = () => {
   const [userGroup, setUserGroup] = useState("");
   const [groupAbo, setgroupAbo] = useState("");
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("id");
-  const groupId = localStorage.getItem("groupId");
+  const token = Cookies.get("token");
+  const userId = Cookies.get("userId");
+  const groupId = Cookies.get("groupId");
   const [groupEmployees, setGroupEmployees] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
@@ -45,7 +46,7 @@ const Profile = () => {
     setSelectedEmployee(null);
     setIsDeletePopupOpen(false);
   };
-  const group = localStorage.getItem("groupId");
+  const group = Cookies.get("groupId");
   useEffect(() => {
     const fetchData = async () => {
       try {

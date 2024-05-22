@@ -28,9 +28,10 @@ Chart.register(
   Legend
 );
 import { useSelector, useDispatch } from "react-redux";
+import Cookies from "js-cookie";
 
 //generell
-const groupId = localStorage.getItem("groupId");
+const groupId = Cookies.get("groupId");
 const apiUrl = process.env.REACT_APP_API_URL;
 const Forecast = () => {
   // Define state variables for the chart data and also the checks if they are empty

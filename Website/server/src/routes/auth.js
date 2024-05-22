@@ -5,6 +5,7 @@ const Joi = require("joi");
 
 router.post("/", async (req, res) => {
   try {
+    console.log("requested");
     const { error } = validate(req.body);
     if (error)
       return res.status(400).send({ message: error.details[0].message });
@@ -20,11 +21,25 @@ router.post("/", async (req, res) => {
     if (!validPassword)
       return res.status(401).send({ message: "Invalid Email or Password" });
 
-    const token = user.generateAuthToken(); // Ensure this method securely generates a JWT
+    const token = user.generateAuthToken();
     const userid = user._id;
     const group = user.group;
-
-    res.cookie("token", token, { httpOnly: true, secure: true }); // Set token as HttpOnly, Secure cookie
+    console.log("group " + group);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    });
+    res.cookie("userId", userid, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    });
+    res.cookie("groupId", group, {
+      httpOnly: false,
+      secure: false,
+      sameSite: "None",
+    });
     res.status(200).send({
       data: {
         userId: userid,

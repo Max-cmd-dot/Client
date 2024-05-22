@@ -4,6 +4,8 @@ import axios from "axios";
 import { changeRoute } from "../../reduxStore";
 import { useSelector, useDispatch } from "react-redux";
 import { FiSettings } from "react-icons/fi";
+import Cookies from "js-cookie";
+
 const apiUrl = process.env.REACT_APP_API_URL;
 const axiosInstance = axios.create({
   baseURL: apiUrl,
@@ -311,7 +313,7 @@ const countDevices = (list) => {
 };
 
 const Actions = () => {
-  const groupId = localStorage.getItem("groupId");
+  const groupId = Cookies.get("groupId");
   const currentPage = useSelector((state) => state.currentPage);
   const dispatch = useDispatch();
   const [list2, setList2] = useState([]);

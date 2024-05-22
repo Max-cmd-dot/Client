@@ -7,10 +7,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { FiSettings } from "react-icons/fi";
 import ClipLoader from "react-spinners/ClipLoader";
 const apiUrl = process.env.REACT_APP_API_URL;
+import Cookies from "js-cookie";
 
 const Notifications = () => {
   const [list, setList] = useState([]);
-  const groupId = localStorage.getItem("groupId");
+  const groupId = Cookies.get("groupId");
   const [notificationtype, setNotificationType] = useState("alarms");
   const [notificationTypeFilter, setNotificationTypeFilter] = useState("all");
   const [releaseNotes, setReleaseNotes] = useState([]);

@@ -5,6 +5,7 @@ import ButtonGroup from "../ButtonGroup/button-group.jsx"; // Import the ButtonG
 const apiUrl = process.env.REACT_APP_API_URL;
 import { changeRoute } from "../../reduxStore";
 import { useSelector, useDispatch } from "react-redux";
+import Cookies from "js-cookie";
 
 const History = () => {
   const [buttons, setButtons] = useState(["+"]);
@@ -49,7 +50,7 @@ const History = () => {
   };
 
   const doSomethingAfterClick = async (event) => {
-    const userId = localStorage.getItem("id");
+    const userId = Cookies.get("userId");
     if (event.target.name === "+") {
       let i = 1;
       while (buttons.includes("Chart " + i)) {
@@ -82,7 +83,7 @@ const History = () => {
     }
   };
   useEffect(() => {
-    const userId = localStorage.getItem("id");
+    const userId = Cookies.get("userId");
     getAllCharts(userId).then((charts) => {
       const sortedCharts = charts.sort((a, b) => a.localeCompare(b));
       setButtons([...sortedCharts, "+"]);

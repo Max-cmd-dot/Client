@@ -1,13 +1,14 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; // Import Link and useNavigate
 import styles from "./styles.module.css";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-const Login = () => {
+const Login = ({ setIsLoggedIn }) => {
   const [data, setData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = ({ currentTarget: input }) => {
     setData({ ...data, [input.name]: input.value });
@@ -17,12 +18,14 @@ const Login = () => {
     e.preventDefault();
     try {
       const url = `${apiUrl}/api/auth`;
-      const { data: res } = await axios.post(url, data, {
+      const response = await axios.post(url, data, {
         withCredentials: true,
       });
-      // Assuming server sets HttpOnly cookies for the token
-      window.location.href = "/"; // Redirect immediately
+      console.log("Response:", response); // Debugging
+      setIsLoggedIn(true);
+      navigate("/"); // Redirect to the main page after login
     } catch (error) {
+      console.error("Error occurred:", error); // Debugging
       let errorMessage;
       if (
         error.response &&

@@ -3,11 +3,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { changeRoute } from "../../reduxStore";
 import { useSelector, useDispatch } from "react-redux";
+import Cookies from "js-cookie";
+
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const Devices = () => {
   const currentPage = useSelector((state) => state.currentPage);
-  const groupId = localStorage.getItem("groupId");
+  const groupId = Cookies.get("groupId");
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(changeRoute("/devices"));

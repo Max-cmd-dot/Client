@@ -28,6 +28,7 @@ Chart.register(
   PointElement,
   TimeScale
 );
+import Cookies from "js-cookie";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const Main = () => {
@@ -36,7 +37,7 @@ const Main = () => {
   let canvas = document.createElement("canvas");
   let ctx = canvas.getContext("2d");
 
-  const groupId = localStorage.getItem("groupId");
+  const groupId = Cookies.get("groupId");
   const [rightabo, setRightabo] = useState(false);
   const currentPage = useSelector((state) => state.currentPage);
   const dispatch = useDispatch();

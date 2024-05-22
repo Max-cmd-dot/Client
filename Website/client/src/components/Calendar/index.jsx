@@ -8,9 +8,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { changeRoute } from "../../reduxStore";
+import Cookies from "js-cookie";
+
 const apiUrl = process.env.REACT_APP_API_URL;
 const Calendar = () => {
-  const groupId = localStorage.getItem("groupId");
+  const groupId = Cookies.get("groupId");
   let [list2, setList2] = useState([]);
   const state = {
     weekendsVisible: true,

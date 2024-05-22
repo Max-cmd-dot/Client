@@ -1,10 +1,10 @@
 require("dotenv").config();
-
-// pages imports
 const express = require("express");
-const app = express();
 const cors = require("cors");
+const app = express();
 const connection = require("./db");
+
+// Import routes
 const userRoutes = require("./src/routes/users");
 const authRoutes = require("./src/routes/auth");
 const dataRoutes = require("./src/routes/apidata");
@@ -21,14 +21,31 @@ const alarmsRoutes = require("./src/routes/alarmsData");
 const { checkAll } = require("./src/utils/alertSystem");
 const { automationSystem } = require("./src/utils/actionSystem");
 
-// database connection
 connection();
 
-// middlewares
-app.use(express.json());
-app.use(cors());
+// Allowed origins for CORS
+const allowedOrigins = ["http://localhost:3000", "http://192.168.178.121:3000"];
 
-// routes
+// CORS middleware configuration
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // Allow requests with no origin (mobile apps, curl requests)
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          "The CORS policy for this site does not allow access from the specified Origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true,
+  })
+);
+
+// Middleware
+app.use(express.json());
+
+// Routes
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/data", dataRoutes);
@@ -43,25 +60,15 @@ app.use("/api/changeEmail", emailchangeRoutes);
 app.use("/api/hardware", hardwareRoutes);
 app.use("/api/alarms", alarmsRoutes);
 
-// for routing through backend, and also for testing
+// Simple routes for testing
 app.get("/", (req, res) => {
   res.send("Running...");
 });
+
 app.get("/api", (req, res) => {
   res.send("Running API...");
 });
-/**
- * This script sets up two timers to periodically call the `automationSystem` and `checkAll` functions.
- *
- * The `automationSystem` function is called every minute. This function checks all automations and updates the actions
- * based on the automation data. It handles both time-based and sensor/value-based automations.
- *
- * The `checkAll` function is called every full hour. The specifics of what this function does are not detailed here.
- *
- * The timers are set up using the `setInterval` function. Each time the functions are called, a message is logged to the console.
- *
- * Note: There is no cleanup logic to clear the timers, as this script is presumably running in a Node.js environment where the timers should continue running indefinitely.
- */
+
 // Set up a timer to call the automationSystem function every minute
 setInterval(() => {
   console.log("Calling automationSystem");
@@ -76,6 +83,7 @@ setInterval(() => {
     checkAll().catch(console.error);
   }
 }, 60 * 1000); // Check every minute
-//create server for backend on port 8080
+
+// Start server
 const port = process.env.PORT || 8080;
 app.listen(port, console.log(`Listening on port ${port}...`));
