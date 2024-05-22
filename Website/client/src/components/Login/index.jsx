@@ -2,7 +2,9 @@ import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import styles from "./styles.module.css";
+
 const apiUrl = process.env.REACT_APP_API_URL;
+
 const Login = () => {
   const [data, setData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
@@ -15,14 +17,11 @@ const Login = () => {
     e.preventDefault();
     try {
       const url = `${apiUrl}/api/auth`;
-      const { data: res } = await axios.post(url, data);
-      localStorage.setItem("token", res.data.token); // Store the authentication token in local storage
-      localStorage.setItem("id", res.data.userId);
-      localStorage.setItem("groupId", res.data.group);
-      // Redirect the user to the desired page after successful login
-      setTimeout(() => {
-        window.location.href = "/"; // Redirect to the landing page after a delay
-      }, 100); // Delay of 1000 milliseconds (1 second)
+      const { data: res } = await axios.post(url, data, {
+        withCredentials: true,
+      });
+      // Assuming server sets HttpOnly cookies for the token
+      window.location.href = "/"; // Redirect immediately
     } catch (error) {
       let errorMessage;
       if (
@@ -30,7 +29,7 @@ const Login = () => {
         error.response.status >= 400 &&
         error.response.status <= 500
       ) {
-        errorMessage = error.response.data.message;
+        errorMessage = "Invalid email or password.";
       } else {
         errorMessage = "An unexpected error occurred.";
       }

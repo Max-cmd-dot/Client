@@ -20,12 +20,13 @@ router.post("/", async (req, res) => {
     if (!validPassword)
       return res.status(401).send({ message: "Invalid Email or Password" });
 
-    const token = user.generateAuthToken();
+    const token = user.generateAuthToken(); // Ensure this method securely generates a JWT
     const userid = user._id;
     const group = user.group;
+
+    res.cookie("token", token, { httpOnly: true, secure: true }); // Set token as HttpOnly, Secure cookie
     res.status(200).send({
       data: {
-        token,
         userId: userid,
         group,
       },
