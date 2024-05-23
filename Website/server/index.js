@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const app = express();
 const connection = require("./db");
 
@@ -27,7 +28,7 @@ connection();
 const allowedOrigins = [
   "http://localhost:3000",
   "http://192.168.178.121:3000",
-  "https://nexaharvest.com/",
+  "https://nexaharvest.com",
 ];
 
 // CORS middleware configuration
@@ -43,11 +44,17 @@ app.use(
       return callback(null, true);
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
+// Enable pre-flight for all routes
+app.options("*", cors());
+
 // Middleware
 app.use(express.json());
+app.use(cookieParser());
 
 // Routes
 app.use("/api/users", userRoutes);
@@ -90,4 +97,6 @@ setInterval(() => {
 
 // Start server
 const port = process.env.PORT || 8080;
-app.listen(port, console.log(`Listening on port ${port}...`));
+app.listen(port, () => {
+  console.log(`Listening on port ${port}...`);
+});
