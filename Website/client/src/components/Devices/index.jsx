@@ -22,6 +22,7 @@ const Devices = () => {
         const response = await axios.get(
           `${apiUrl}/api/devices?group=${groupId}`
         );
+        console.log(apiUrl);
         const valuesArr = response.data.message.map((item) => ({
           deviceId: item.deviceId,
           type: item.type,

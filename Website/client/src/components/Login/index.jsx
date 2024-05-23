@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom"; // Import Link and useNavigate
+import { useNavigate, Link } from "react-router-dom";
 import styles from "./styles.module.css";
+import Cookies from "js-cookie";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -9,6 +10,10 @@ const Login = ({ setIsLoggedIn }) => {
   const [data, setData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log("Current cookies:", document.cookie);
+  }, []); // Log cookies on component mount
 
   const handleChange = ({ currentTarget: input }) => {
     setData({ ...data, [input.name]: input.value });
@@ -22,6 +27,10 @@ const Login = ({ setIsLoggedIn }) => {
         withCredentials: true,
       });
       console.log("Response:", response); // Debugging
+      console.log("Cookies after login:", document.cookie); // Log cookies after login
+      Cookies.set("groupId", response.data.data.group);
+      Cookies.set("userId", response.data.data.userId);
+      Cookies.set("token", response.data.data.token);
       setIsLoggedIn(true);
       navigate("/"); // Redirect to the main page after login
     } catch (error) {

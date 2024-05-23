@@ -3,6 +3,8 @@ const { User } = require("../models/user");
 const bcrypt = require("bcrypt");
 const Joi = require("joi");
 
+const isProduction = process.env.NODE_ENV === "production";
+
 router.post("/", async (req, res) => {
   try {
     const { error } = validate(req.body);
@@ -23,24 +25,10 @@ router.post("/", async (req, res) => {
     const token = user.generateAuthToken();
     const userid = user._id;
     const group = user.group;
-    console.log("group " + group);
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-    });
-    res.cookie("userId", userid, {
-      httpOnly: false,
-      secure: true,
-      sameSite: "None",
-    });
-    res.cookie("groupId", group, {
-      httpOnly: false,
-      secure: false,
-      sameSite: "None",
-    });
+
     res.status(200).send({
       data: {
+        token: token,
         userId: userid,
         group,
       },
