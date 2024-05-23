@@ -52,13 +52,12 @@ function App() {
     const fetchData = async () => {
       try {
         const groupId = Cookies.get("groupId");
-        console.log("group ID " + groupId);
+        console.log("group ID: ", groupId); // Debugging
         const response = await axios.get(
           `${apiUrl}/api/group/abo?group=${groupId}`,
           { withCredentials: true }
         );
         setRightabo(response.data.package);
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
         setRightabo(false); // Set to false if there is an error

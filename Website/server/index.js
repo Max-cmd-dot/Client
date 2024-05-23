@@ -30,15 +30,18 @@ const allowedOrigins = [
   "http://192.168.178.121:3000",
   "https://nexaharvest.com",
 ];
+console.log("Allowed Origins:", allowedOrigins);
 
 // CORS middleware configuration
 app.use(
   cors({
     origin: function (origin, callback) {
+      console.log("Origin:", origin); // Debugging log
       if (!origin) return callback(null, true); // Allow requests with no origin (mobile apps, curl requests)
       if (allowedOrigins.indexOf(origin) === -1) {
         const msg =
           "The CORS policy for this site does not allow access from the specified Origin.";
+        console.log("CORS Error:", msg); // Debugging log
         return callback(new Error(msg), false);
       }
       return callback(null, true);

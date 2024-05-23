@@ -30,7 +30,7 @@ router.post("/", async (req, res) => {
       sameSite: "None",
     });
     res.cookie("userId", userid, {
-      httpOnly: true,
+      httpOnly: false,
       secure: true,
       sameSite: "None",
     });
