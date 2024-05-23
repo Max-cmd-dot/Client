@@ -17,3 +17,4 @@ Website/client/src/.env
 Scripts/Hardware/squareLine
 Scripts/Hardware/OTA_ESP32_SquareLine
 Scripts/Hardware/OTA_Esp32/lib
+/Website/client/.env
