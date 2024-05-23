@@ -24,7 +24,11 @@ const { automationSystem } = require("./src/utils/actionSystem");
 connection();
 
 // Allowed origins for CORS
-const allowedOrigins = ["http://localhost:3000", "http://192.168.178.121:3000"];
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://192.168.178.121:3000",
+  "https://nexaharvest.com/",
+];
 
 // CORS middleware configuration
 app.use(

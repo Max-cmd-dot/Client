@@ -5,7 +5,6 @@ const Joi = require("joi");
 
 router.post("/", async (req, res) => {
   try {
-    console.log("requested");
     const { error } = validate(req.body);
     if (error)
       return res.status(400).send({ message: error.details[0].message });
