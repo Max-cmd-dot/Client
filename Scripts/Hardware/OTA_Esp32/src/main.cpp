@@ -16,6 +16,7 @@
 
 TaskHandle_t Task1;
 TaskHandle_t Task2;
+TaskHandle_t Task3;
 /*Change to your screen resolution*/
 static const uint16_t screenWidth = 320;
 static const uint16_t screenHeight = 240;
@@ -30,10 +31,10 @@ String version = "1.0.4";
 // esp32fota esp32fota("<Type of Firme for this device>", <this version>, <validate signature>);
 esp32FOTA esp32FOTAmy("esp32-fota-http", version, false);
 unsigned long lastHttpResponseTime = 0;
-unsigned long httpResponseInterval = 5000; // 5 seconds
+unsigned long httpResponseInterval = 20000; // 5 seconds
 
 unsigned long lastSensorDataTime = 0;
-unsigned long sensorDataInterval = 5000; // 5 seconds
+unsigned long sensorDataInterval = 20000; // 5 seconds
 
 unsigned long lastDisplayUpdateTime = 0;
 const unsigned long displayUpdateInterval = 5; // Update display every 5ms
@@ -223,6 +224,7 @@ void initializeNTP()
   setenv("TZ", "CET-1CEST,M3.5.0,M10.5.0/3", 1);
   tzset();
 }
+
 void makeRequest()
 {
   HTTPClient http;
@@ -233,7 +235,6 @@ void makeRequest()
 
   do
   {
-
     http.begin(String(hostBackendHardware)); // Specify the URL
     http.addHeader("Content-Type", "application/json");
     http.addHeader("deviceId", String(deviceId));
@@ -247,7 +248,7 @@ void makeRequest()
     { // Check for the returning code
       Serial.println("Data received successfully from backend server");
       // Parse JSON
-      DynamicJsonDocument doc(1024);
+      JsonDocument doc; // Specify the buffer size
       // Deserialize the JSON document
       DeserializationError error = deserializeJson(doc, response);
 
@@ -275,6 +276,21 @@ void makeRequest()
   } while (httpCode != 200 && retries < maxRetries);
 }
 std::vector<const char *> wmMenuItems = {"wifi", "info", "param", "exit"}; //"erase"
+
+void writeStringToFile(const String &content)
+{
+  File file = SPIFFS.open(LOG_FILE, "a"); // Open the file in append mode
+  if (file)
+  {
+    file.println(content); // Write the entire string to the file
+    file.close();
+    Serial.println("String written to Log Text file.");
+  }
+  else
+  {
+    Serial.println("Error opening Log Text file for writing.");
+  }
+}
 
 void WifiManager()
 {
@@ -309,6 +325,7 @@ void WifiManager()
   Serial.println(WiFi.localIP());
   Serial.print("[Wifi] MAC address: ");
   Serial.println(WiFi.macAddress());
+  writeStringToFile("[System] Wifi-Manager finished");
 }
 void sendToServer(String topic, String group, String value)
 {
@@ -341,7 +358,7 @@ void sendToServer(String topic, String group, String value)
   {
     Serial.print("[Sensor Data Server] Error on sending POST (error nor clear): ");
     String response = http.getString();
-    Serial.println(response);
+    Serial.println("Response" + response);
   }
 
   http.end(); // Free resources
@@ -366,7 +383,7 @@ void processHttpResponse()
     if (response.length() > 0)
     {
       // Parse the JSON response
-      DynamicJsonDocument doc(3500); // change this if we change the schema of actions
+      JsonDocument doc; // Specify the buffer size
       DeserializationError error = deserializeJson(doc, response);
 
       // Check for errors in parsing
@@ -444,21 +461,6 @@ void updateDisplayValues(float temperature, float humidity, float soilMoisture, 
 
   // Update lux bar chart
   lv_bar_set_value(ui_BarLux, luxPercentage, LV_ANIM_OFF);
-}
-
-void writeStringToFile(const String &content)
-{
-  File file = SPIFFS.open(LOG_FILE, "a"); // Open the file in append mode
-  if (file)
-  {
-    file.println(content); // Write the entire string to the file
-    file.close();
-    Serial.println("String written to Log Text file.");
-  }
-  else
-  {
-    Serial.println("Error opening Log Text file for writing.");
-  }
 }
 
 String readLogFileContent()
@@ -550,12 +552,12 @@ void sendSensorData()
   sendAllSensorData(lightData, sizeof(lightData) / sizeof(SensorData));
 }
 
-// Task1code: blinks an LED every 1000 ms
 void codeForTask1(void *pvParameters)
 {
+  Serial.print("Task1 running on core ");
   for (;;)
   {
-    Serial.println("checking for update");
+    Serial.print("Task1 still running on core ");
     // Check for updates
     bool updatedNeeded = esp32FOTAmy.execHTTPcheck();
     if (updatedNeeded)
@@ -567,27 +569,25 @@ void codeForTask1(void *pvParameters)
   }
 }
 
-// Task2code: blinks an LED every 700 ms
 void codeForTask2(void *pvParameters)
 {
-  Serial.print("Task2 running still on core ");
+  Serial.print("Task2 running on core ");
   Serial.println(xPortGetCoreID());
   for (;;)
   {
-    Serial.print("Task2 running still on core ");
-    Serial.println(xPortGetCoreID());
     // Get current time
     unsigned long currentMillis = millis();
+    Serial.print("Task2 still running on core ");
+    Serial.println(xPortGetCoreID());
     // Process HTTP responses
     if (currentMillis - lastHttpResponseTime >= httpResponseInterval)
     {
       lastHttpResponseTime = currentMillis;
       printf("[System loop] Processing http response...\n");
       processHttpResponse();
-      // Add some delay to allow other tasks to run
-      vTaskDelay(10 / portTICK_PERIOD_MS);
+      // Add sufficient delay to allow other tasks to run
+      vTaskDelay(100 / portTICK_PERIOD_MS);
     }
-
     // Send sensor data
     if (currentMillis - lastSensorDataTime >= sensorDataInterval)
     {
@@ -595,11 +595,9 @@ void codeForTask2(void *pvParameters)
       printf("[System loop] Sending data to server...\n");
       sendSensorData();
       printf("[System loop] Data sent to server\n");
-      // Add some delay to allow other tasks to run
-      vTaskDelay(10 / portTICK_PERIOD_MS);
+      // Add sufficient delay to allow other tasks to run
+      vTaskDelay(100 / portTICK_PERIOD_MS);
     }
-    // Call the function to update the LVGL label
-    updateLogText();
   }
 }
 // Callback function to handle switch state changes
@@ -617,7 +615,8 @@ static void event_handler(lv_event_t *e)
 void setup()
 {
   Serial.begin(115200);
-  // Initialize the relay pins as output and set them to LOW
+
+  // Initialize the relay pins as output and set them to HIGH
   pinMode(relay_1, OUTPUT);
   digitalWrite(relay_1, HIGH);
 
@@ -637,22 +636,22 @@ void setup()
   // Clear the screen
   tft.fillScreen(TFT_BLACK);
   touch_calibrate();
-  Serial.println("Setup done");
+  Serial.println("[Setup] Setup done");
 
   lv_init();
   lv_disp_draw_buf_init(&draw_buf, buf, NULL, screenWidth * screenHeight / 10);
 
-  /*Initialize the display*/
+  /* Initialize the display */
   static lv_disp_drv_t disp_drv;
   lv_disp_drv_init(&disp_drv);
-  /*Change the following line to your display resolution*/
+  /* Change the following line to your display resolution */
   disp_drv.hor_res = screenWidth;
   disp_drv.ver_res = screenHeight;
   disp_drv.flush_cb = my_disp_flush;
   disp_drv.draw_buf = &draw_buf;
   lv_disp_drv_register(&disp_drv);
 
-  /*Initialize the (dummy) input device driver*/
+  /* Initialize the (dummy) input device driver */
   static lv_indev_drv_t indev_drv;
   lv_indev_drv_init(&indev_drv);
   indev_drv.type = LV_INDEV_TYPE_POINTER;
@@ -661,17 +660,18 @@ void setup()
 
   ui_init();
 
-  // add an event to the switches
+  // Add an event to the switches
   lv_obj_add_event_cb(ui_Switch1, event_handler, LV_EVENT_ALL, NULL);
   // Call the function to write the string
-  writeStringToFile("ESP32 Log-File-System started");
+  writeStringToFile("[Setup] ESP32 Log-File-System started");
 
   // Initialize I2C communication
   Wire.begin();
+
   // Check BME680 sensor connection
   if (!bme.begin())
   {
-    Serial.println("[Wiring] Failed to connect to the BME680 sensor. Please check the wiring.");
+    Serial.println("[Setup Wiring] Failed to connect to the BME680 sensor. Please check the wiring.");
     writeStringToFile("[Wiring] Failed to connect to the BME680 sensor. Please check the wiring.");
     while (1)
       ; // Halt the program if the sensor connection fails
@@ -691,42 +691,39 @@ void setup()
   bme.setHumidityOversampling(BME680_OS_2X);
   bme.setPressureOversampling(BME680_OS_4X);
   bme.setIIRFilterSize(BME680_FILTER_SIZE_3);
-  bme.setGasHeater(320, 150); // 320*C for 150 ms
+  bme.setGasHeater(320, 150); // 320°C for 150 ms
 
-  // call the wifi manager
+  // Call the WiFi manager
   WifiManager();
-  writeStringToFile("[System] Wifi-Manager finished");
 
-  // set update things
+  // Set update things
   esp32FOTAmy.setManifestURL(manifest_url);
   esp32FOTAmy.printConfig();
 
-  // init and get the time
+  // Init and get the time
   initializeNTP();
 
-  // get the mongodb credentials
+  // Get the MongoDB credentials
   makeRequest();
 
-  // check for update
-  Serial.println("Starting task 1");
+  // Check for update
   xTaskCreatePinnedToCore(
       codeForTask1, /* Task function. */
       "Task1",      /* name of task. */
-      5000,         /* Stack size of task */
+      2700,         /* Stack size of task */
       NULL,         /* parameter of the task */
       1,            /* priority of the task */
       &Task1,       /* Task handle to keep track of created task */
-      1);           /* Core */
-  delay(500);
+      0);           /* Core */
 
   xTaskCreatePinnedToCore(
       codeForTask2, /* Task function. */
       "Task2",      /* name of task. */
-      5000,         /* Stack size of task */
+      4096,         /* Stack size of task */
       NULL,         /* parameter of the task */
       1,            /* priority of the task */
       &Task2,       /* Task handle to keep track of created task */
-      0);
+      1);
 }
 
 void loop()
