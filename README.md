@@ -1,10 +1,12 @@
 # Nexaharvest
 ## Contents
- - [How it looks](#how-it-looks)
  - [Purpose](#purpose)
+ - [How it looks](#how-it-looks)
  - [Reference](#reference)
  - [Installation](#installation)
  - [Disclaimer](#disclaimer)
+## Purpose
+Automation and monitoring of plants. With this Hard and software you can collect percisely all sensor Data view it from anywhere and analyse it. Furthermore you can Set alerts and much more!
 
 ## How it looks:
 | Notifications | History |
@@ -24,8 +26,6 @@ Please donate to max.nobis@nexaharvest.com
 Inquiries for support contracts to max.nobis@nexaharvest.com
 More information at https://nexaharvest.com
 
-## Purpose
-Automation and monitoring of plants. With this Hard and software you can collect percisely all sensor Data view it from anywhere and analyse it. Furthermore you can Set alerts and much more!
 
 ## Reference
 Nexaharvest Boxes are available at
