@@ -13,6 +13,8 @@ const ChartDataSchema = new mongoose.Schema(
         checked_humidity: { type: Boolean, default: false },
         checked_lux: { type: Boolean, default: false },
         checked_moisture_1: { type: Boolean, default: false },
+        checked_moisture_2: { type: Boolean, default: false },
+        checked_moisture_3: { type: Boolean, default: false },
       },
     ],
   },

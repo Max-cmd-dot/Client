@@ -99,6 +99,7 @@ const ChartComponent = ({ chartName }) => {
           `${apiUrl}/api/historyChart/settings/${userId}/${chartName}`
         );
         const data = await response.json();
+        console.log(`Data: ${JSON.stringify(data)}`);
         // Set the state with the data from the response
         if (data) {
           setchartTyp(data.type);
@@ -108,6 +109,8 @@ const ChartComponent = ({ chartName }) => {
           setDatasetTemperatureChecked(data.datasets[0].checked_temperature);
           setDatasetHumidityChecked(data.datasets[0].checked_humidity);
           setdatasetMoistureOneChecked(data.datasets[0].checked_moisture_1);
+          setdatasetMoistureTwoChecked(data.datasets[0].checked_moisture_2);
+          setdatasetMoistureThreeChecked(data.datasets[0].checked_moisture_3);
           setDatasetLuxChecked(data.datasets[0].checked_lux);
         }
       } catch (error) {
@@ -262,7 +265,6 @@ const ChartComponent = ({ chartName }) => {
     datasetMoistureTwoChecked,
     datasetMoistureThreeChecked,
     datasetLuxChecked,
-
     update_interval,
     updateDataInterval,
     max_count,
@@ -322,6 +324,22 @@ const ChartComponent = ({ chartName }) => {
                         label: "Moisture 1",
                         data: moi1chardata.map(
                           (moi1chardata) => moi1chardata.value
+                        ),
+                        borderColor: ["rgba(100, 100, 137, 1)"],
+                        backgroundColor: "rgba(100, 100, 137, 1)",
+                      },
+                      datasetMoistureTwoChecked && {
+                        label: "Moisture 2",
+                        data: moi2chardata.map(
+                          (moi2chardata) => moi2chardata.value
+                        ),
+                        borderColor: ["rgba(100, 100, 137, 1)"],
+                        backgroundColor: "rgba(100, 100, 137, 1)",
+                      },
+                      datasetMoistureThreeChecked && {
+                        label: "Moisture 3",
+                        data: moi3chardata.map(
+                          (moi3chardata) => moi3chardata.value
                         ),
                         borderColor: ["rgba(100, 100, 137, 1)"],
                         backgroundColor: "rgba(100, 100, 137, 1)",
@@ -399,6 +417,22 @@ const ChartComponent = ({ chartName }) => {
                           (moi1chardata) => moi1chardata.value
                         ),
                         borderColor: ["rgba(0, 0, 237, 1)"],
+                      },
+                      datasetMoistureTwoChecked && {
+                        label: "Moisture 2",
+                        data: moi2chardata.map(
+                          (moi2chardata) => moi2chardata.value
+                        ),
+                        borderColor: ["rgba(100, 100, 137, 1)"],
+                        backgroundColor: "rgba(100, 100, 137, 1)",
+                      },
+                      datasetMoistureThreeChecked && {
+                        label: "Moisture 3",
+                        data: moi3chardata.map(
+                          (moi3chardata) => moi3chardata.value
+                        ),
+                        borderColor: ["rgba(100, 100, 137, 1)"],
+                        backgroundColor: "rgba(100, 100, 137, 1)",
                       },
                       datasetLuxChecked && {
                         label: "Lux",
@@ -597,7 +631,33 @@ const ChartComponent = ({ chartName }) => {
                         )
                       }
                     />
-                    <label htmlFor="Moisture">Moisture</label>
+                    <label htmlFor="Moisture 1">Moisture 1</label>
+                    <input
+                      type="checkbox"
+                      name="Moisture 2"
+                      checked={datasetMoistureTwoChecked}
+                      onChange={(event) =>
+                        handleChangeDataset(
+                          event,
+                          "moisture",
+                          setdatasetMoistureTwoChecked
+                        )
+                      }
+                    />
+                    <label htmlFor="Moisture 2">Moisture 2</label>
+                    <input
+                      type="checkbox"
+                      name="Moisture 3"
+                      checked={datasetMoistureThreeChecked}
+                      onChange={(event) =>
+                        handleChangeDataset(
+                          event,
+                          "moisture",
+                          setdatasetMoistureThreeChecked
+                        )
+                      }
+                    />
+                    <label htmlFor="Moisture 3">Moisture 3</label>
 
                     <input
                       type="checkbox"

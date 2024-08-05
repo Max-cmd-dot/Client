@@ -571,14 +571,10 @@ void codeForTask1(void *pvParameters)
 
 void codeForTask2(void *pvParameters)
 {
-  Serial.print("Task2 running on core ");
-  Serial.println(xPortGetCoreID());
   for (;;)
   {
     // Get current time
     unsigned long currentMillis = millis();
-    Serial.print("Task2 still running on core ");
-    Serial.println(xPortGetCoreID());
     // Process HTTP responses
     if (currentMillis - lastHttpResponseTime >= httpResponseInterval)
     {
@@ -597,6 +593,7 @@ void codeForTask2(void *pvParameters)
       printf("[System loop] Data sent to server\n");
       // Add sufficient delay to allow other tasks to run
       vTaskDelay(100 / portTICK_PERIOD_MS);
+      updateLogText();
     }
   }
 }
