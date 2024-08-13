@@ -11,12 +11,6 @@ export const StandardSidebarData = [
     cName: "nav-text",
   },
   {
-    title: "Documentation",
-    path: "/doc",
-    icon: <bifrom.BiFile />,
-    cName: "nav-text",
-  },
-  {
     title: "Profile",
     path: "/profile",
     icon: <feathericons.FiUser />,

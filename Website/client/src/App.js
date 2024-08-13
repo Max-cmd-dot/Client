@@ -13,7 +13,6 @@ import Forecast from "./components/Forecast";
 import Calendar from "./components/Calendar";
 import Password_reset from "./components/Password_reset";
 import Reset_Password from "./components/Reset_Password";
-import Doc from "./components/Doc";
 import Notifications from "./components/Notifications";
 import NotFoundPage from "./components/NotFoundPage";
 import Profile from "./components/Profile";
@@ -108,7 +107,6 @@ function App() {
               )}
               <Route path="/imprint" element={<Imprint />} />
               <Route path="/privacy" element={<Privacy />} />
-              <Route path="/doc" element={<Doc />} />
             </Route>
           ) : (
             <Route
