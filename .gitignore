@@ -1,16 +1,13 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/Website/client/node_modules
-/Website/server/node_modules
+node_modules
 
 # logs
 npm-debug.log*
-Scripts/mqtt2mongodb.log
 
 # runtime data
-Website/server/.env
-Website/client/src/.env
+.env
 
 
 .DS_Store
@@ -19,3 +16,4 @@ Scripts/Hardware/OTA_ESP32_SquareLine
 Scripts/Hardware/OTA_Esp32/lib
 /Website/client/.env
 client/build
+node_modules
