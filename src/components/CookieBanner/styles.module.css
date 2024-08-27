@@ -1,0 +1,27 @@
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #f5f5f5;
+  padding: 20px 0;
+  text-align: center;
+  border-top: 1px solid #ccc;
+}
+
+.cookie-banner p {
+  margin: 0;
+  padding: 0 20px;
+  color: #333;
+  font-size: 16px;
+}
+
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: rgba(245, 245, 245, 0.9); /* Semi-transparent background */
+  padding: 20px 0;
+  text-align: center;
+  border-top: 1px solid #ccc;
+  z-index: 1000; /* High z-index to overlay other content */
+}

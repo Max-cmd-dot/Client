@@ -25,6 +25,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
 import ServerError from "./components/ServerError/ServerError";
+import CookieBanner from "./components/CookieBanner";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -78,6 +79,7 @@ function App() {
 
   return (
     <div className="container">
+      <CookieBanner />
       <Routes>
         {isLoggedIn ? (
           rightabo === "small" ||
