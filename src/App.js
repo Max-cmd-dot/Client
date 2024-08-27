@@ -105,8 +105,6 @@ function App() {
               {rightabo === "big" && (
                 <Route path="/calendar" element={<Calendar />} />
               )}
-              <Route path="/imprint" element={<Imprint />} />
-              <Route path="/privacy" element={<Privacy />} />
             </Route>
           ) : (
             <Route
@@ -118,6 +116,8 @@ function App() {
           <Route path="*" element={<Navigate replace to="/landing" />} />
         )}
 
+        <Route path="/imprint" element={<Imprint />} />
+        <Route path="/privacy" element={<Privacy />} />
         <Route path="/landing" element={<Landing />} />
         <Route path="/signup" element={<Signup />} />
         <Route

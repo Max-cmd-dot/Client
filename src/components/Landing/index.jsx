@@ -195,8 +195,8 @@ const Landing = () => {
       </section>
       <section className={styles.info_section}>
         <footer className={styles.footer}>
-          <Link to="/impressum">Impressum</Link>
-          <Link to="/agb">AGB</Link>
+          <Link to="/imprint">Impressum</Link>
+          <Link to="/privacy">Datenschutzerklärung</Link>
         </footer>
       </section>
     </div>
