@@ -59,10 +59,6 @@ const Landing = () => {
 
   return (
     <div>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap"
-        rel="stylesheet"
-      ></link>
       <div className={styles.hero_section}>
         <div className={styles.logo_and_heading}>
           <img src={logo} alt="Logo" className={styles.logo} />
@@ -176,7 +172,7 @@ const Landing = () => {
         <div className={styles.contact_box}>
           <h2>Ready to take advantage of Nexa Harvest?</h2>
           <p>
-            Contact us today to learn more about our IoT solution. or request a
+            Contact us today to learn more about our IoT solution. Or request a
             customized demo. Boost Improve your efficiency, improve your
             processes and stay ahead of the curve. one step ahead of the
             competition.
